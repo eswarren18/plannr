@@ -1,8 +1,8 @@
-from .database import create_tables
+from .database import drop_tables
 
 def test_db():
-    create_tables()
-    print("Tables created successfully!")
+    drop_tables()
+    print("Tables dropped successfully!")
 
 if __name__ == "__main__":
     test_db()
