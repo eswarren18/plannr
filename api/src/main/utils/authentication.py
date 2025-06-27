@@ -1,6 +1,7 @@
 """
 Helper functions for implementing authentication
 """
+
 import os
 import bcrypt
 from calendar import timegm
@@ -20,15 +21,19 @@ def hash_password(plain_password) -> str:
     """
     Hashes a password
     """
-    return bcrypt.hashpw(plain_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+    return bcrypt.hashpw(
+        plain_password.encode("utf-8"), bcrypt.gensalt()
+    ).decode("utf-8")
 
 
 def verify_password(plain_password, hash_password) -> str:
     """
-    Check if a plain-text password matches a hashed password stored in the database.
+    Checks if a plain-text password matches a hashed password stored in the database.
     Used during user login to verify credentials.
     """
-    return bcrypt.checkpw(plain_password.encode("utf-8"), hash_password.encode("utf-8"))
+    return bcrypt.checkpw(
+        plain_password.encode("utf-8"), hash_password.encode("utf-8")
+    )
 
 
 def generate_jwt_token(user: UserLogin) -> str:
@@ -50,7 +55,9 @@ def decode_jwt_token(token: str) -> Optional[dict]:
     Decodes a JWT token and returns the payload if valid, otherwise returns None.
     """
     try:
-        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[ALGORITHMS.HS256])
+        payload = jwt.decode(
+            token, JWT_SECRET_KEY, algorithms=[ALGORITHMS.HS256]
+        )
         return payload
     except JWTError:
         return None

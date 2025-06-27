@@ -14,8 +14,10 @@ Base = declarative_base()
 
 from src.main.models.users import User
 
+
 def create_tables():
     Base.metadata.create_all(bind=engine)
+
 
 def drop_tables():
     Base.metadata.drop_all(bind=engine)

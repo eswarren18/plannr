@@ -9,7 +9,11 @@ import sys
 import os
 from dotenv import load_dotenv
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src", "main")))
+sys.path.append(
+    os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "src", "main")
+    )
+)
 
 from src.main.database import Base
 import src.main.models.users
