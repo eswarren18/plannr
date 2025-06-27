@@ -6,6 +6,10 @@ class UserBase(BaseModel):
     Base Pydantic model for user data. Used as a parent for other user-related models.
     """
     email: str
+    username: str
+    first_name: str
+    last_name: str
+    role: str  # 'admin', 'tech', or 'customer'
 
 class UserCreate(UserBase):
     """
@@ -33,7 +37,8 @@ class TokenData(BaseModel):
     """
     Represents the data extracted from a JWT token (e.g., for validation).
     """
-    email: Optional[str] = None
+    username: Optional[str] = None
+    role: Optional[str] = None
 
 class UserLogin(BaseModel):
     """
