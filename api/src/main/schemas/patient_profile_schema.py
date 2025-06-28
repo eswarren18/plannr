@@ -11,13 +11,16 @@ from pydantic import BaseModel
 from datetime import date
 from typing import Optional
 
+
 class PatientProfileBase(BaseModel):
     name: str
     dob: date
     phone: str
 
+
 class PatientProfileCreate(PatientProfileBase):
     pass
+
 
 class PatientProfileRead(PatientProfileBase):
     id: int

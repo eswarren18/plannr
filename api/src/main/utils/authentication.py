@@ -4,13 +4,11 @@ Helper functions for implementing authentication
 
 import os
 import bcrypt
-from calendar import timegm
 from datetime import datetime, timezone, timedelta
-from fastapi import Cookie
 from jose import JWTError, jwt
 from jose.constants import ALGORITHMS
-from typing import Annotated, Optional
-from models.jwt import UserLogin, TokenData
+from typing import Optional
+from src.main.schemas.jwt import UserLogin
 
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 if not JWT_SECRET_KEY:
