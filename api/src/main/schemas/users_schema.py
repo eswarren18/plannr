@@ -31,8 +31,12 @@ class UserRequest(BaseModel):
 
 
 class UserResponse(UserBase):
+    """
+    Represents a user, without the password
+    """
+
     id: int
-    role: Optional[str] = None  # 'admin', 'tech', or 'customer'
+    role: Optional[str] = None
 
     class Config:
         orm_mode = True

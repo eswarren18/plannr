@@ -82,6 +82,21 @@ async def signin(user_request: UserRequest, request: Request, response: Response
     return user
 
 
+@router.delete("/signout")
+async def signout(request: Request, response: Response):
+    """
+    Signs the user out by deleting their JWT Cookie
+    """
+
+    # Secure cookies only if running on something besides localhost
+    secure = True if request.headers.get("origin") == "localhost" else False
+
+    # Delete cookie
+    response.delete_cookie(key="fast_api_token", httponly=True, samesite="lax", secure=secure)
+
+    return None
+
+
 # @router.get("/authenticate")
 # async def authenticate():
 #     """
@@ -94,13 +109,5 @@ async def signin(user_request: UserRequest, request: Request, response: Response
 
 #     This can be used in your frontend to determine if a user
 #     is logged in or not
-#     """
-#     return None
-
-
-# @router.delete("/signout")
-# async def signout():
-#     """
-#     Signs the user out by deleting their JWT Cookie
 #     """
 #     return None
