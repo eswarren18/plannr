@@ -21,17 +21,26 @@ class UserCreate(UserBase):
     password: str
 
 
+class UserRequest(BaseModel):
+    """
+    Represents the parameters needed for user login (authentication input).
+    """
+
+    username: str
+    password: str
+
+
+class UserResponse(UserBase):
+    id: int
+    role: Optional[str] = None  # 'admin', 'tech', or 'customer'
+
+    class Config:
+        orm_mode = True
+
+
 class UserUpdate(BaseModel):
     username: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     role: Optional[str] = None
     password: Optional[str] = None
-
-
-class UserRead(UserBase):
-    id: int
-    role: Optional[str] = None  # 'admin', 'tech', or 'customer'
-
-    class Config:
-        orm_mode = True

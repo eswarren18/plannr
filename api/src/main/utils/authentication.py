@@ -8,7 +8,7 @@ from datetime import datetime, timezone, timedelta
 from jose import JWTError, jwt
 from jose.constants import ALGORITHMS
 from typing import Optional
-from src.main.schemas.jwt import UserLogin
+from src.main.schemas.users_schema import UserRequest
 
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 if not JWT_SECRET_KEY:
@@ -19,25 +19,29 @@ def hash_password(plain_password) -> str:
     """
     Hashes a password
     """
+
     return bcrypt.hashpw(
         plain_password.encode("utf-8"), bcrypt.gensalt()
     ).decode("utf-8")
 
 
-def verify_password(plain_password, hash_password) -> str:
+def verify_password(plain_password, hash_password) -> bool:
     """
-    Checks if a plain-text password matches a hashed password stored in the database.
-    Used during user login to verify credentials.
+    Checks if a plain-text password matches a hashed password stored in the
+    database. Used during user login to verify credentials.
     """
+
     return bcrypt.checkpw(
         plain_password.encode("utf-8"), hash_password.encode("utf-8")
     )
 
 
-def generate_jwt_token(user: UserLogin) -> str:
+def generate_jwt_token(user: UserRequest) -> str:
     """
-    Generates a new JWT token using the user's information, including their role.
+    Generates a new JWT token using the user's information, including their
+    role.
     """
+
     expiration = datetime.now(timezone.utc) + timedelta(hours=1)
     payload = {
         "sub": user.username,
@@ -50,8 +54,10 @@ def generate_jwt_token(user: UserLogin) -> str:
 
 def decode_jwt_token(token: str) -> Optional[dict]:
     """
-    Decodes a JWT token and returns the payload if valid, otherwise returns None.
+    Decodes a JWT token and returns the payload if valid, otherwise returns
+    None.
     """
+
     try:
         payload = jwt.decode(
             token, JWT_SECRET_KEY, algorithms=[ALGORITHMS.HS256]
@@ -63,9 +69,10 @@ def decode_jwt_token(token: str) -> Optional[dict]:
 
 def get_current_user_from_token(token: str) -> Optional[str]:
     """
-    Extracts the username (subject) from a valid JWT token.
-    Returns None if the token is invalid or expired.
+    Extracts the username (subject) from a valid JWT token. Returns None if
+    the token is invalid or expired.
     """
+
     payload = decode_jwt_token(token)
     if payload and "sub" in payload:
         return payload["sub"]
@@ -74,9 +81,10 @@ def get_current_user_from_token(token: str) -> Optional[str]:
 
 def get_current_user_role_from_token(token: str) -> Optional[str]:
     """
-    Extracts the user's role from a valid JWT token.
-    Returns None if the token is invalid or expired.
+    Extracts the user's role from a valid JWT token. Returns None if the token
+    is invalid or expired.
     """
+
     payload = decode_jwt_token(token)
     if payload and "role" in payload:
         return payload["role"]
