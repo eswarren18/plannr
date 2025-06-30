@@ -5,19 +5,19 @@ User Authentication API Router
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.orm import Session
 from src.main.models.users import User
-from src.main.schemas.users_schema import UserCreate, UserResponse, UserRequest
+from src.main.schemas.users_schema import UserCreate, UserResponse, UserRequest, UserUpdate
 from src.main.database import get_db
 from src.main.utils.authentication import (
     hash_password,
     verify_password,
     generate_jwt_token,
+    try_get_jwt_user_data
 )
 
 router = APIRouter(tags=["Authentication"], prefix="/api/auth")
 
 
-# TODO: does this make more sense to be an authentication route or a user route?
-# User create and update should probably be their own router file because they don't actually auth, just create.
+# TODO: Router organization. Consider splitting some routes into a user_router file. Routes that don't have anything to do with authentication or authorization.
 @router.post("/signup", response_model=UserResponse)
 async def signup(user: UserCreate, db: Session = Depends(get_db)):
     """
@@ -31,7 +31,7 @@ async def signup(user: UserCreate, db: Session = Depends(get_db)):
     if existing_user:
         raise HTTPException(status_code=400, detail="User already registered")
 
-    # Create new user
+    # Create, add, and return new user
     db_user = User(
         username=user.username,
         first_name=user.first_name,
@@ -43,6 +43,36 @@ async def signup(user: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+@router.put("/update", response_model=UserResponse)
+async def update(
+    user_update: UserUpdate,
+    db: Session = Depends(get_db),
+    jwt_payload: dict = Depends(try_get_jwt_user_data)
+):
+    """
+    Updates the user profile
+    """
+
+    # Fetch the user from the database
+    user = db.query(User).filter(User.username == jwt_payload["sub"]).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not logged in")
+
+    # Update, add, and return new user
+    if user_update.first_name is not None:
+        user.first_name = user_update.first_name
+    if user_update.last_name is not None:
+        user.last_name = user_update.last_name
+    if user_update.role is not None:
+        user.role = user_update.role
+    if user_update.password is not None:
+        user.hashed_password = hash_password(user_update.password)
+
+    db.commit()
+    db.refresh(user)
+    return user
 
 
 @router.post("/signin", response_model=UserResponse)
@@ -97,17 +127,18 @@ async def signout(request: Request, response: Response):
     return None
 
 
-# @router.get("/authenticate")
-# async def authenticate():
-#     """
-#     This function returns the user if the user is logged in.
+@router.get("/authenticate", response_model=UserResponse)
+async def authenticate(
+    db: Session = Depends(get_db),
+    jwt_payload: dict = Depends(try_get_jwt_user_data),
+):
+    """
+    Returns the user if logged in, else 404.
+    """
 
-#     The `try_get_jwt_user_data` function tries to get the user and validate
-#     the JWT
-
-#     If the user isn't logged in this returns a 404
-
-#     This can be used in your frontend to determine if a user
-#     is logged in or not
-#     """
-#     return None
+    if not jwt_payload or "sub" not in jwt_payload:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not logged in")
+    user = db.query(User).filter(User.username == jwt_payload["sub"]).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not logged in")
+    return user

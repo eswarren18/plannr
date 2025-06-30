@@ -9,6 +9,8 @@ from jose import JWTError, jwt
 from jose.constants import ALGORITHMS
 from typing import Optional
 from src.main.schemas.users_schema import UserRequest
+from fastapi import Cookie
+from typing import Annotated
 
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 if not JWT_SECRET_KEY:
@@ -89,3 +91,19 @@ def get_current_user_role_from_token(token: str) -> Optional[str]:
     if payload and "role" in payload:
         return payload["role"]
     return None
+
+
+def try_get_jwt_user_data(
+    fast_api_token: Annotated[Optional[str], Cookie()] = None,
+) -> Optional[dict]:
+    """
+    Dependency to extract user data from JWT in the cookie. Returns the JWT
+    payload dict if valid, else None.
+    """
+
+    if not fast_api_token:
+        return None
+    payload = decode_jwt_token(fast_api_token)
+    if not payload:
+        return None
+    return payload
