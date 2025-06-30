@@ -4,8 +4,8 @@ User Authentication API Router
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.orm import Session
-from src.main.models.users import User
-from src.main.schemas.users_schema import UserRequest, UserResponse
+from src.main.models.user import User
+from src.main.schemas.user_schema import UserRequest, UserResponse
 from src.main.database import get_db
 from src.main.utils.authentication import (
     generate_jwt_token,

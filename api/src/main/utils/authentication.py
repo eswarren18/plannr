@@ -8,7 +8,7 @@ from datetime import datetime, timezone, timedelta
 from jose import JWTError, jwt
 from jose.constants import ALGORITHMS
 from typing import Optional
-from src.main.schemas.users_schema import UserRequest
+from src.main.schemas.user_schema import UserRequest
 from fastapi import Cookie
 from typing import Annotated
 

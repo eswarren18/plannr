@@ -4,8 +4,8 @@ User CRUD/Profile API Router
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from src.main.models.users import User
-from src.main.schemas.users_schema import UserCreate, UserResponse, UserUpdate
+from src.main.models.user import User
+from src.main.schemas.user_schema import UserCreate, UserResponse, UserUpdate
 from src.main.database import get_db
 from src.main.utils.authentication import hash_password, try_get_jwt_user_data
 
