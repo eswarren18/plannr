@@ -20,26 +20,28 @@ router = APIRouter(tags=["Users"], prefix="/api/user")
 @router.post("/signup", response_model=UserResponse)
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     """
-    Creates a new user when someone submits the signup form
+    Creates a new user. If role is 'patient', requires patient profile activation. If 'admin' or 'employee', just creates user.
     """
-
-    existing_user = (
-        db.query(User).filter(User.username == user.username).first()
-    )
+    existing_user = db.query(User).filter((User.username == user.username) | (User.email == user.email)).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="User already registered")
-    db_user = User(
-        username=user.username,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        role="customer",
-        hashed_password=hash_password(user.password),
-    )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-
-    return set_jwt_cookie_response(db_user, response_model=UserResponse)
+    if user.role in ["admin", "employee"]:
+        db_user = User(
+            username=user.username,
+            email=user.email,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            role=user.role,
+            hashed_password=hash_password(user.password),
+        )
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        return set_jwt_cookie_response(db_user, response_model=UserResponse)
+    elif user.role == "patient":
+        raise HTTPException(status_code=400, detail="Patients must activate their profile via /api/patient_profile/activate")
+    else:
+        raise HTTPException(status_code=400, detail="Invalid role")
 
 
 @router.get("/authenticate", response_model=UserResponse)

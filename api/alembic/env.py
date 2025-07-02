@@ -16,7 +16,7 @@ sys.path.append(
 )
 
 from src.main.database import Base
-import src.main.models.users
+import src.main.models.user
 import src.main.models.patient_profile
 
 # Load environment variables from .env file

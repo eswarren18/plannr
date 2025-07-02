@@ -2,8 +2,7 @@
 SQLAlchemy ORM model for the PatientProfile entity.
 
 Defines the structure of the patient_profiles table in the database, including
-columns, relationships, and constraints. This model is used for database
-operations and is separate from API schemas.
+columns, relationships, and constraints.
 """
 
 from sqlalchemy import (
@@ -13,6 +12,7 @@ from sqlalchemy import (
     Date,
     ForeignKey,
     UniqueConstraint,
+    Boolean,
 )
 from sqlalchemy.orm import relationship
 from src.main.database import Base
@@ -21,9 +21,12 @@ from src.main.database import Base
 class PatientProfile(Base):
     __tablename__ = "patient_profiles"
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
     dob = Column(Date, nullable=False)
-    phone = Column(String, nullable=False)
+    phone = Column(String, nullable=True)
+    email = Column(String, nullable=True)
+    active = Column(Boolean, nullable=False, default=False)
     user_id = Column(
         Integer, ForeignKey("users.id"), unique=True, nullable=True
     )
@@ -31,5 +34,5 @@ class PatientProfile(Base):
     user = relationship("User", backref="patient_profile", uselist=False)
 
     __table_args__ = (
-        UniqueConstraint("name", "dob", "phone", name="uq_patient_identity"),
+        UniqueConstraint("first_name", "last_name", "dob", "phone", name="uq_patient_identity"),
     )

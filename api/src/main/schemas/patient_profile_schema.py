@@ -7,15 +7,18 @@ schemas ensure correct data structure in API requests and responses, and are
 separate from database models.
 """
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from datetime import date
 from typing import Optional
 
 
 class PatientProfileBase(BaseModel):
-    name: str
+    first_name: str
+    last_name: str
     dob: date
-    phone: str
+    phone: Optional[str] = None
+    email: Optional[EmailStr] = None
+    active: bool = False
 
 
 class PatientProfileCreate(PatientProfileBase):
@@ -27,4 +30,4 @@ class PatientProfileRead(PatientProfileBase):
     user_id: Optional[int] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
