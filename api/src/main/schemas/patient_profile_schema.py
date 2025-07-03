@@ -16,7 +16,7 @@ class PatientProfileBase(BaseModel):
     first_name: str
     last_name: str
     dob: date
-    phone: Optional[str] = None
+    phone: str
     email: Optional[EmailStr] = None
     active: bool = False
 

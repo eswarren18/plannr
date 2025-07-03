@@ -9,6 +9,7 @@ requests and responses, separate from database models and authentication logic.
 
 from pydantic import BaseModel, EmailStr
 from typing import Optional
+from datetime import date
 
 
 class UserBase(BaseModel):
@@ -21,6 +22,8 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
     role: str  # 'patient', 'admin', or 'employee'
+    dob: Optional[date] = None
+    phone: Optional[str] = None
 
 
 class UserRequest(BaseModel):

@@ -2,8 +2,10 @@
 User CRUD/Profile API Router
 """
 
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from src.main.models.patient_profile import PatientProfile
 from src.main.models.user import User
 from src.main.schemas.user_schema import UserCreate, UserResponse, UserUpdate
 from src.main.database import get_db
@@ -20,11 +22,15 @@ router = APIRouter(tags=["Users"], prefix="/api/user")
 @router.post("/signup", response_model=UserResponse)
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     """
-    Creates a new user. If role is 'patient', requires patient profile activation. If 'admin' or 'employee', just creates user.
+    Patient or employee/admin signup. If patient, link to existing inactive patient profile or create both. If admin/employee, just create user.
     """
+
+    # If the user is already registered, throw an exception
     existing_user = db.query(User).filter((User.username == user.username) | (User.email == user.email)).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="User already registered")
+
+    # TODO: a user should NOT be able to sign up as an admin.
     if user.role in ["admin", "employee"]:
         db_user = User(
             username=user.username,
@@ -38,8 +44,62 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(db_user)
         return set_jwt_cookie_response(db_user, response_model=UserResponse)
+
+
+    # Validate required identity fields for patient signups
     elif user.role == "patient":
-        raise HTTPException(status_code=400, detail="Patients must activate their profile via /api/patient_profile/activate")
+        # At this point, first_name, last_name, dob, and phone are guaranteed present by schema validation
+        patient = db.query(PatientProfile).filter(
+            PatientProfile.first_name == user.first_name,
+            PatientProfile.last_name == user.last_name,
+            PatientProfile.dob == user.dob,
+            PatientProfile.phone == user.phone,
+            PatientProfile.active == False,
+        ).first()
+
+        # If an inactive patient profile exists, claim it
+        if patient:
+            db_user = User(
+                username=user.username,
+                email=user.email,
+                first_name=user.first_name,
+                last_name=user.last_name,
+                role="patient",
+                hashed_password=hash_password(user.password),
+            )
+            db.add(db_user)
+            db.commit()
+            db.refresh(db_user)
+            patient.user_id = db_user.id
+            patient.active = True
+            db.commit()
+            return set_jwt_cookie_response(db_user, response_model=UserResponse)
+
+        # If an inactive patient profile DOES NOT exist, create both user and patient profile
+        else:
+            db_user = User(
+                username=user.username,
+                email=user.email,
+                first_name=user.first_name,
+                last_name=user.last_name,
+                role="patient",
+                hashed_password=hash_password(user.password),
+            )
+            db.add(db_user)
+            db.commit()
+            db.refresh(db_user)
+            patient = PatientProfile(
+                first_name=user.first_name,
+                last_name=user.last_name,
+                dob=user.dob,
+                phone=user.phone,
+                email=user.email,
+                active=True,
+                user_id=db_user.id,
+            )
+            db.add(patient)
+            db.commit()
+            return set_jwt_cookie_response(db_user, response_model=UserResponse)
     else:
         raise HTTPException(status_code=400, detail="Invalid role")
 
