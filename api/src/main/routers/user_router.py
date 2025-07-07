@@ -26,17 +26,14 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     """
 
     # If the user is already registered, throw an exception
-    existing_user = db.query(User).filter((User.username == user.username) | (User.email == user.email)).first()
+    existing_user = db.query(User).filter(User.email == user.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="User already registered")
 
     # TODO: a user should NOT be able to sign up as an admin.
     if user.role in ["admin", "employee"]:
         db_user = User(
-            username=user.username,
             email=user.email,
-            first_name=user.first_name,
-            last_name=user.last_name,
             role=user.role,
             hashed_password=hash_password(user.password),
         )
@@ -45,8 +42,6 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
         db.refresh(db_user)
         return set_jwt_cookie_response(db_user, response_model=UserResponse)
 
-
-    # Validate required identity fields for patient signups
     elif user.role == "patient":
         # At this point, first_name, last_name, dob, and phone are guaranteed present by schema validation
         patient = db.query(PatientProfile).filter(
@@ -60,10 +55,7 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
         # If an inactive patient profile exists, claim it
         if patient:
             db_user = User(
-                username=user.username,
                 email=user.email,
-                first_name=user.first_name,
-                last_name=user.last_name,
                 role="patient",
                 hashed_password=hash_password(user.password),
             )
@@ -78,10 +70,7 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
         # If an inactive patient profile DOES NOT exist, create both user and patient profile
         else:
             db_user = User(
-                username=user.username,
                 email=user.email,
-                first_name=user.first_name,
-                last_name=user.last_name,
                 role="patient",
                 hashed_password=hash_password(user.password),
             )
@@ -93,7 +82,6 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
                 last_name=user.last_name,
                 dob=user.dob,
                 phone=user.phone,
-                email=user.email,
                 active=True,
                 user_id=db_user.id,
             )
@@ -115,7 +103,7 @@ async def get_user(
 
     if not jwt_payload or "sub" not in jwt_payload:
         raise HTTPException(status_code=404, detail="Not logged in")
-    user = db.query(User).filter(User.username == jwt_payload["sub"]).first()
+    user = db.query(User).filter(User.email == jwt_payload["sub"]).first()
     if not user:
         raise HTTPException(status_code=404, detail="Not logged in")
     return user
@@ -131,13 +119,9 @@ async def update_user(
     Updates the user profile
     """
 
-    user = db.query(User).filter(User.username == jwt_payload["sub"]).first()
+    user = db.query(User).filter(User.email == jwt_payload["sub"]).first()
     if not user:
         raise HTTPException(status_code=404, detail="Not logged in")
-    if user_update.first_name is not None:
-        user.first_name = user_update.first_name
-    if user_update.last_name is not None:
-        user.last_name = user_update.last_name
     if user_update.role is not None:
         user.role = user_update.role
     if user_update.password is not None:
@@ -177,7 +161,7 @@ async def delete_user(
     Deletes the current user profile from the database.
     """
 
-    user = db.query(User).filter(User.username == jwt_payload["sub"]).first()
+    user = db.query(User).filter(User.email == jwt_payload["sub"]).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     db.delete(user)

@@ -13,17 +13,12 @@ from datetime import date
 
 
 class UserBase(BaseModel):
-    username: Optional[str] = None
-    email: Optional[EmailStr] = None
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
+    email: EmailStr
 
 
 class UserCreate(UserBase):
     password: str
     role: str  # 'patient', 'admin', or 'employee'
-    dob: Optional[date] = None
-    phone: Optional[str] = None
 
 
 class UserRequest(BaseModel):
@@ -31,7 +26,7 @@ class UserRequest(BaseModel):
     Represents the parameters needed for user login (authentication input).
     """
 
-    username: str
+    email: EmailStr
     password: str
 
 
@@ -48,8 +43,6 @@ class UserResponse(UserBase):
 
 
 class UserUpdate(BaseModel):
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
     role: Optional[str] = None
     password: Optional[str] = None
     email: Optional[EmailStr] = None

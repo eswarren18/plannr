@@ -24,8 +24,7 @@ class PatientProfile(Base):
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     dob = Column(Date, nullable=False)
-    phone = Column(String, nullable=True)
-    email = Column(String, nullable=True)
+    phone = Column(String, nullable=False)
     active = Column(Boolean, nullable=False, default=False)
     user_id = Column(
         Integer, ForeignKey("users.id"), unique=True, nullable=True

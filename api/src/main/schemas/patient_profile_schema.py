@@ -7,7 +7,7 @@ schemas ensure correct data structure in API requests and responses, and are
 separate from database models.
 """
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from datetime import date
 from typing import Optional
 
@@ -17,7 +17,6 @@ class PatientProfileBase(BaseModel):
     last_name: str
     dob: date
     phone: str
-    email: Optional[EmailStr] = None
     active: bool = False
 
 

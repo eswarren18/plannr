@@ -42,13 +42,12 @@ def verify_password(plain_password, hash_password) -> bool:
 
 def generate_jwt_token(user: UserRequest) -> str:
     """
-    Generates a new JWT token using the user's information, including their
-    role.
+    Generates a new JWT token using the user's information, including their role.
     """
 
     expiration = datetime.now(timezone.utc) + timedelta(hours=1)
     payload = {
-        "sub": user.username,
+        "sub": user.email,
         "role": user.role,
         "exp": int(expiration.timestamp()),
     }
@@ -73,8 +72,7 @@ def decode_jwt_token(token: str) -> Optional[dict]:
 
 def get_current_user_from_token(token: str) -> Optional[str]:
     """
-    Extracts the username (subject) from a valid JWT token. Returns None if
-    the token is invalid or expired.
+    Extracts the email (subject) from a valid JWT token. Returns None if the token is invalid or expired.
     """
 
     payload = decode_jwt_token(token)
@@ -118,11 +116,11 @@ def set_jwt_cookie_response(user, response_model=None):
     """
 
     class UserObj:
-        def __init__(self, username, role):
-            self.username = username
+        def __init__(self, email, role):
+            self.email = email
             self.role = role
 
-    jwt_token = generate_jwt_token(UserObj(user.username, user.role))
+    jwt_token = generate_jwt_token(UserObj(user.email, user.role))
     content = response_model.from_orm(user).dict() if response_model else {}
     response = JSONResponse(content=content)
     response.set_cookie(
