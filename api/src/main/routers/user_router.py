@@ -43,7 +43,7 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
         return set_jwt_cookie_response(db_user, response_model=UserResponse)
 
     elif user.role == "patient":
-        # At this point, first_name, last_name, dob, and phone are guaranteed present by schema validation
+        # Use first_name, last_name, dob, phone to match patient profile
         patient = db.query(PatientProfile).filter(
             PatientProfile.first_name == user.first_name,
             PatientProfile.last_name == user.last_name,
@@ -52,7 +52,6 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
             PatientProfile.active == False,
         ).first()
 
-        # If an inactive patient profile exists, claim it
         if patient:
             db_user = User(
                 email=user.email,
@@ -66,8 +65,6 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
             patient.active = True
             db.commit()
             return set_jwt_cookie_response(db_user, response_model=UserResponse)
-
-        # If an inactive patient profile DOES NOT exist, create both user and patient profile
         else:
             db_user = User(
                 email=user.email,

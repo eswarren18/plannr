@@ -17,8 +17,13 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
+    email: EmailStr # email, password, role for user creation
     password: str
-    role: str  # 'patient', 'admin', or 'employee'
+    role: str
+    first_name: str # first_name, last_name, dob, phone for patient profile matching/creation
+    last_name: str
+    dob: date
+    phone: str
 
 
 class UserRequest(BaseModel):
