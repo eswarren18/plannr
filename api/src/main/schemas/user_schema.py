@@ -48,6 +48,12 @@ class UserResponse(UserBase):
 
 
 class UserUpdate(BaseModel):
-    role: Optional[str] = None
+    """
+    Represents fields a user can update within their user profile
+    """
+
     password: Optional[str] = None
     email: Optional[EmailStr] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    phone: Optional[str] = None

@@ -113,16 +113,32 @@ async def update_user(
     jwt_payload: dict = Depends(try_get_jwt_user_data),
 ):
     """
-    Updates the user profile
+    Updates the user and patient profile
     """
 
+    # Update user attributes
     user = db.query(User).filter(User.email == jwt_payload["sub"]).first()
     if not user:
         raise HTTPException(status_code=404, detail="Not logged in")
-    if user_update.role is not None:
-        user.role = user_update.role
+
     if user_update.password is not None:
         user.hashed_password = hash_password(user_update.password)
+    if user_update.email is not None:
+        user.email = user_update.email
+
+    # Update patient profile attributes if present
+    patient_profile = db.query(PatientProfile).filter(PatientProfile.user_id == user.id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Patient profile does not exist for this user")
+
+    if user_update.first_name is not None:
+        patient_profile.first_name = user_update.first_name
+    if user_update.last_name is not None:
+        patient_profile.last_name = user_update.last_name
+    if user_update.phone is not None:
+        patient_profile.phone = user_update.phone
+
+    # Update the database
     db.commit()
     db.refresh(user)
     return user
