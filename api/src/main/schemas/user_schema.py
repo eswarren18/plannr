@@ -17,6 +17,9 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
+    """
+    Represents attributes needed to create a patient User
+    """
     email: EmailStr # email, password, role for user creation
     password: str
     role: str
@@ -25,10 +28,18 @@ class UserCreate(UserBase):
     dob: date
     phone: str
 
+# TODO: Determine if this class is needed or can password go under UserBase
+class EmployeeCreate(UserBase):
+    """
+    Represents attributes needed to create an employee User
+    """
+
+    password: str
+
 
 class UserRequest(BaseModel):
     """
-    Represents the parameters needed for user login (authentication input).
+    Represents the attributes needed for user login (authentication input)
     """
 
     email: EmailStr

@@ -36,19 +36,19 @@ async def signin(
 
     # Try to get the user from the database
     user = (
-        db.query(User).filter(User.username == user_request.username).first()
+        db.query(User).filter(User.email == user_request.email).first()
     )
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Incorrect email or password",
         )
 
     # Verify the user's password
     if not verify_password(user_request.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Incorrect email or password",
         )
 
     return set_jwt_cookie_response(user, response_model=UserResponse)

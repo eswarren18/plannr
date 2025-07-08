@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from src.main.models.patient_profile import PatientProfile
 from src.main.models.user import User
-from src.main.schemas.user_schema import UserCreate, UserResponse, UserUpdate
+from src.main.schemas.user_schema import UserCreate, EmployeeCreate, UserResponse, UserUpdate
 from src.main.database import get_db
 from src.main.utils.authentication import (
     hash_password,
@@ -25,7 +25,7 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     Patient or employee/admin signup. If patient, link to existing inactive patient profile or create both. If admin/employee, just create user.
     """
 
-    # If the user is already registered, throw an exception
+    # Checks if the user is registered
     existing_user = db.query(User).filter(User.email == user.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="User already registered")
@@ -42,8 +42,8 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
         db.refresh(db_user)
         return set_jwt_cookie_response(db_user, response_model=UserResponse)
 
+    #
     elif user.role == "patient":
-        # Use first_name, last_name, dob, phone to match patient profile
         patient = db.query(PatientProfile).filter(
             PatientProfile.first_name == user.first_name,
             PatientProfile.last_name == user.last_name,
@@ -85,6 +85,8 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
             db.add(patient)
             db.commit()
             return set_jwt_cookie_response(db_user, response_model=UserResponse)
+
+    #
     else:
         raise HTTPException(status_code=400, detail="Invalid role")
 
@@ -106,6 +108,7 @@ async def get_user(
     return user
 
 
+# TODO: Split into /update_auth and /update_profile. /update_auth will update the users password by sending an email.
 @router.put("/update", response_model=UserResponse)
 async def update_user(
     user_update: UserUpdate,
@@ -113,7 +116,7 @@ async def update_user(
     jwt_payload: dict = Depends(try_get_jwt_user_data),
 ):
     """
-    Updates the user and patient profile
+    Updates the User and Patient Profile
     """
 
     # Update user attributes
@@ -180,3 +183,30 @@ async def delete_user(
     db.delete(user)
     db.commit()
     return None
+
+
+# TODO: An email invite should be sent to the employee's work email to claim and reset their password
+@router.post("/admin-create-employee", response_model=UserResponse, dependencies=[Depends(require_admin)])
+async def admin_create_employee(user: EmployeeCreate, db: Session = Depends(get_db)):
+    """
+    ADMIN-ONLY: Creates an employee User.
+    """
+
+    # TODO: Move this query into a utils folder and call it in the different routes.
+    # Checks if the user is registered
+    existing_user = db.query(User).filter(User.email == user.email).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="User already registered")
+
+    # Creates a User with an employee role
+    db_user = User(
+        email=user.email,
+        role="employee",
+        hashed_password=hash_password(user.password),
+    )
+
+    # Adds the employee User to the database
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return set_jwt_cookie_response(db_user, response_model=UserResponse)
