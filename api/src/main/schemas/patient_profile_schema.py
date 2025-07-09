@@ -20,8 +20,11 @@ class PatientProfileBase(BaseModel):
     active: bool = False
 
 
-class PatientProfileCreate(PatientProfileBase):
-    pass
+class PatientProfileCreate(BaseModel):
+    first_name: str
+    last_name: str
+    dob: date
+    phone: str
 
 
 class PatientProfileRead(PatientProfileBase):

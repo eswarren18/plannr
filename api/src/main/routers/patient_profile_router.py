@@ -14,14 +14,15 @@ from src.main.database import get_db
 router = APIRouter(tags=["Patient Profiles"], prefix="/api/patient_profiles")
 
 
-@router.post("/admin-create", response_model=PatientProfileRead)
-async def admin_create_patient_profile(
+@router.post("", response_model=PatientProfileRead)
+async def create_patient_profile(
     profile: PatientProfileCreate, db: Session = Depends(get_db)
 ):
     """
-    Admin creates an inactive patient profile (no user_id, active=False).
+    ADMIN-ONLY: Creates an inactive Patient Profile
     """
 
+    # Checks if the Patient Profile exists
     existing = (
         db.query(PatientProfile)
         .filter(
@@ -36,7 +37,9 @@ async def admin_create_patient_profile(
         raise HTTPException(
             status_code=400, detail="Patient profile already exists"
         )
-    patient = PatientProfile(**profile.model_dump(), user_id=None)
+
+    # Creates an inactive Patient Profile
+    patient = PatientProfile(**profile.model_dump(), user_id=None, active=False)
     db.add(patient)
     db.commit()
     db.refresh(patient)

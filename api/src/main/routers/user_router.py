@@ -26,7 +26,7 @@ router = APIRouter(tags=["Users"], prefix="/api/users")
 @router.post("", response_model=UserResponse)
 async def create_patient(user: PatientCreate, db: Session = Depends(get_db)):
     """
-    Creates a patient User
+    Creates a patient User and an active Patient Profile
     """
     # Checks if the User is registered
     existing_user = db.query(User).filter(User.email == user.email).first()
