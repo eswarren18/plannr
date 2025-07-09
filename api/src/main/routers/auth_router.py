@@ -1,5 +1,5 @@
 """
-User Authentication API Router
+API Router for Authentication CRUD endpoints
 """
 
 from fastapi import (
@@ -35,9 +35,7 @@ async def signin(
     """
 
     # Try to get the user from the database
-    user = (
-        db.query(User).filter(User.email == user_request.email).first()
-    )
+    user = db.query(User).filter(User.email == user_request.email).first()
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

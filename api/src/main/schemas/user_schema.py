@@ -16,17 +16,18 @@ class UserBase(BaseModel):
     email: EmailStr
 
 
-class UserCreate(UserBase):
+class PatientCreate(UserBase):
     """
     Represents attributes needed to create a patient User
     """
-    email: EmailStr # email, password, role for user creation
-    password: str
+
+    password: str  # email, password, role for user creation
     role: str
-    first_name: str # first_name, last_name, dob, phone for patient profile matching/creation
+    first_name: str  # first_name, last_name, dob, phone for patient profile matching/creation
     last_name: str
     dob: date
     phone: str
+
 
 # TODO: Determine if this class is needed or can password go under UserBase
 class EmployeeCreate(UserBase):

@@ -33,5 +33,11 @@ class PatientProfile(Base):
     user = relationship("User", backref="patient_profile", uselist=False)
 
     __table_args__ = (
-        UniqueConstraint("first_name", "last_name", "dob", "phone", name="uq_patient_identity"),
+        UniqueConstraint(
+            "first_name",
+            "last_name",
+            "dob",
+            "phone",
+            name="uq_patient_identity",
+        ),
     )
