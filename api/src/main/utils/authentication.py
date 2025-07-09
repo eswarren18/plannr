@@ -42,7 +42,8 @@ def verify_password(plain_password, hash_password) -> bool:
 
 def generate_jwt_token(user: UserRequest) -> str:
     """
-    Generates a new JWT token using the user's information, including their role.
+    Generates a new JWT token using the user's information, including their
+    role.
     """
 
     expiration = datetime.now(timezone.utc) + timedelta(hours=1)
@@ -72,7 +73,8 @@ def decode_jwt_token(token: str) -> Optional[dict]:
 
 def get_current_user_from_token(token: str) -> Optional[str]:
     """
-    Extracts the email (subject) from a valid JWT token. Returns None if the token is invalid or expired.
+    Extracts the email (subject) from a valid JWT token. Returns None if the
+    token is invalid or expired.
     """
 
     payload = decode_jwt_token(token)
@@ -99,7 +101,8 @@ def try_get_jwt_user_data(
 
 def require_admin(jwt_payload: dict = Depends(try_get_jwt_user_data)):
     """
-    Dependency to ensure the current user is an admin. Raises HTTPException if not.
+    Dependency to ensure the current user is an admin. Raises HTTPException if
+    not.
     """
 
     if not jwt_payload or jwt_payload.get("role") != "admin":
@@ -111,8 +114,9 @@ def require_admin(jwt_payload: dict = Depends(try_get_jwt_user_data)):
 
 def set_jwt_cookie_response(user, response_model=None):
     """
-    Generates a JWT for the user and returns a JSONResponse with the JWT set as an HTTP-only cookie.
-    Optionally serializes the user with a response_model (e.g., Pydantic schema).
+    Generates a JWT for the user and returns a JSONResponse with the JWT set
+    as an HTTP-only cookie. Optionally serializes the user with a
+    response_model (e.g., Pydantic schema).
     """
 
     class UserObj:

@@ -126,7 +126,7 @@ async def create_employee(user: EmployeeCreate, db: Session = Depends(get_db)):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return set_jwt_cookie_response(db_user, response_model=UserResponse)
+    return db_user
 
 
 # TODO: Split into /update_auth and /update_profile. /update_auth will update the users password by sending an email.
