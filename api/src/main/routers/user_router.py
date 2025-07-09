@@ -78,26 +78,6 @@ async def create_patient(user: PatientCreate, db: Session = Depends(get_db)):
         return set_jwt_cookie_response(db_user, response_model=UserResponse)
 
 
-@router.get("/me", response_model=UserResponse)
-async def get_current_user(
-    db: Session = Depends(get_db),
-    jwt_payload: dict = Depends(try_get_jwt_user_data),
-):
-    """
-    Gets the current User data if logged in
-    """
-
-    # Checks if JWT is valid
-    if not jwt_payload or "sub" not in jwt_payload:
-        raise HTTPException(status_code=404, detail="Not logged in")
-
-    # Checks if the user is registered
-    user = db.query(User).filter(User.email == jwt_payload["sub"]).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="Not logged in")
-    return user
-
-
 # TODO: An email invite should be sent to the employee's work email to claim and reset their password
 @router.post(
     "/employee",
@@ -127,6 +107,26 @@ async def create_employee(user: EmployeeCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+@router.get("/me", response_model=UserResponse)
+async def get_current_user(
+    db: Session = Depends(get_db),
+    jwt_payload: dict = Depends(try_get_jwt_user_data),
+):
+    """
+    Gets the current User data if logged in
+    """
+
+    # Checks if JWT is valid
+    if not jwt_payload or "sub" not in jwt_payload:
+        raise HTTPException(status_code=404, detail="Not logged in")
+
+    # Checks if the user is registered
+    user = db.query(User).filter(User.email == jwt_payload["sub"]).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Not logged in")
+    return user
 
 
 # TODO: Split into /update_auth and /update_profile. /update_auth will update the users password by sending an email.
