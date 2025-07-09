@@ -15,7 +15,6 @@ from src.main.models.user import User
 from src.main.schemas.user_schema import UserRequest, UserResponse
 from src.main.database import get_db
 from src.main.utils.authentication import (
-    generate_jwt_token,
     verify_password,
     set_jwt_cookie_response,
 )
@@ -26,15 +25,13 @@ router = APIRouter(tags=["Authentication"], prefix="/api/auth")
 @router.post("/signin", response_model=UserResponse)
 async def signin(
     user_request: UserRequest,
-    request: Request,
-    response: Response,
     db: Session = Depends(get_db),
 ):
     """
-    Signs the user in when the correct password
+    Signs in the User
     """
 
-    # Try to get the user from the database
+    # Trys to get the User from the database
     user = db.query(User).filter(User.email == user_request.email).first()
     if not user:
         raise HTTPException(
@@ -42,7 +39,7 @@ async def signin(
             detail="Incorrect email or password",
         )
 
-    # Verify the user's password
+    # Verifys the User password
     if not verify_password(user_request.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -55,7 +52,7 @@ async def signin(
 @router.delete("/signout")
 async def signout(request: Request, response: Response):
     """
-    Signs the user out by deleting their JWT Cookie
+    Signs out the User by deleting their JWT Cookie
     """
 
     # Secure cookies only if running on something besides localhost
