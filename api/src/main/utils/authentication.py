@@ -13,7 +13,6 @@ from fastapi import Cookie, Depends, HTTPException
 from typing import Annotated
 from fastapi.responses import JSONResponse
 
-
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 if not JWT_SECRET_KEY:
     raise ValueError("JWT_SECRET_KEY environment variable is not set.")
@@ -73,8 +72,8 @@ def decode_jwt_token(token: str) -> Optional[dict]:
 
 def get_current_user_from_token(token: str) -> Optional[str]:
     """
-    Extracts the email (subject) from a valid JWT token. Returns None if the
-    token is invalid or expired.
+    Extracts the username (subject) from a valid JWT token. Returns None if
+    the token is invalid or expired.
     """
 
     payload = decode_jwt_token(token)
@@ -101,8 +100,8 @@ def try_get_jwt_user_data(
 
 def require_admin(jwt_payload: dict = Depends(try_get_jwt_user_data)):
     """
-    Dependency to ensure the current user is an admin. Raises HTTPException if
-    not.
+    Dependency to require admin role. Raises HTTP 403 Forbidden if the user
+    is not an admin.
     """
 
     if not jwt_payload or jwt_payload.get("role") != "admin":
@@ -112,11 +111,10 @@ def require_admin(jwt_payload: dict = Depends(try_get_jwt_user_data)):
     return jwt_payload
 
 
-def set_jwt_cookie_response(user, response_model=None):
+def set_jwt_cookie_response(user, response_model=None, custom_content=None):
     """
-    Generates a JWT for the user and returns a JSONResponse with the JWT set
-    as an HTTP-only cookie. Optionally serializes the user with a
-    response_model (e.g., Pydantic schema).
+    Sets the JWT cookie in the response. Supports custom content for JSON
+    serialization.
     """
 
     class UserObj:
@@ -125,7 +123,12 @@ def set_jwt_cookie_response(user, response_model=None):
             self.role = role
 
     jwt_token = generate_jwt_token(UserObj(user.email, user.role))
-    content = response_model.from_orm(user).dict() if response_model else {}
+    if custom_content is not None:
+        content = custom_content
+    elif response_model:
+        content = response_model.from_orm(user).dict()
+    else:
+        content = {}
     response = JSONResponse(content=content)
     response.set_cookie(
         key="fast_api_token", value=jwt_token, httponly=True, samesite="lax"

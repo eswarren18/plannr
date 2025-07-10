@@ -13,46 +13,37 @@ from datetime import date
 
 
 class UserBase(BaseModel):
-    email: EmailStr
-
-
-class PatientCreate(UserBase):
-    """
-    Represents attributes needed to create a patient User
-    """
-
-    password: str  # email, password, role for user creation
-    role: str
-    first_name: str  # first_name, last_name, dob, phone for patient profile matching/creation
+    email: Optional[EmailStr] = None
+    first_name: str
     last_name: str
-    dob: date
-    phone: str
+    dob: Optional[date] = None
+    phone: Optional[str] = None
 
 
-# TODO: Determine if this class is needed or can password go under UserBase
-class EmployeeCreate(UserBase):
-    """
-    Represents attributes needed to create an employee User
-    """
+class UserCreate(BaseModel):
+    email: Optional[EmailStr] = None
+    first_name: str
+    last_name: str
+    dob: Optional[date] = None
+    phone: Optional[str] = None
+    password: Optional[str] = None  # required for self-signup, null for admin-created inactive
 
+
+class EmployeeCreate(BaseModel):
+    email: EmailStr
+    first_name: str
+    last_name: str
     password: str
 
 
 class UserRequest(BaseModel):
-    """
-    Represents the attributes needed for user login (authentication input)
-    """
-
     email: EmailStr
     password: str
 
 
 class UserResponse(UserBase):
-    """
-    Represents a user, without the password
-    """
-
     id: int
+    active: bool
     role: Optional[str] = None
 
     class Config:
@@ -60,12 +51,11 @@ class UserResponse(UserBase):
 
 
 class UserUpdate(BaseModel):
-    """
-    Represents fields a user can update within their user profile
-    """
-
     password: Optional[str] = None
     email: Optional[EmailStr] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     phone: Optional[str] = None
+    dob: Optional[date] = None
+    active: Optional[bool] = None
+    role: Optional[str] = None
