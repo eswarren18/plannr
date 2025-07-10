@@ -22,7 +22,7 @@ from src.main.utils.authentication import (
 
 router = APIRouter(tags=["Users"], prefix="/api/users")
 
-@router.post("active-patient", response_model=UserResponse)
+@router.post("/active-patient", response_model=UserResponse)
 async def create_active_patient(user: UserCreate, db: Session = Depends(get_db)):
     """
     Creates a patient with an active profile
