@@ -22,11 +22,12 @@ from src.main.utils.authentication import (
 
 router = APIRouter(tags=["Users"], prefix="/api/users")
 
-@router.post("", response_model=UserResponse)
-async def create_patient(user: UserCreate, db: Session = Depends(get_db)):
+@router.post("active-patient", response_model=UserResponse)
+async def create_active_patient(user: UserCreate, db: Session = Depends(get_db)):
     """
-    Creates a patient User (and claims an inactive user if matching, else creates new)
+    Creates a patient with an active profile
     """
+
     existing_user = db.query(User).filter(User.email == user.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="User already registered")
@@ -65,42 +66,17 @@ async def create_patient(user: UserCreate, db: Session = Depends(get_db)):
         content = jsonable_encoder(UserResponse.from_orm(db_user))
         return set_jwt_cookie_response(db_user, response_model=UserResponse, custom_content=content)
 
-@router.post(
-    "/employee",
-    response_model=UserResponse,
-    dependencies=[Depends(require_admin)],
-)
-async def create_employee(user: EmployeeCreate, db: Session = Depends(get_db)):
-    """
-    ADMIN-ONLY: Creates an employee User
-    """
-    existing_user = db.query(User).filter(User.email == user.email).first()
-    if existing_user:
-        raise HTTPException(status_code=400, detail="User already registered")
-    db_user = User(
-        email=user.email,
-        role="employee",
-        hashed_password=hash_password(user.password),
-        first_name=user.first_name,
-        last_name=user.last_name,
-        dob=None,
-        phone=None,
-        active=True,
-    )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
 
 @router.post(
-    "/admin-create-inactive-patient",
+    "/inactive-patient",
     response_model=UserResponse,
     dependencies=[Depends(require_admin)],
 )
-async def admin_create_inactive_patient(user: UserCreate, db: Session = Depends(get_db)):
+async def create_inactive_patient(user: UserCreate, db: Session = Depends(get_db)):
     """
-    ADMIN-ONLY: Creates an inactive patient user (no password, email, or role required)
+    ADMIN-ONLY: Creates a patient with an inactive profile
     """
+
     existing = db.query(User).filter(
         User.first_name == user.first_name,
         User.last_name == user.last_name,
@@ -124,20 +100,52 @@ async def admin_create_inactive_patient(user: UserCreate, db: Session = Depends(
     db.refresh(patient)
     return patient
 
+
+@router.post(
+    "/employee",
+    response_model=UserResponse,
+    dependencies=[Depends(require_admin)],
+)
+async def create_employee(user: EmployeeCreate, db: Session = Depends(get_db)):
+    """
+    ADMIN-ONLY: Creates an employee
+    """
+
+    existing_user = db.query(User).filter(User.email == user.email).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="User already registered")
+    db_user = User(
+        email=user.email,
+        role="employee",
+        hashed_password=hash_password(user.password),
+        first_name=user.first_name,
+        last_name=user.last_name,
+        dob=None,
+        phone=None,
+        active=True,
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
 @router.get("/me", response_model=UserResponse)
 async def get_current_user(
     db: Session = Depends(get_db),
     jwt_payload: dict = Depends(try_get_jwt_user_data),
 ):
     """
-    Gets the current User data if logged in
+    Gets the current User data
     """
+
     if not jwt_payload or "sub" not in jwt_payload:
         raise HTTPException(status_code=404, detail="Not logged in")
     user = db.query(User).filter(User.email == jwt_payload["sub"]).first()
     if not user:
         raise HTTPException(status_code=404, detail="Not logged in")
     return user
+
 
 @router.put("/me", response_model=UserResponse)
 async def update_current_user(
@@ -146,7 +154,7 @@ async def update_current_user(
     jwt_payload: dict = Depends(try_get_jwt_user_data),
 ):
     """
-    Updates the current User (all fields)
+    Updates the current User
     """
     if not jwt_payload or "sub" not in jwt_payload:
         raise HTTPException(status_code=404, detail="Not logged in")
@@ -173,6 +181,7 @@ async def update_current_user(
     db.refresh(user)
     return user
 
+
 @router.delete("/me", status_code=204)
 async def delete_current_user(
     db: Session = Depends(get_db),
@@ -181,6 +190,7 @@ async def delete_current_user(
     """
     Deletes the current User
     """
+
     if not jwt_payload or "sub" not in jwt_payload:
         raise HTTPException(status_code=404, detail="Not logged in")
     user = db.query(User).filter(User.email == jwt_payload["sub"]).first()
