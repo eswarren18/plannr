@@ -1,7 +1,10 @@
 ---
 name: Bug Report
-description: File a bug report to help us improve
+about: File a bug report to help the dev team improve the app
+title: ''
 labels: bug
+assignees: ''
+
 ---
 
 # Bug Report
