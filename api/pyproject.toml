@@ -16,7 +16,6 @@ exclude = '''
   | build
   | dist
   | migrations
-  | db
   | env.py
 )/
 '''
@@ -31,12 +30,11 @@ force_grid_wrap = 0
 use_parentheses = true
 ensure_newline_before_comments = true
 src_paths = ["src/main"]
-exclude = [
+skip = [
     ".venv",
     "__pycache__",
     "migrations",
     "build",
     "dist",
-    "db",
     "env.py"
 ]
