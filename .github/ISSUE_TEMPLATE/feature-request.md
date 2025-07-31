@@ -9,7 +9,7 @@ assignees: ""
 ## Instructions
 
 - **Delete Instructions before submitting so the issue begins with the Description.**
-- Select the appropriate label on the right-hand side (chore, documentation, or enhancement).
+- Select the appropriate label at the bottom of the page (chore, documentation, or enhancement).
 
 ## Description
 

@@ -1,16 +1,15 @@
 ---
 name: Bug Report
 about: Help us improve our code
-title: ''
+title: ""
 labels: bug
-assignees: ''
-
+assignees: ""
 ---
 
 ## Instructions
 
 - **Delete Instructions before submitting so the issue begins with the Description.**
-- Select the appropriate label on the right-hand side (bug or hotfix).
+- Select the appropriate label at the bottom of the page (bug or hotfix).
 
 ## Description
 
