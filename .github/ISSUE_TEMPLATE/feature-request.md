@@ -1,10 +1,9 @@
 ---
 name: Feature Request
 about: Suggest an idea for this project
-title: ''
+title: ""
 labels: enhancement
-assignees: ''
-
+assignees: ""
 ---
 
 ## Instructions
@@ -16,7 +15,7 @@ assignees: ''
 
 Include a summary or user story of the needed feature.
 
-## Acceptance Criteria:
+## Acceptance Criteria
 
 List measurable requirements that must be met for the feature to be considered complete and accepted by stakeholders.
 
