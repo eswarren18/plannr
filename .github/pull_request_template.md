@@ -1,29 +1,19 @@
-# Pull Request Template
+## Instructions
+
+- **Delete Instructions before submitting so the PR begins with the Description.**
+- Select the appropriate label on the right-hand side (bug, chore, documentation, enhancement, or hotfix). This label should match the label of the issue it resolves.
+- Under Description, insert the issue number so the PR is linked to that issue.
 
 ## Description
 
-Please include a summary of the change and which issue is fixed. Also include relevant motivation and context.
+Resolves #<issue-number>
 
-Fixes # (issue)
+Include a summary of the change and relevant motivation and context.
 
-## Type of Change
+## Solution
 
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Breaking change
-- [ ] Documentation update
-- [ ] Other (please describe)
+Include a summary fo how it was implemented.
 
-## Checklist
+## Testing
 
-- [ ] My code follows the style guidelines of this project
-- [ ] I have performed a self-review of my code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing unit tests pass locally with my changes
-
-## Screenshots (if applicable)
-
-## Additional Notes
+How did you / how can the reviewer test it?
