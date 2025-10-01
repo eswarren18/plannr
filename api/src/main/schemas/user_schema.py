@@ -14,22 +14,22 @@ from pydantic import BaseModel, EmailStr
 
 
 class UserBase(BaseModel):
-    email: Optional[EmailStr] = None
-    first_name: str
-    last_name: str
-    dob: Optional[date] = None
-    phone: Optional[str] = None
+    email: EmailStr
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    event_name: Optional[str] = None
+    event_date: Optional[date] = None
+    event_location: Optional[str] = None
 
 
 class UserCreate(BaseModel):
-    email: Optional[EmailStr] = None
-    first_name: str
-    last_name: str
-    dob: Optional[date] = None
-    phone: Optional[str] = None
-    password: Optional[str] = (
-        None  # required for self-signup, null for admin-created inactive
-    )
+    email: EmailStr
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    event_name: Optional[str] = None
+    event_date: Optional[date] = None
+    event_location: Optional[str] = None
+    password: Optional[str] = None
 
 
 class EmployeeCreate(BaseModel):
@@ -50,7 +50,7 @@ class UserResponse(UserBase):
     role: Optional[str] = None
 
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 
 class UserUpdate(BaseModel):

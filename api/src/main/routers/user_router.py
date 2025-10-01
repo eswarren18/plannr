@@ -2,6 +2,8 @@
 API Router for User CRUD endpoints
 """
 
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
@@ -20,7 +22,7 @@ from src.main.utils.authentication import (
     try_get_jwt_user_data,
 )
 
-router = APIRouter(tags=["Users"], prefix="/api/users")
+router = APIRouter(tags=["users"], prefix="/users")
 
 
 @router.post("/active-patient", response_model=UserResponse)
@@ -210,11 +212,30 @@ async def delete_current_user(
     Deletes the current User
     """
 
-    if not jwt_payload or "sub" not in jwt_payload:
-        raise HTTPException(status_code=404, detail="Not logged in")
-    user = db.query(User).filter(User.email == jwt_payload["sub"]).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="Not logged in")
-    db.delete(user)
+
+@router.get("/", response_model=List[UserResponse])
+def list_users(db: Session = Depends(get_db)):
+    return db.query(User).all()
+
+
+@router.post("/", response_model=UserResponse)
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    db_user = User(
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        is_registered=user.is_registered,
+        hashed_password=user.hashed_password,
+    )
+    db.add(db_user)
     db.commit()
-    return None
+    db.refresh(db_user)
+    return db_user
+
+
+@router.get("/{user_id}", response_model=UserResponse)
+def get_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
