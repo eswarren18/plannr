@@ -16,11 +16,11 @@ services:
     build:
       context: ./api
     container_name: fastapi_backend
-    command: uvicorn src.main.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn src.main.main:app --host 0.0.0.0 --port 9000 --reload
     volumes:
       - ./api:/app
     ports:
-      - "8000:8000"
+      - "9000:9000"
     depends_on:
       - db
     environment:

@@ -7,9 +7,10 @@ profiles. These schemas are used to ensure correct data structure in API
 requests and responses, separate from database models and authentication logic.
 """
 
-from pydantic import BaseModel, EmailStr
-from typing import Optional
 from datetime import date
+from typing import Optional
+
+from pydantic import BaseModel, EmailStr
 
 
 class UserBase(BaseModel):
@@ -26,7 +27,9 @@ class UserCreate(BaseModel):
     last_name: str
     dob: Optional[date] = None
     phone: Optional[str] = None
-    password: Optional[str] = None  # required for self-signup, null for admin-created inactive
+    password: Optional[str] = (
+        None  # required for self-signup, null for admin-created inactive
+    )
 
 
 class EmployeeCreate(BaseModel):

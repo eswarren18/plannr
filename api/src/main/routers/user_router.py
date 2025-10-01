@@ -3,27 +3,30 @@ API Router for User CRUD endpoints
 """
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy.orm import Session
+from src.main.database import get_db
 from src.main.models.user import User
 from src.main.schemas.user_schema import (
+    EmployeeCreate,
     UserCreate,
     UserResponse,
     UserUpdate,
-    EmployeeCreate,
 )
-from src.main.database import get_db
 from src.main.utils.authentication import (
     hash_password,
-    try_get_jwt_user_data,
     require_admin,
     set_jwt_cookie_response,
+    try_get_jwt_user_data,
 )
 
 router = APIRouter(tags=["Users"], prefix="/api/users")
 
+
 @router.post("/active-patient", response_model=UserResponse)
-async def create_active_patient(user: UserCreate, db: Session = Depends(get_db)):
+async def create_active_patient(
+    user: UserCreate, db: Session = Depends(get_db)
+):
     """
     Creates a patient with an active profile
     """
@@ -31,15 +34,19 @@ async def create_active_patient(user: UserCreate, db: Session = Depends(get_db))
     existing_user = db.query(User).filter(User.email == user.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="User already registered")
-    inactive_patient = db.query(User).filter(
-        User.first_name == user.first_name,
-        User.last_name == user.last_name,
-        User.dob == user.dob,
-        User.phone == user.phone,
-        User.active == False,
-        User.role == None,
-        User.email == None,
-    ).first()
+    inactive_patient = (
+        db.query(User)
+        .filter(
+            User.first_name == user.first_name,
+            User.last_name == user.last_name,
+            User.dob == user.dob,
+            User.phone == user.phone,
+            User.active == False,
+            User.role == None,
+            User.email == None,
+        )
+        .first()
+    )
     if inactive_patient:
         inactive_patient.email = user.email
         inactive_patient.hashed_password = hash_password(user.password)
@@ -48,7 +55,11 @@ async def create_active_patient(user: UserCreate, db: Session = Depends(get_db))
         db.commit()
         db.refresh(inactive_patient)
         content = jsonable_encoder(UserResponse.from_orm(inactive_patient))
-        return set_jwt_cookie_response(inactive_patient, response_model=UserResponse, custom_content=content)
+        return set_jwt_cookie_response(
+            inactive_patient,
+            response_model=UserResponse,
+            custom_content=content,
+        )
     else:
         db_user = User(
             email=user.email,
@@ -64,7 +75,9 @@ async def create_active_patient(user: UserCreate, db: Session = Depends(get_db))
         db.commit()
         db.refresh(db_user)
         content = jsonable_encoder(UserResponse.from_orm(db_user))
-        return set_jwt_cookie_response(db_user, response_model=UserResponse, custom_content=content)
+        return set_jwt_cookie_response(
+            db_user, response_model=UserResponse, custom_content=content
+        )
 
 
 @router.post(
@@ -72,17 +85,23 @@ async def create_active_patient(user: UserCreate, db: Session = Depends(get_db))
     response_model=UserResponse,
     dependencies=[Depends(require_admin)],
 )
-async def create_inactive_patient(user: UserCreate, db: Session = Depends(get_db)):
+async def create_inactive_patient(
+    user: UserCreate, db: Session = Depends(get_db)
+):
     """
     ADMIN-ONLY: Creates a patient with an inactive profile
     """
 
-    existing = db.query(User).filter(
-        User.first_name == user.first_name,
-        User.last_name == user.last_name,
-        User.dob == user.dob,
-        User.phone == user.phone,
-    ).first()
+    existing = (
+        db.query(User)
+        .filter(
+            User.first_name == user.first_name,
+            User.last_name == user.last_name,
+            User.dob == user.dob,
+            User.phone == user.phone,
+        )
+        .first()
+    )
     if existing:
         raise HTTPException(status_code=400, detail="Patient already exists")
     patient = User(

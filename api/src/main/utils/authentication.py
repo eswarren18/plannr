@@ -3,15 +3,15 @@ Helper functions for implementing authentication
 """
 
 import os
+from datetime import datetime, timedelta, timezone
+from typing import Annotated, Optional
+
 import bcrypt
-from datetime import datetime, timezone, timedelta
+from fastapi import Cookie, Depends, HTTPException
+from fastapi.responses import JSONResponse
 from jose import JWTError, jwt
 from jose.constants import ALGORITHMS
-from typing import Optional
 from src.main.schemas.user_schema import UserRequest
-from fastapi import Cookie, Depends, HTTPException
-from typing import Annotated
-from fastapi.responses import JSONResponse
 
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 if not JWT_SECRET_KEY:
@@ -83,7 +83,7 @@ def get_current_user_from_token(token: str) -> Optional[str]:
 
 
 def try_get_jwt_user_data(
-    fast_api_token: Annotated[Optional[str], Cookie()] = None,
+    fast_api_token: Annotated[Optional[str], Cookie()] = None
 ) -> Optional[dict]:
     """
     Dependency to extract user data from JWT in the cookie. Returns the JWT

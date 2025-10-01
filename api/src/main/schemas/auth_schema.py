@@ -6,8 +6,9 @@ authentication flows. These models are used for validating and serializing
 authentication-related data, separate from user profile and database models.
 """
 
-from pydantic import BaseModel
 from typing import Optional
+
+from pydantic import BaseModel
 
 
 class Token(BaseModel):

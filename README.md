@@ -1,8 +1,8 @@
-# The Pharmacy Farm
+# Plannr
 
 ## Overview
 
-The Pharmacy Farm is a software-as-a-service (SaaS) application that enables pharmacies, prescribers, and patients to collaboratively manage and fill prescriptions. Patients can place orders, prescribers can issue and manage them, and pharmacy staff can process and fulfill them through tailored role-based access and workflows.
+Plannr is a web app for event planning that supports group creation, role-based access, recurring events, RSVPs with custom surveys, polls, file sharing, and calendar sync. Includes engagement tools like reminders, event feeds, and post-event photo sharing.
 
 <br>
 
@@ -104,7 +104,7 @@ Follow these steps to set up and run The Pharmacy Farm locally.
    ```
 
 5. **Access the API**
-   - Once running, visit: [http://localhost:8000/docs](http://localhost:8000/docs) for the FastAPI interactive docs.
+   - Once running, visit: [http://localhost:9000/docs](http://localhost:9000/docs) for the FastAPI interactive docs.
 
 <br>
 
