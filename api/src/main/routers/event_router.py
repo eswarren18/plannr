@@ -13,7 +13,7 @@ from src.main.schemas.event_schema import (
     InviteOut,
 )
 
-router = APIRouter(prefix="/events", tags=["events"])
+router = APIRouter(tags=["Events"], prefix="/events")
 
 
 @router.post("/", response_model=EventOut)

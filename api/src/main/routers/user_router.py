@@ -5,145 +5,28 @@ API Router for User CRUD endpoints
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 from src.main.database import get_db
 from src.main.models.user import User
-from src.main.schemas.user_schema import (
-    EmployeeCreate,
-    UserCreate,
-    UserResponse,
-    UserUpdate,
-)
-from src.main.utils.authentication import (
-    hash_password,
-    require_admin,
-    set_jwt_cookie_response,
-    try_get_jwt_user_data,
-)
+from src.main.schemas.user_schema import UserCreate, UserResponse, UserUpdate
+from src.main.utils.authentication import hash_password, try_get_jwt_user_data
 
-router = APIRouter(tags=["users"], prefix="/users")
+router = APIRouter(tags=["Users"], prefix="/users")
 
 
-@router.post("/active-patient", response_model=UserResponse)
-async def create_active_patient(
-    user: UserCreate, db: Session = Depends(get_db)
-):
-    """
-    Creates a patient with an active profile
-    """
-
-    existing_user = db.query(User).filter(User.email == user.email).first()
-    if existing_user:
-        raise HTTPException(status_code=400, detail="User already registered")
-    inactive_patient = (
-        db.query(User)
-        .filter(
-            User.first_name == user.first_name,
-            User.last_name == user.last_name,
-            User.dob == user.dob,
-            User.phone == user.phone,
-            User.active == False,
-            User.role == None,
-            User.email == None,
-        )
-        .first()
-    )
-    if inactive_patient:
-        inactive_patient.email = user.email
-        inactive_patient.hashed_password = hash_password(user.password)
-        inactive_patient.role = "patient"
-        inactive_patient.active = True
-        db.commit()
-        db.refresh(inactive_patient)
-        content = jsonable_encoder(UserResponse.from_orm(inactive_patient))
-        return set_jwt_cookie_response(
-            inactive_patient,
-            response_model=UserResponse,
-            custom_content=content,
-        )
-    else:
-        db_user = User(
-            email=user.email,
-            role="patient",
-            hashed_password=hash_password(user.password),
-            first_name=user.first_name,
-            last_name=user.last_name,
-            dob=user.dob,
-            phone=user.phone,
-            active=True,
-        )
-        db.add(db_user)
-        db.commit()
-        db.refresh(db_user)
-        content = jsonable_encoder(UserResponse.from_orm(db_user))
-        return set_jwt_cookie_response(
-            db_user, response_model=UserResponse, custom_content=content
-        )
+@router.get("/", response_model=List[UserResponse])
+def list_users(db: Session = Depends(get_db)):
+    return db.query(User).all()
 
 
-@router.post(
-    "/inactive-patient",
-    response_model=UserResponse,
-    dependencies=[Depends(require_admin)],
-)
-async def create_inactive_patient(
-    user: UserCreate, db: Session = Depends(get_db)
-):
-    """
-    ADMIN-ONLY: Creates a patient with an inactive profile
-    """
-
-    existing = (
-        db.query(User)
-        .filter(
-            User.first_name == user.first_name,
-            User.last_name == user.last_name,
-            User.dob == user.dob,
-            User.phone == user.phone,
-        )
-        .first()
-    )
-    if existing:
-        raise HTTPException(status_code=400, detail="Patient already exists")
-    patient = User(
-        first_name=user.first_name,
-        last_name=user.last_name,
-        dob=user.dob,
-        phone=user.phone,
-        active=False,
-        email=None,
-        hashed_password=None,
-        role=None,
-    )
-    db.add(patient)
-    db.commit()
-    db.refresh(patient)
-    return patient
-
-
-@router.post(
-    "/employee",
-    response_model=UserResponse,
-    dependencies=[Depends(require_admin)],
-)
-async def create_employee(user: EmployeeCreate, db: Session = Depends(get_db)):
-    """
-    ADMIN-ONLY: Creates an employee
-    """
-
-    existing_user = db.query(User).filter(User.email == user.email).first()
-    if existing_user:
-        raise HTTPException(status_code=400, detail="User already registered")
+@router.post("/", response_model=UserResponse)
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = User(
         email=user.email,
-        role="employee",
-        hashed_password=hash_password(user.password),
         first_name=user.first_name,
         last_name=user.last_name,
-        dob=None,
-        phone=None,
-        active=True,
+        is_registered=user.is_registered,
+        hashed_password=user.hashed_password,
     )
     db.add(db_user)
     db.commit()
@@ -211,26 +94,6 @@ async def delete_current_user(
     """
     Deletes the current User
     """
-
-
-@router.get("/", response_model=List[UserResponse])
-def list_users(db: Session = Depends(get_db)):
-    return db.query(User).all()
-
-
-@router.post("/", response_model=UserResponse)
-def create_user(user: UserCreate, db: Session = Depends(get_db)):
-    db_user = User(
-        email=user.email,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        is_registered=user.is_registered,
-        hashed_password=user.hashed_password,
-    )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
 
 
 @router.get("/{user_id}", response_model=UserResponse)
