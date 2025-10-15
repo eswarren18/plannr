@@ -11,7 +11,7 @@ from fastapi import Cookie, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from jose import JWTError, jwt
 from jose.constants import ALGORITHMS
-from src.main.schemas.user_schema import UserRequest
+from src.main.schemas import UserRequest
 
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 if not JWT_SECRET_KEY:
@@ -46,11 +46,10 @@ def generate_jwt_token(user: UserRequest) -> str:
     """
 
     expiration = datetime.now(timezone.utc) + timedelta(hours=1)
-    payload = {
-        "sub": user.email,
-        "role": user.role,
-        "exp": int(expiration.timestamp()),
-    }
+    payload = {"sub": user.email, "exp": int(expiration.timestamp())}
+    # Only add role if present
+    if hasattr(user, "role") and user.role is not None:
+        payload["role"] = user.role
     token = jwt.encode(payload, JWT_SECRET_KEY, algorithm=ALGORITHMS.HS256)
     return token
 
@@ -118,11 +117,13 @@ def set_jwt_cookie_response(user, response_model=None, custom_content=None):
     """
 
     class UserObj:
-        def __init__(self, email, role):
+        def __init__(self, email, role=None):
             self.email = email
             self.role = role
 
-    jwt_token = generate_jwt_token(UserObj(user.email, user.role))
+    # Only pass role if present
+    role = getattr(user, "role", None)
+    jwt_token = generate_jwt_token(UserObj(user.email, role))
     if custom_content is not None:
         content = custom_content
     elif response_model:

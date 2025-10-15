@@ -3,21 +3,6 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr
 
 
-class UserBase(BaseModel):
-    email: EmailStr
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    is_registered: bool = False
-
-
-class UserCreate(UserBase):
-    hashed_password: Optional[str] = None
-
-
-class UserOut(UserBase):
-    id: int
-
-
 class EventBase(BaseModel):
     title: str
     description: Optional[str] = None

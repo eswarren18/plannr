@@ -4,12 +4,16 @@ API Router for User CRUD endpoints
 
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 from src.main.database import get_db
-from src.main.models.user import User
-from src.main.schemas.user_schema import UserCreate, UserResponse
-from src.main.utils.authentication import hash_password, try_get_jwt_user_data
+from src.main.models import User
+from src.main.schemas import UserCreate, UserResponse
+from src.main.utils import (
+    hash_password,
+    set_jwt_cookie_response,
+    try_get_jwt_user_data,
+)
 
 router = APIRouter(tags=["Users"], prefix="/users")
 
@@ -20,7 +24,16 @@ def list_users(db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=UserResponse)
-def create_user(user: UserCreate, db: Session = Depends(get_db)):
+def create_user(
+    user: UserCreate, db: Session = Depends(get_db), response: Response = None
+):
+    # Check if email already exists
+    existing_user = db.query(User).filter(User.email == user.email).first()
+    if existing_user:
+        raise HTTPException(
+            status_code=400, detail="A user with this email already exists."
+        )
+
     db_user = User(
         email=user.email,
         first_name=user.first_name,
@@ -31,7 +44,9 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return db_user
+
+    # sign in user upon creation
+    return set_jwt_cookie_response(db_user, response_model=UserResponse)
 
 
 @router.get("/me", response_model=UserResponse)

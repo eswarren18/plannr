@@ -3,9 +3,8 @@ from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from src.main.database import get_db
-from src.main.models.event import Event, EventParticipant, Invite
-from src.main.models.user import User
-from src.main.schemas.event_schema import (
+from src.main.models import Event, EventParticipant, Invite, User
+from src.main.schemas import (
     EventCreate,
     EventOut,
     EventParticipantBase,

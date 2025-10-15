@@ -22,7 +22,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     first_name: Optional[str] = None
     last_name: Optional[str] = None
-    password: Optional[str] = None
+    password: str
 
 
 class UserRequest(BaseModel):
@@ -35,4 +35,4 @@ class UserResponse(UserBase):
     is_registered: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True

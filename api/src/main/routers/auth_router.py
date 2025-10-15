@@ -12,12 +12,9 @@ from fastapi import (
 )
 from sqlalchemy.orm import Session
 from src.main.database import get_db
-from src.main.models.user import User
-from src.main.schemas.user_schema import UserRequest, UserResponse
-from src.main.utils.authentication import (
-    set_jwt_cookie_response,
-    verify_password,
-)
+from src.main.models import User
+from src.main.schemas import UserRequest, UserResponse
+from src.main.utils import set_jwt_cookie_response, verify_password
 
 router = APIRouter(tags=["Authentication"], prefix="/api/auth")
 
