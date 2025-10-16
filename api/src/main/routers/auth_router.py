@@ -52,9 +52,14 @@ async def signout(request: Request, response: Response):
     # Secure cookies only if running on something besides localhost
     secure = True if request.headers.get("origin") == "localhost" else False
 
+    # Check if the cookie is present
+    cookie = request.cookies.get("fast_api_token")
+    if not cookie:
+        return {"detail": "No user was signed in"}
+
     # Delete cookie
     response.delete_cookie(
         key="fast_api_token", httponly=True, samesite="lax", secure=secure
     )
 
-    return None
+    return {"detail": "User has been signed out"}

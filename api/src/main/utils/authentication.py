@@ -121,7 +121,6 @@ def set_jwt_cookie_response(user, response_model=None, custom_content=None):
             self.email = email
             self.role = role
 
-    # Only pass role if present
     role = getattr(user, "role", None)
     jwt_token = generate_jwt_token(UserObj(user.email, role))
     if custom_content is not None:
