@@ -20,7 +20,7 @@ router = APIRouter(tags=["Authentication"], prefix="/api/auth")
 
 
 @router.post("/signin", response_model=UserResponse)
-async def signin(user_request: UserRequest, db: Session = Depends(get_db)):
+def signin(user_request: UserRequest, db: Session = Depends(get_db)):
     """
     Signs in the User
     """
@@ -44,7 +44,7 @@ async def signin(user_request: UserRequest, db: Session = Depends(get_db)):
 
 
 @router.delete("/signout")
-async def signout(request: Request, response: Response):
+def signout(request: Request, response: Response):
     """
     Signs out the User by deleting their JWT Cookie
     """

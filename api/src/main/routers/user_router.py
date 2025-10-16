@@ -50,7 +50,7 @@ def create_user(
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_current_user(
+def get_current_user(
     db: Session = Depends(get_db),
     jwt_payload: dict = Depends(try_get_jwt_user_data),
 ):
@@ -67,13 +67,20 @@ async def get_current_user(
 
 
 @router.delete("/me", status_code=204)
-async def delete_current_user(
+def delete_current_user(
     db: Session = Depends(get_db),
     jwt_payload: dict = Depends(try_get_jwt_user_data),
 ):
     """
     Deletes the current User
     """
+    if not jwt_payload or "sub" not in jwt_payload:
+        raise HTTPException(status_code=404, detail="Not logged in")
+    user = db.query(User).filter(User.email == jwt_payload["sub"]).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    db.delete(user)
+    db.commit()
 
 
 @router.get("/{user_id}", response_model=UserResponse)
