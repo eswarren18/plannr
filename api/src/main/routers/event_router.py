@@ -11,7 +11,7 @@ from src.main.schemas import (
     InviteCreate,
     InviteOut,
 )
-from src.main.utils.authentication import get_jwt_user_data
+from src.main.utils.authentication import get_current_user_from_token
 
 router = APIRouter(tags=["Events"], prefix="/events")
 
@@ -20,17 +20,8 @@ router = APIRouter(tags=["Events"], prefix="/events")
 def create_event(
     event: EventCreate,
     db: Session = Depends(get_db),
-    jwt_payload: dict = Depends(get_jwt_user_data),
+    user: User = Depends(get_current_user_from_token),
 ):
-    # Check if user is logged in. Get user details from DB.
-    if not jwt_payload or "sub" not in jwt_payload:
-        raise HTTPException(status_code=404, detail="Not logged in")
-    user = db.query(User).filter(User.email == jwt_payload["sub"]).first()
-
-    # Check if user exists. This check isn't needed except for edge cases (user deleted after JWT issued, JWT forged, bug in user creation)
-    if not user:
-        raise HTTPException(status_code=404, detail="Not logged in")
-
     # Create the new event. Commit event to DB.
     new_event = Event(
         title=event.title, description=event.description, host_id=user.id
@@ -50,35 +41,42 @@ def create_event(
     return new_event
 
 
-@router.get("/", response_model=List[EventOut])
-def list_events(db: Session = Depends(get_db)):
-    return db.query(Event).all()
-
-
-@router.post("/{event_id}/invite", response_model=InviteOut)
-def invite_participant(
-    event_id: int, invite: InviteCreate, db: Session = Depends(get_db)
+@router.get("/hosted", response_model=List[EventOut])
+def list_hosting_events(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user_from_token),
 ):
-    # Create invite token logic here (token should be generated securely)
-    new_invite = Invite(
-        event_id=event_id,
-        email=invite.email,
-        role=invite.role,
-        token=invite.token,
-        expires_at=invite.expires_at,
-    )
-    db.add(new_invite)
-    db.commit()
-    db.refresh(new_invite)
-    return new_invite
+    # Return a list of events that the authenticated user is hosting
+    return db.query(Event).filter(Event.host_id == user.id).all()
 
 
-@router.get(
-    "/{event_id}/participants", response_model=List[EventParticipantBase]
-)
-def get_participants(event_id: int, db: Session = Depends(get_db)):
-    return (
-        db.query(EventParticipant)
-        .filter(EventParticipant.event_id == event_id)
-        .all()
+@router.get("/participating", response_model=List[EventOut])
+def list_participating_events(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user_from_token),
+):
+    # Return a list of events in which the authenticated user is a participant
+    event_ids = (
+        db.query(EventParticipant.event_id)
+        .filter(EventParticipant.user_id == user.id)
+        .subquery()
     )
+    return db.query(Event).filter(Event.id.in_(event_ids)).all()
+
+
+# @router.post("/{event_id}/invite", response_model=InviteOut)
+# def invite_participant(
+#     event_id: int, invite: InviteCreate, db: Session = Depends(get_db)
+# ):
+#     # Create invite token logic here (token should be generated securely)
+#     new_invite = Invite(
+#         event_id=event_id,
+#         email=invite.email,
+#         role=invite.role,
+#         token=invite.token,
+#         expires_at=invite.expires_at,
+#     )
+#     db.add(new_invite)
+#     db.commit()
+#     db.refresh(new_invite)
+#     return new_invite

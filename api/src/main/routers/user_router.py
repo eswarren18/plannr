@@ -10,7 +10,7 @@ from src.main.database import get_db
 from src.main.models import User
 from src.main.schemas import UserCreate, UserResponse
 from src.main.utils import (
-    get_jwt_user_data,
+    get_current_user_from_token,
     hash_password,
     set_jwt_cookie_response,
 )
@@ -18,6 +18,7 @@ from src.main.utils import (
 router = APIRouter(tags=["Users"], prefix="/users")
 
 
+# TODO: This lists all users even when not signed in. What situation will this be needed?
 @router.get("/", response_model=List[UserResponse])
 def list_users(db: Session = Depends(get_db)):
     # List all users in the database. Return user details.
@@ -52,35 +53,17 @@ def create_user(
 
 
 @router.get("/me", response_model=UserResponse)
-def get_current_user(
-    db: Session = Depends(get_db),
-    jwt_payload: dict = Depends(get_jwt_user_data),
-):
-    # Check if user is logged in. Get user details from DB.
-    if not jwt_payload or "sub" not in jwt_payload:
-        raise HTTPException(status_code=404, detail="Not logged in")
-    user = db.query(User).filter(User.email == jwt_payload["sub"]).first()
-
-    # Check if user exists. Return error if not found.
-    if not user:
-        raise HTTPException(status_code=404, detail="Not logged in")
+def get_current_user(user: User = Depends(get_current_user_from_token)):
+    # Returns the current User object from the JWT token in the cookie.
+    # This endpoint is similar to get_current_user_from_token, but is exposed as an API route for clients to fetch their own user data.
     return user
 
 
 @router.delete("/me", status_code=204)
 def delete_current_user(
     db: Session = Depends(get_db),
-    jwt_payload: dict = Depends(get_jwt_user_data),
+    user: User = Depends(get_current_user_from_token),
 ):
-    # Check if user is logged in. Get user details from DB.
-    if not jwt_payload or "sub" not in jwt_payload:
-        raise HTTPException(status_code=404, detail="Not logged in")
-    user = db.query(User).filter(User.email == jwt_payload["sub"]).first()
-
-    # Check if user exists. Return error if not found.
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
     # Delete the current user from the database. Commit changes.
     db.delete(user)
     db.commit()

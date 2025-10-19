@@ -11,6 +11,9 @@ from fastapi import Cookie, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from jose import JWTError, jwt
 from jose.constants import ALGORITHMS
+from sqlalchemy.orm import Session
+from src.main.database import get_db
+from src.main.models import User
 from src.main.schemas import UserRequest
 
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
@@ -69,18 +72,6 @@ def decode_jwt_token(token: str) -> Optional[dict]:
         return None
 
 
-def get_current_user_from_token(token: str) -> Optional[str]:
-    """
-    Extracts the username (subject) from a valid JWT token. Returns None if
-    the token is invalid or expired.
-    """
-
-    payload = decode_jwt_token(token)
-    if payload and "sub" in payload:
-        return payload["sub"]
-    return None
-
-
 def get_jwt_user_data(
     fast_api_token: Annotated[Optional[str], Cookie()] = None
 ) -> Optional[dict]:
@@ -95,6 +86,22 @@ def get_jwt_user_data(
     if not payload:
         return None
     return payload
+
+
+def get_current_user_from_token(
+    db: Session = Depends(get_db),
+    jwt_payload: dict = Depends(get_jwt_user_data),
+) -> Optional[User]:
+    """
+    Dependency to get the current User object from the JWT token in the cookie.
+    Returns the User if authenticated, else raises HTTPException.
+    """
+    if not jwt_payload or "sub" not in jwt_payload:
+        raise HTTPException(status_code=404, detail="Not logged in")
+    user = db.query(User).filter(User.email == jwt_payload["sub"]).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Not logged in")
+    return user
 
 
 def require_admin(jwt_payload: dict = Depends(get_jwt_user_data)):
