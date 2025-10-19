@@ -15,16 +15,22 @@ class Event(Base):
     title = Column(String, nullable=False)
     description = Column(Text, nullable=True)
     host_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    host = relationship("User", backref="hosted_events")
-    participants = relationship("EventParticipant", back_populates="event")
-    invites = relationship("Invite", back_populates="event")
+    host = relationship(
+        "User", backref="hosted_events"
+    )  # event.host: access the User hosting the Event
+    participants = relationship(
+        "EventParticipant", back_populates="event"
+    )  # event.participants: access the Users participating in the Event
+    invites = relationship(
+        "Invite", back_populates="event"
+    )  # event.invites: access the Users invited to the event
 
 
 class EventParticipant(Base):
     __tablename__ = "event_participants"
     event_id = Column(Integer, ForeignKey("events.id"), primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
-    role = Column(String, nullable=False)  # host, cohost, participant
+    role = Column(String, nullable=False)
     event = relationship("Event", back_populates="participants")
     user = relationship("User", backref="event_participations")
 
@@ -34,7 +40,7 @@ class Invite(Base):
     id = Column(Integer, primary_key=True, index=True)
     event_id = Column(Integer, ForeignKey("events.id"), nullable=False)
     email = Column(String, nullable=False)
-    role = Column(String, nullable=False)  # host, cohost, participant
+    role = Column(String, nullable=False)
     token = Column(String, unique=True, nullable=False)
     expires_at = Column(DateTime, nullable=True)
     event = relationship("Event", back_populates="invites")

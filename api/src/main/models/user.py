@@ -17,3 +17,4 @@ class User(Base):
     first_name = Column(String, nullable=True)
     last_name = Column(String, nullable=True)
     is_registered = Column(Boolean, default=False, nullable=False)
+    # user.hosted_events: access all events a user is hosting
