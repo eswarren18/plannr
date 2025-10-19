@@ -81,7 +81,7 @@ def get_current_user_from_token(token: str) -> Optional[str]:
     return None
 
 
-def try_get_jwt_user_data(
+def get_jwt_user_data(
     fast_api_token: Annotated[Optional[str], Cookie()] = None
 ) -> Optional[dict]:
     """
@@ -97,7 +97,7 @@ def try_get_jwt_user_data(
     return payload
 
 
-def require_admin(jwt_payload: dict = Depends(try_get_jwt_user_data)):
+def require_admin(jwt_payload: dict = Depends(get_jwt_user_data)):
     """
     Dependency to require admin role. Raises HTTP 403 Forbidden if the user
     is not an admin.

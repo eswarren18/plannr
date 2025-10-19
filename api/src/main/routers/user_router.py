@@ -10,9 +10,9 @@ from src.main.database import get_db
 from src.main.models import User
 from src.main.schemas import UserCreate, UserResponse
 from src.main.utils import (
+    get_jwt_user_data,
     hash_password,
     set_jwt_cookie_response,
-    try_get_jwt_user_data,
 )
 
 router = APIRouter(tags=["Users"], prefix="/users")
@@ -54,7 +54,7 @@ def create_user(
 @router.get("/me", response_model=UserResponse)
 def get_current_user(
     db: Session = Depends(get_db),
-    jwt_payload: dict = Depends(try_get_jwt_user_data),
+    jwt_payload: dict = Depends(get_jwt_user_data),
 ):
     # Check if user is logged in. Get user details from DB.
     if not jwt_payload or "sub" not in jwt_payload:
@@ -70,7 +70,7 @@ def get_current_user(
 @router.delete("/me", status_code=204)
 def delete_current_user(
     db: Session = Depends(get_db),
-    jwt_payload: dict = Depends(try_get_jwt_user_data),
+    jwt_payload: dict = Depends(get_jwt_user_data),
 ):
     # Check if user is logged in. Get user details from DB.
     if not jwt_payload or "sub" not in jwt_payload:

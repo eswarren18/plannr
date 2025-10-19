@@ -11,7 +11,7 @@ from src.main.schemas import (
     InviteCreate,
     InviteOut,
 )
-from src.main.utils.authentication import try_get_jwt_user_data
+from src.main.utils.authentication import get_jwt_user_data
 
 router = APIRouter(tags=["Events"], prefix="/events")
 
@@ -20,7 +20,7 @@ router = APIRouter(tags=["Events"], prefix="/events")
 def create_event(
     event: EventCreate,
     db: Session = Depends(get_db),
-    jwt_payload: dict = Depends(try_get_jwt_user_data),
+    jwt_payload: dict = Depends(get_jwt_user_data),
 ):
     # Check if user is logged in. Get user details from DB.
     if not jwt_payload or "sub" not in jwt_payload:
