@@ -1,3 +1,4 @@
+import uuid
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -12,6 +13,7 @@ from src.main.schemas import (
     InviteOut,
 )
 from src.main.utils.authentication import get_current_user_from_token
+from src.main.utils.email import send_invite_email
 
 router = APIRouter(tags=["Events"], prefix="/events")
 
@@ -41,7 +43,7 @@ def create_event(
     return new_event
 
 
-@router.get("/hosted", response_model=List[EventOut])
+@router.get("/hosting", response_model=List[EventOut])
 def list_hosting_events(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
@@ -64,19 +66,23 @@ def list_participating_events(
     return db.query(Event).filter(Event.id.in_(event_ids)).all()
 
 
-# @router.post("/{event_id}/invite", response_model=InviteOut)
-# def invite_participant(
-#     event_id: int, invite: InviteCreate, db: Session = Depends(get_db)
-# ):
-#     # Create invite token logic here (token should be generated securely)
-#     new_invite = Invite(
-#         event_id=event_id,
-#         email=invite.email,
-#         role=invite.role,
-#         token=invite.token,
-#         expires_at=invite.expires_at,
-#     )
-#     db.add(new_invite)
-#     db.commit()
-#     db.refresh(new_invite)
-#     return new_invite
+@router.post("/{event_id}/invite", response_model=InviteOut)
+def invite_participant(
+    event_id: int, invite: InviteCreate, db: Session = Depends(get_db)
+):
+    new_invite = Invite(
+        event_id=event_id,
+        email=invite.email,
+        role=invite.role,
+        token=str(uuid.uuid4()),
+    )
+    db.add(new_invite)
+    db.commit()
+    db.refresh(new_invite)
+
+    # Send invite email
+    subject = "You're invited to an event!"
+    body = f"Hello! You've been invited to event {event_id}. Click here to accept: <accept_link>"
+    send_invite_email(invite.email, subject, body)
+
+    return new_invite

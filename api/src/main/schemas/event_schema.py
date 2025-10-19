@@ -24,11 +24,8 @@ class EventParticipantBase(BaseModel):
 
 
 class InviteBase(BaseModel):
-    event_id: int
     email: EmailStr
     role: str
-    token: str
-    expires_at: Optional[str] = None
 
 
 class InviteCreate(InviteBase):

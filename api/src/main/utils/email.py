@@ -1,0 +1,14 @@
+import smtplib
+from email.message import EmailMessage
+
+
+def send_invite_email(to_email: str, subject: str, body: str):
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = "noreply@yourapp.local"
+    msg["To"] = to_email
+    msg.set_content(body)
+
+    # Connect to MailHog SMTP server
+    with smtplib.SMTP("mailhog", 1025) as smtp:
+        smtp.send_message(msg)

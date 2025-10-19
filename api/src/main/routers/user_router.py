@@ -76,3 +76,6 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+
+# TODO: update user endpoint for users to update their account info
