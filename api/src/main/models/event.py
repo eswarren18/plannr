@@ -42,5 +42,7 @@ class Invite(Base):
     email = Column(String, nullable=False)
     role = Column(String, nullable=False)
     token = Column(String, unique=True, nullable=False)
-    expires_at = Column(DateTime, nullable=True)
+    status = Column(
+        String, nullable=False, default="pending"
+    )  # pending, accepted, declined
     event = relationship("Event", back_populates="invites")

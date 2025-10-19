@@ -70,6 +70,29 @@ def list_participating_events(
 def invite_participant(
     event_id: int, invite: InviteCreate, db: Session = Depends(get_db)
 ):
+    # Get invite from DB if it already exists
+    existing_invite = (
+        db.query(Invite)
+        .filter(Invite.event_id == event_id, Invite.email == invite.email)
+        .first()
+    )
+
+    # Handle if an invite has already been sent for the user & event
+    if existing_invite:
+        if existing_invite.status == "accepted":
+            raise HTTPException(
+                status_code=400, detail="User already accepted invite."
+            )
+        elif existing_invite.status == "pending":
+            # TODO: Optionally, resend email
+            return existing_invite
+        else:
+            # TODO: Optionally, resend email
+            raise HTTPException(
+                status_code=400, detail="User already declined invite."
+            )
+
+    # Create an invite. Commit it to DB.
     new_invite = Invite(
         event_id=event_id,
         email=invite.email,
@@ -81,8 +104,39 @@ def invite_participant(
     db.refresh(new_invite)
 
     # Send invite email
+    # TODO: email needs to send a clickable link
     subject = "You're invited to an event!"
     body = f"Hello! You've been invited to event {event_id}. Click here to accept: <accept_link>"
     send_invite_email(invite.email, subject, body)
 
     return new_invite
+
+
+@router.get("/invite/accept/{token}")
+def accept_invite(token: str, db: Session = Depends(get_db)):
+    invite = db.query(Invite).filter(Invite.token == token).first()
+    if not invite or invite.status != "pending":
+        raise HTTPException(
+            status_code=404, detail="Invalid or expired invite."
+        )
+
+    # Update invite status
+    invite.status = "accepted"
+    db.commit()
+
+    # Look up the user by email
+    # TODO: eventually, users don't need to register
+    user = db.query(User).filter(User.email == invite.email).first()
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found. Please register before accepting the invite.",
+        )
+
+    # Add to EventParticipant
+    event_participant = EventParticipant(
+        event_id=invite.event_id, user_id=user.id, role=invite.role
+    )
+    db.add(event_participant)
+    db.commit()
+    return {"detail": "Invite accepted!"}
