@@ -100,12 +100,14 @@ def invite_participant(
                 status_code=400, detail="User already declined invite."
             )
 
-    # Create an invite. Commit it to DB.
+    # Check if the invitee is a registered user
+    invited_user = db.query(User).filter(User.email == invite.email).first()
     new_invite = Invite(
         event_id=event_id,
         email=invite.email,
         role=invite.role,
         token=str(uuid.uuid4()),
+        user_id=invited_user.id if invited_user else None,
     )
     db.add(new_invite)
     db.commit()
@@ -128,19 +130,17 @@ def accept_invite(token: str, db: Session = Depends(get_db)):
             status_code=404, detail="Invalid or expired invite."
         )
 
-    # Update invite status
-    invite.status = "accepted"
-    db.commit()
-
     # Look up the user by email
-    # TODO: eventually, users don't need to register
     user = db.query(User).filter(User.email == invite.email).first()
     if not user:
         raise HTTPException(
             status_code=404,
             detail="User not found. Please register before accepting the invite.",
         )
-
+    # Update invite status and link to user
+    invite.status = "accepted"
+    invite.user_id = user.id
+    db.commit()
     # Add to EventParticipant
     event_participant = EventParticipant(
         event_id=invite.event_id, user_id=user.id, role=invite.role

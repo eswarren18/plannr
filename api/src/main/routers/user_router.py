@@ -7,7 +7,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 from src.main.database import get_db
-from src.main.models import User
+from src.main.models import Invite, User
 from src.main.schemas import UserCreate, UserResponse
 from src.main.utils import (
     get_current_user_from_token,
@@ -47,7 +47,15 @@ def create_user(
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-
+    # Backfill invites for this email
+    invites = (
+        db.query(Invite)
+        .filter(Invite.email == db_user.email, Invite.user_id == None)
+        .all()
+    )
+    for invite in invites:
+        invite.user_id = db_user.id
+    db.commit()
     # Sign in the user upon creation by setting the JWT cookie. Return user details.
     return set_jwt_cookie_response(db_user, response_model=UserResponse)
 
@@ -64,6 +72,11 @@ def delete_current_user(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
+    # Delete invites by user_id or email
+    db.query(Invite).filter(
+        (Invite.user_id == user.id) | (Invite.email == user.email)
+    ).delete(synchronize_session=False)
+    db.commit()
     # Delete the current user from the database. Commit changes.
     db.delete(user)
     db.commit()
