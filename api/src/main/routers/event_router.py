@@ -68,8 +68,16 @@ def list_participating_events(
 
 @router.post("/{event_id}/invite", response_model=InviteOut)
 def invite_participant(
-    event_id: int, invite: InviteCreate, db: Session = Depends(get_db)
+    event_id: int,
+    invite: InviteCreate,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user_from_token),
 ):
+    # Only the host can invite participants
+    event = db.query(Event).filter(Event.id == event_id).first()
+    if not event or event.host_id != user.id:
+        raise HTTPException(status_code=403, detail="Not authorized.")
+
     # Get invite from DB if it already exists
     existing_invite = (
         db.query(Invite)
@@ -140,3 +148,20 @@ def accept_invite(token: str, db: Session = Depends(get_db)):
     db.add(event_participant)
     db.commit()
     return {"detail": "Invite accepted!"}
+
+
+@router.delete("/invite/{invite_id}", status_code=204)
+def delete_invite(
+    invite_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user_from_token),
+):
+    invite = db.query(Invite).filter(Invite.id == invite_id).first()
+    if not invite:
+        raise HTTPException(status_code=404, detail="Invite not found.")
+    event = db.query(Event).filter(Event.id == invite.event_id).first()
+    if not event or event.host_id != user.id:
+        raise HTTPException(status_code=403, detail="Not authorized.")
+    db.delete(invite)
+    db.commit()
+    return
