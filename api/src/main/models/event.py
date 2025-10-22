@@ -19,19 +19,17 @@ class Event(Base):
     )
     host = relationship(
         "User", backref=backref("hosted_events", cascade="all, delete-orphan")
-    )  # event.host: access the User hosting the Event
+    )
     participants = relationship(
-        "EventParticipant",
-        back_populates="event",
-        cascade="all, delete-orphan",
-    )  # event.participants: access the Users participating in the Event
+        "Participant", back_populates="event", cascade="all, delete-orphan"
+    )
     invites = relationship(
         "Invite", back_populates="event", cascade="all, delete-orphan"
-    )  # event.invites: access the Users invited to the event
+    )
 
 
-class EventParticipant(Base):
-    __tablename__ = "event_participants"
+class Participant(Base):
+    __tablename__ = "participants"
     event_id = Column(
         Integer, ForeignKey("events.id", ondelete="CASCADE"), primary_key=True
     )
@@ -43,25 +41,4 @@ class EventParticipant(Base):
     user = relationship(
         "User",
         backref=backref("event_participations", cascade="all, delete-orphan"),
-    )
-
-
-class Invite(Base):
-    __tablename__ = "invites"
-    id = Column(Integer, primary_key=True, index=True)
-    event_id = Column(
-        Integer, ForeignKey("events.id", ondelete="CASCADE"), nullable=False
-    )
-    user_id = Column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True
-    )
-    email = Column(String, nullable=False)
-    role = Column(String, nullable=False)
-    token = Column(String, unique=True, nullable=False)
-    status = Column(
-        String, nullable=False, default="pending"
-    )  # pending, accepted, declined
-    event = relationship("Event", back_populates="invites")
-    user = relationship(
-        "User", backref=backref("invites", cascade="all, delete-orphan")
     )

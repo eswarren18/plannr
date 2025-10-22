@@ -17,7 +17,7 @@ class EventOut(EventBase):
     host_id: int
 
 
-class EventParticipantBase(BaseModel):
+class ParticipantBase(BaseModel):
     event_id: int
     user_id: int
     role: str

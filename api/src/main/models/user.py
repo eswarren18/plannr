@@ -6,6 +6,7 @@ and constraints.
 """
 
 from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy.orm import relationship
 from src.main.database import Base
 
 
@@ -17,4 +18,6 @@ class User(Base):
     first_name = Column(String, nullable=True)
     last_name = Column(String, nullable=True)
     is_registered = Column(Boolean, default=False, nullable=False)
-    # user.hosted_events: access all events a user is hosting
+    invites = relationship(
+        "Invite", back_populates="user", cascade="all, delete-orphan"
+    )
