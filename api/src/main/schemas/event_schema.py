@@ -32,5 +32,9 @@ class InviteCreate(InviteBase):
     pass
 
 
+class InviteStatusUpdate(BaseModel):
+    status: str
+
+
 class InviteOut(InviteBase):
     id: int

@@ -1,7 +1,7 @@
 import uuid
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlalchemy.orm import Session
 from src.main.database import get_db
 from src.main.models import Event, EventParticipant, Invite, User
@@ -11,6 +11,7 @@ from src.main.schemas import (
     EventParticipantBase,
     InviteCreate,
     InviteOut,
+    InviteStatusUpdate,
 )
 from src.main.utils.authentication import get_current_user_from_token
 from src.main.utils.email import send_invite_email
@@ -113,41 +114,47 @@ def invite_participant(
     db.commit()
     db.refresh(new_invite)
 
-    # Send invite email
-    # TODO: email needs to send a clickable link
-    subject = "You're invited to an event!"
-    body = f"Hello! You've been invited to event {event_id}. Click here to accept: <accept_link>"
-    send_invite_email(invite.email, subject, body)
+    # Send invite email with clickable accept and decline links
+    link = "http://PLACEHOLDER"
+    send_invite_email(invite.email, event.title, link)
 
     return new_invite
 
 
-@router.get("/invite/accept/{token}")
-def accept_invite(token: str, db: Session = Depends(get_db)):
+@router.put("/invite/{token}", summary="Respond to an invite")
+def respond_invite(
+    token: str,
+    status_update: InviteStatusUpdate = Body(
+        ..., example={"status": "accepted"}
+    ),
+    db: Session = Depends(get_db),
+):
+    # Get the invite from the DB that is associated with the token (input)
     invite = db.query(Invite).filter(Invite.token == token).first()
     if not invite or invite.status != "pending":
         raise HTTPException(
             status_code=404, detail="Invalid or expired invite."
         )
 
-    # Look up the user by email
+    # Allow unregistered users to accept/decline invites
     user = db.query(User).filter(User.email == invite.email).first()
-    if not user:
-        raise HTTPException(
-            status_code=404,
-            detail="User not found. Please register before accepting the invite.",
+    if status_update.status not in ["accepted", "declined"]:
+        raise HTTPException(status_code=400, detail="Invalid status.")
+    invite.status = status_update.status
+    if user:
+        invite.user_id = user.id
+    db.commit()
+    if status_update.status == "accepted" and user:
+        event_participant = EventParticipant(
+            event_id=invite.event_id, user_id=user.id, role=invite.role
         )
-    # Update invite status and link to user
-    invite.status = "accepted"
-    invite.user_id = user.id
-    db.commit()
-    # Add to EventParticipant
-    event_participant = EventParticipant(
-        event_id=invite.event_id, user_id=user.id, role=invite.role
-    )
-    db.add(event_participant)
-    db.commit()
-    return {"detail": "Invite accepted!"}
+        db.add(event_participant)
+        db.commit()
+        return {"detail": "Invite accepted!"}
+    elif status_update.status == "accepted":
+        return {"detail": "Invite accepted! (register to participate fully)"}
+    else:
+        return {"detail": "Invite declined."}
 
 
 @router.delete("/invite/{invite_id}", status_code=204)
