@@ -1,7 +1,8 @@
 """
-SQLAlchemy ORM models for Event, EventParticipant, and Invite entities.
+SQLAlchemy ORM models for Event and Participant entities.
 
-Defines the structure of the events, event_participants, and invites tables in the database, including columns and constraints.
+Defines the structure of the events and participants, and invites tables in
+the database, including columns and constraints.
 """
 
 from sqlalchemy import Column, ForeignKey, Integer, String, Text
@@ -28,6 +29,7 @@ class Event(Base):
     )
 
 
+# many-to-many relationship between Event and User
 class Participant(Base):
     __tablename__ = "participants"
     event_id = Column(

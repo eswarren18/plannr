@@ -1,3 +1,10 @@
+"""
+SQLAlchemy ORM model for Invite entities.
+
+Defines the structure of the invites table in the database, including columns
+and constraints.
+"""
+
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from src.main.database import Base

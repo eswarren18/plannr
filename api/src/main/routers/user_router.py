@@ -18,13 +18,6 @@ from src.main.utils import (
 router = APIRouter(tags=["Users"], prefix="/users")
 
 
-# TODO: This lists all users even when not signed in. What situation will this be needed?
-@router.get("/", response_model=List[UserResponse])
-def list_users(db: Session = Depends(get_db)):
-    # List all users in the database. Return user details.
-    return db.query(User).all()
-
-
 @router.post("/", response_model=UserResponse)
 def create_user(
     user: UserCreate, db: Session = Depends(get_db), response: Response = None
@@ -60,8 +53,15 @@ def create_user(
     return set_jwt_cookie_response(db_user, response_model=UserResponse)
 
 
+# TODO: This lists all users even when not signed in. What situation will this be needed?
+@router.get("/", response_model=List[UserResponse])
+def list_users(db: Session = Depends(get_db)):
+    # List all users in the database. Return user details.
+    return db.query(User).all()
+
+
 @router.get("/me", response_model=UserResponse)
-def get_current_user(user: User = Depends(get_current_user_from_token)):
+def list_current_user(user: User = Depends(get_current_user_from_token)):
     # Returns the current User object from the JWT token in the cookie.
     # This endpoint is similar to get_current_user_from_token, but is exposed as an API route for clients to fetch their own user data.
     return user
@@ -83,7 +83,7 @@ def delete_current_user(
 
 
 @router.get("/{user_id}", response_model=UserResponse)
-def get_user(user_id: int, db: Session = Depends(get_db)):
+def list_user(user_id: int, db: Session = Depends(get_db)):
     # Get user details by user_id. Return error if not found.
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
