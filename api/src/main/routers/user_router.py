@@ -15,7 +15,7 @@ from src.main.utils import (
     set_jwt_cookie_response,
 )
 
-router = APIRouter(tags=["Users"], prefix="/users")
+router = APIRouter(tags=["Users"], prefix="/api/users")
 
 
 @router.post("/", response_model=UserResponse)

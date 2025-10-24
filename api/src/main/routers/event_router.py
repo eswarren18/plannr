@@ -7,7 +7,7 @@ from src.main.models import Event, Participant, User
 from src.main.schemas import EventCreate, EventOut
 from src.main.utils.authentication import get_current_user_from_token
 
-router = APIRouter(tags=["Events"], prefix="/events")
+router = APIRouter(tags=["Events"], prefix="/api/events")
 
 
 @router.post("/", response_model=EventOut)

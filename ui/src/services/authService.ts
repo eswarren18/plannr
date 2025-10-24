@@ -1,0 +1,123 @@
+export interface SignUpRequest {
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  password: string;
+}
+
+export interface UserRequest {
+    email: string;
+    password: string;
+}
+
+export const baseUrl = import.meta.env.VITE_API_HOST
+if (!baseUrl) {
+    throw new Error('VITE_API_HOST was not defined')
+}
+
+export async function authenticate() {
+    const url = `${baseUrl}/api/users/me`;
+    try {
+        const res = await fetch(url, {
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if (!res.ok) {
+            return new Error('Not logged in');
+        }
+        const result = await res.json();
+        if (typeof result.id !== 'number' || typeof result.email !== 'string') {
+            return new Error('Invalid user data');
+        }
+        return result;
+    } catch (e) {
+        if (e instanceof Error) {
+            return e;
+        }
+        return new Error('Something unknown happened.');
+    }
+}
+
+export async function signup(signUpRequest: SignUpRequest) {
+    const url = `${baseUrl}/api/users`
+    try {
+        const res = await fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(signUpRequest),
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        if (!res.ok) {
+            throw new Error("Couldn't sign up")
+        }
+        const result = await res.json()
+
+        if (
+            typeof result.id !== 'number' ||
+            typeof result.email !== 'string'
+        ) {
+            throw new Error('Invalid user data')
+        }
+
+        return result
+    } catch (e) {
+        if (e instanceof Error) {
+            return e
+        }
+        return new Error('Something unknown happened.')
+    }
+}
+
+export async function signin(userRequest: UserRequest) {
+    const url = `${baseUrl}/api/auth/signin`
+    try {
+        const res = await fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(userRequest),
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+
+        if (!res.ok) {
+            return new Error('Incorrect email or password')
+        }
+        const result = await res.json()
+
+        if (
+            typeof result.id !== 'number' ||
+            typeof result.email !== 'string'
+        ) {
+            return new Error('Invalid user data')
+        }
+        return result
+    } catch (e) {
+        if (e instanceof Error) {
+            return e
+        }
+        return new Error('Something unknown happened.')
+    }
+}
+
+export async function signout() {
+    const url = `${baseUrl}/api/auth/signout`
+    try {
+        const res = await fetch(url, {
+            method: 'DELETE',
+            credentials: 'include',
+        })
+        if (!res.ok) {
+            throw new Error('Failed to logout')
+        }
+    } catch (e) {
+        if (e instanceof Error) {
+            return e
+        }
+        return new Error('Something Unknown Happened')
+    }
+}

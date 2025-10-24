@@ -1,0 +1,7 @@
+Assets folder:
+ - Use for images, SVGs, animations, etc., that are imported into your React
+   components.
+ - These assets are processed by the build tool (e.g., optimized, hashed for
+   cache busting).
+ - You can import them directly in your JS/JSX/TSX files: import logo from
+   './assets/logo.png';

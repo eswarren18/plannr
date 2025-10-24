@@ -1,3 +1,4 @@
+# This is a template for production deployment. Adjust as needed for your cloud provider and production environment.
 services:
   db:
     image: postgres:15
@@ -16,14 +17,13 @@ services:
     build:
       context: ./api
     container_name: fastapi_backend
-    command: uvicorn src.main.main:app --host 0.0.0.0 --port 9000 --reload
+    command: uvicorn src.main.main:app --host 0.0.0.0 --port 9000
     volumes:
       - ./api:/app
     ports:
       - "9000:9000"
     depends_on:
       - db
-      - mailhog
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -33,24 +33,15 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
 
   ui:
+    build:
+      context: ./ui
     container_name: vite_frontend
-    image: node:20-alpine
-    working_dir: /app
-    user: 1000:1000
-    volumes:
-      - ./ui:/app
     environment:
-      VITE_API_HOST: http://localhost:9000
+      - VITE_API_HOST=http://api:9000
     ports:
-      - "5173:5173"
-    command: sh -c "npm install && npm run dev"
-
-  mailhog:
-    image: mailhog/mailhog
-    container_name: mailhog
-    ports:
-      - "1025:1025"
-      - "8025:8025"
+      - "80:80"
+    depends_on:
+      - api
 
 volumes:
   postgres_data:

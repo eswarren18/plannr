@@ -13,7 +13,7 @@ from src.main.schemas.invite_schema import (
 )
 from src.main.utils import get_current_user_from_token, send_invite_email
 
-router = APIRouter(tags=["Invites"])
+router = APIRouter(tags=["Invites"], prefix="/api")
 
 
 @router.post(
@@ -67,8 +67,8 @@ def create_invite(
     db.commit()
     db.refresh(new_invite)
 
-    # Send invite email with clickable accept and decline links
-    link = "http://PLACEHOLDER"
+    # Send invite email with clickable link to the event
+    link = "http://localhost:5173"
     send_invite_email(invite.email, event.title, link)
 
     return new_invite
