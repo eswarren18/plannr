@@ -1,6 +1,7 @@
 
 import { createContext, useEffect, useState, ReactNode } from 'react';
 import { authenticate, signout as signoutApi } from '../services/authService';
+import LoadingIcon from '../components/LoadingIcon';
 
 interface AuthContextType {
     user: any;
@@ -50,7 +51,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
                 signout,
             }}
         >
-            {isLoading ? <div>loading...</div> : children}
+            {isLoading ? <LoadingIcon /> : children}
         </AuthContext.Provider>
     );
 }

@@ -1,4 +1,3 @@
-import { useLocation } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 import Nav from './components/Nav';
 
@@ -10,7 +9,7 @@ if (!API_HOST) {
     throw new Error('VITE_API_HOST is not defined')
 }
 
-function App() {
+export default function App() {
     return (
         <>
             <Nav />
@@ -18,5 +17,3 @@ function App() {
         </>
     );
 }
-
-export default App;

@@ -6,7 +6,7 @@ import App from './App';
 import AuthProvider from './providers/AuthProvider';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import Welcome from './pages/Welcome';
+import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
@@ -17,7 +17,7 @@ createRoot(document.getElementById('root') as HTMLElement).render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />}>
-            <Route index element={<Welcome />} />
+            <Route index element={<Home />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="signup" element={<SignUp />} />
             <Route path="signin" element={<SignIn />} />

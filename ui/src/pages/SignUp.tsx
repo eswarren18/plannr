@@ -3,7 +3,7 @@ import { AuthContext } from '../providers/AuthProvider';
 import { signup } from '../services/authService';
 import { useNavigate } from 'react-router-dom';
 
-function SignUp() {
+export default function SignUp() {
   const [form, setForm] = useState({ email: '', password: '', firstName: '', lastName: '' });
   const [error, setError] = useState('');
   const auth = useContext(AuthContext);
@@ -41,5 +41,3 @@ function SignUp() {
     </form>
   );
 }
-
-export default SignUp;
