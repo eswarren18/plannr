@@ -11,6 +11,26 @@ export default function SignIn() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validate submission data
+        if (!form.email.match(/^[^@]+@[^@]+\.[^@]+$/)) {
+            setError('Please enter a valid email address');
+            return;
+        }
+        if (!form.password) {
+            setError('Please enter your password');
+            return;
+        }
+        // TODO: require users to use strong passwords
+        /*
+        // Uncomment for strong password validation in production
+        if (!form.password.match(/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/)) {
+            setError('Password must be at least 8 characters, include a number, a letter, and a special character.');
+            return;
+        }
+        */
+
+        // Submit signin request
         const result = await signin({
             email: form.email,
             password: form.password,
@@ -32,7 +52,6 @@ export default function SignIn() {
                 Welcome Back!
             </h1>
             <p className="text-sm font-normal text-gray-600 mb-4">Sign In</p>
-            {/* TODO <FormErrorAlert errors={formErrors} /> */}
             <div className="flex items-center border-2 py-2 px-3 rounded-2xl mb-3">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +67,7 @@ export default function SignIn() {
                 </svg>
                 <input
                     autoComplete="email"
-                    className="pl-2 outline-none border-none"
+                    className="pl-2 outline-none border-none w-full"
                     id="email"
                     name="email"
                     onChange={(e) =>
@@ -74,7 +93,7 @@ export default function SignIn() {
                 </svg>
                 <input
                     autoComplete="current-password"
-                    className="pl-2 outline-none border-none"
+                    className="pl-2 outline-none border-none w-full"
                     id="password"
                     name="password"
                     onChange={(e) =>
@@ -85,6 +104,7 @@ export default function SignIn() {
                     value={form.password}
                 />
             </div>
+            {error && <div className="text-red-600 text-sm mb-2">{error}</div>}
             <button
                 type="submit"
                 className="block w-full bg-cyan-600 mt-4 py-2 rounded-2xl text-white font-semibold mb-2 transition-colors duration-200 focus:outline-none hover:bg-cyan-400 hover:ring-2 hover:ring-cyan-300 active:bg-cyan-200 active:ring-4 active:ring-cyan-100"

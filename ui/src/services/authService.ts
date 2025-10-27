@@ -1,8 +1,8 @@
 export interface SignUpRequest {
-  email: string;
-  firstName?: string;
-  lastName?: string;
-  password: string;
+    email: string;
+    firstName?: string;
+    lastName?: string;
+    password: string;
 }
 
 export interface UserRequest {
@@ -10,9 +10,17 @@ export interface UserRequest {
     password: string;
 }
 
-export const baseUrl = import.meta.env.VITE_API_HOST
+export interface UserResponse {
+    id: number;
+    email: string;
+    firstName?: string;
+    lastName?: string;
+    isRegistered: boolean;
+}
+
+export const baseUrl = import.meta.env.VITE_API_HOST;
 if (!baseUrl) {
-    throw new Error('VITE_API_HOST was not defined')
+    throw new Error('VITE_API_HOST was not defined');
 }
 
 export async function authenticate() {
@@ -41,7 +49,7 @@ export async function authenticate() {
 }
 
 export async function signup(signUpRequest: SignUpRequest) {
-    const url = `${baseUrl}/api/users`
+    const url = `${baseUrl}/api/users`;
     try {
         const res = await fetch(url, {
             method: 'POST',
@@ -50,30 +58,27 @@ export async function signup(signUpRequest: SignUpRequest) {
             headers: {
                 'Content-Type': 'application/json',
             },
-        })
+        });
         if (!res.ok) {
-            throw new Error("Couldn't sign up")
+            throw new Error("Couldn't sign up");
         }
-        const result = await res.json()
+        const result: UserResponse = await res.json();
 
-        if (
-            typeof result.id !== 'number' ||
-            typeof result.email !== 'string'
-        ) {
-            throw new Error('Invalid user data')
+        if (typeof result.id !== 'number' || typeof result.email !== 'string') {
+            throw new Error('Invalid user data');
         }
 
-        return result
+        return result;
     } catch (e) {
         if (e instanceof Error) {
-            return e
+            return e;
         }
-        return new Error('Something unknown happened.')
+        return new Error('Something unknown happened.');
     }
 }
 
 export async function signin(userRequest: UserRequest) {
-    const url = `${baseUrl}/api/auth/signin`
+    const url = `${baseUrl}/api/auth/signin`;
     try {
         const res = await fetch(url, {
             method: 'POST',
@@ -82,42 +87,47 @@ export async function signin(userRequest: UserRequest) {
             headers: {
                 'Content-Type': 'application/json',
             },
-        })
+        });
 
         if (!res.ok) {
-            return new Error('Incorrect email or password')
+            // Set default error message
+            let errorMsg = 'Incorrect email or password';
+            try {
+                const errorData = await res.json();
+                if (errorData.detail) errorMsg = errorData.detail;
+            } catch {
+                // fallback to default
+            }
+            return new Error(errorMsg);
         }
-        const result = await res.json()
+        const result: UserResponse = await res.json();
 
-        if (
-            typeof result.id !== 'number' ||
-            typeof result.email !== 'string'
-        ) {
-            return new Error('Invalid user data')
+        if (typeof result.id !== 'number' || typeof result.email !== 'string') {
+            return new Error('Invalid user data');
         }
-        return result
+        return result;
     } catch (e) {
         if (e instanceof Error) {
-            return e
+            return e;
         }
-        return new Error('Something unknown happened.')
+        return new Error('Something unknown happened.');
     }
 }
 
 export async function signout() {
-    const url = `${baseUrl}/api/auth/signout`
+    const url = `${baseUrl}/api/auth/signout`;
     try {
         const res = await fetch(url, {
             method: 'DELETE',
             credentials: 'include',
-        })
+        });
         if (!res.ok) {
-            throw new Error('Failed to logout')
+            throw new Error('Failed to logout');
         }
     } catch (e) {
         if (e instanceof Error) {
-            return e
+            return e;
         }
-        return new Error('Something Unknown Happened')
+        return new Error('Something Unknown Happened');
     }
 }
