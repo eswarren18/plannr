@@ -1,8 +1,10 @@
 # Development requirements
-pre-commit
-flake8
 black
+flake8
 isort
+pre-commit
+pytest
+pytest-asyncio
 
 # Production requirements
 alembic==1.16.1
