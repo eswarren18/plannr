@@ -133,7 +133,7 @@ def set_jwt_cookie_response(user, response_model=None, custom_content=None):
     if custom_content is not None:
         content = custom_content
     elif response_model:
-        content = response_model.from_orm(user).dict()
+        content = response_model.model_validate(user).model_dump()
     else:
         content = {}
     response = JSONResponse(content=content)

@@ -80,7 +80,7 @@ def create_invite(
 def update_invite(
     token: str,
     status_update: InviteStatusUpdate = Body(
-        ..., example={"status": "accepted"}
+        ..., examples={"status": "accepted"}
     ),
     db: Session = Depends(get_db),
 ):
