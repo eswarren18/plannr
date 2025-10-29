@@ -2,9 +2,9 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install all dev dependencies
-COPY ./requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install only production dependencies
+COPY ./requirements-prod.txt .
+RUN pip install --no-cache-dir -r requirements-prod.txt
 
 # Copy the app source
 COPY ./src ./src

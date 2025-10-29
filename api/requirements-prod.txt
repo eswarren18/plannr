@@ -1,10 +1,4 @@
-# Development requirements
-pre-commit
-flake8
-black
-isort
-
-# Production requirements
+## Production requirements
 alembic==1.16.1
 annotated-types==0.7.0
 anyio==4.9.0

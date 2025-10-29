@@ -12,7 +12,7 @@ Follow these steps to set up and run The Pharmacy Farm locally.
 
    ```sh
    git clone <your-repo-url>
-   cd pharm-farm
+   cd plannr
    ```
 
 2. **Configure Environment Variables**
@@ -31,6 +31,7 @@ Follow these steps to set up and run The Pharmacy Farm locally.
 3. **Build and Run the Application**
 
    - Ensure Docker Desktop is running.
+   - Run the following in the terminal.
 
    ```sh
    docker compose build
@@ -39,13 +40,6 @@ Follow these steps to set up and run The Pharmacy Farm locally.
 
 4. **Access the API**
    - Once running, visit: [http://localhost:9000/docs](http://localhost:9000/docs) for the FastAPI interactive docs.
-
-<br>
-
-## Domain Driven Design
-
-This project uses Domain Driven Design principles and is defined here.
-![Domain Model](assets/domain-model.png)
 
 <br>
 
