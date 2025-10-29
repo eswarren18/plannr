@@ -12,12 +12,12 @@ from src.main.utils import verify_password
 client = TestClient(app)
 		self.email = email
 """
-import pytest
 from fastapi.testclient import TestClient
 from src.main.database import get_db
 from src.main.main import app
-from src.main.utils import verify_password, hash_password
+from src.main.utils import hash_password
 from src.main.schemas import UserResponse
+from src.main.routers import auth_router
 
 
 client = TestClient(app)
@@ -34,31 +34,40 @@ class MockUser:
 
 
 class MockQuery:
+    def __init__(self, email):
+        self._email = email
+
     def filter(self, *args, **kwargs):
         return self
 
     def first(self):
-        return MockUser()
+        if self._email == "user@example.com":
+            return MockUser()
+        return None
 
 
 class MockSession:
+    def __init__(self, email=None):
+        self._email = email
+
     def query(self, *args, **kwargs):
-        return MockQuery()
+        return MockQuery(self._email)
 
 
 # --- Tests ---
 def test_signin_success():
-    # Arrange: override the DB session with a mock DB session
+    ### Arrange
+    # Set JSON
+    json = {"email": "user@example.com", "password": "string"}
+
+    # Override the DB session with a mock DB session
     def mock_get_db():
-        return MockSession()
+        return MockSession(json["email"])
 
     app.dependency_overrides[get_db] = mock_get_db
 
     # Act
-    response = client.post(
-        "/api/auth/signin",
-        json={"email": "user@example.com", "password": "string"},
-    )
+    response = client.post("/api/auth/signin", json=json)
 
     # Clean-up
     app.dependency_overrides = {}
@@ -76,105 +85,93 @@ def test_signin_success():
     assert data == expected
 
 
-# def test_signin_wrong_email(monkeypatch):
-#     def mock_query(*args, **kwargs):
-#         class Query:
-#             def filter(self, *args, **kwargs):
-#                 return self
+def test_signin_wrong_email():
+    ### Arrange
+    # Set JSON
+    json = {"email": "wrong@example.com", "password": "string"}
 
-#             def first(self):
-#                 return None
+    # Override the DB session with a mock DB session
+    def mock_get_db():
+        return MockSession(json["email"])
 
-#         return Query()
+    app.dependency_overrides[get_db] = mock_get_db
 
-#     monkeypatch.setattr("src.main.database.get_db", lambda: None)
-#     monkeypatch.setattr("sqlalchemy.orm.Session.query", mock_query)
-#     response = client.post(
-#         "/api/auth/signin",
-#         json={"email": "wrong@example.com", "password": "any"},
-#     )
-#     assert response.status_code == 401
-#     assert response.json()["detail"] == "Incorrect email or password"
+    ### Act
+    response = client.post("/api/auth/signin", json=json)
 
+    ### Clean-up
+    app.dependency_overrides = {}
 
-# def test_signin_wrong_password(monkeypatch, dummy_user):
-#     def mock_query(*args, **kwargs):
-#         class Query:
-#             def filter(self, *args, **kwargs):
-#                 return self
-
-#             def first(self):
-#                 return dummy_user
-
-#         return Query()
-
-#     def mock_verify_password(pw, hpw):
-#         return False
-
-#     monkeypatch.setattr("src.main.database.get_db", lambda: None)
-#     monkeypatch.setattr("src.main.utils.verify_password", mock_verify_password)
-#     monkeypatch.setattr("sqlalchemy.orm.Session.query", mock_query)
-#     response = client.post(
-#         "/api/auth/signin",
-#         json={"email": dummy_user.email, "password": "wrongpw"},
-#     )
-#     assert response.status_code == 401
-#     assert response.json()["detail"] == "Incorrect email or password"
+    ### Assert
+    print(response.status_code)
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Incorrect email or password"
 
 
-# def test_signout_success(monkeypatch):
-#     class DummyRequest:
-#         headers = {"origin": "localhost"}
-#         cookies = {"fast_api_token": "token"}
+def test_signin_wrong_password():
+    ### Arrange
+    # Set JSON
+    json = {"email": "user@example.com", "password": "wrongpw"}
 
-#     class DummyResponse:
-#         def __init__(self):
-#             self.deleted = False
+    # Override the DB session with a mock DB session
+    def mock_get_db():
+        return MockSession(json["email"])
 
-#         def delete_cookie(self, **kwargs):
-#             self.deleted = True
+    app.dependency_overrides[get_db] = mock_get_db
 
-#     request = DummyRequest()
-#     response = DummyResponse()
-#     from src.main.routers import auth_router
+    ### Act
+    response = client.post("/api/auth/signin", json=json)
 
-#     result = auth_router.signout(request, response)
-#     assert response.deleted is True
-#     assert result["detail"] == "User has been signed out"
+    ### Clean-up
+    app.dependency_overrides = {}
 
-
-# def test_signout_no_cookie(monkeypatch):
-#     class DummyRequest:
-#         headers = {"origin": "localhost"}
-#         cookies = {}
-
-#     class DummyResponse:
-#         def delete_cookie(self, **kwargs):
-#             pass
-
-#     request = DummyRequest()
-#     response = DummyResponse()
-#     from src.main.routers import auth_router
-
-#     result = auth_router.signout(request, response)
-#     assert result["detail"] == "No user was signed in"
+    ### Assert
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Incorrect email or password"
 
 
-# def test_signout_secure_cookie(monkeypatch):
-#     class DummyRequest:
-#         headers = {"origin": "https://production.com"}
-#         cookies = {"fast_api_token": "token"}
+def test_signout_success():
+    ### Arrange
+    client.cookies.set("fast_api_token", "token")
+    headers = {"origin": "localhost"}
 
-#     class DummyResponse:
-#         def __init__(self):
-#             self.secure = None
+    ### Act
+    response = client.delete("/api/auth/signout", headers=headers)
 
-#         def delete_cookie(self, **kwargs):
-#             self.secure = kwargs.get("secure")
+    ### Clean-up
+    client.cookies.clear()
 
-#     request = DummyRequest()
-#     response = DummyResponse()
-#     from src.main.routers import auth_router
+    ### Assert
+    assert response.status_code == 200
+    assert response.json()["detail"] == "User has been signed out"
 
-#     auth_router.signout(request, response)
-#     assert response.secure is True
+
+def test_signout_no_cookie():
+    ### Arrange
+    headers = {"origin": "localhost"}
+
+    ### Act
+    response = client.delete("/api/auth/signout", headers=headers)
+
+    ### Clean-up
+    # None
+
+    ### Assert
+    assert response.status_code == 200
+    assert response.json()["detail"] == "No user was signed in"
+
+
+def test_signout_secure_cookie():
+    ### Arrange
+    client.cookies.set("fast_api_token", "token")
+    headers = {"origin": "https://production.com"}
+
+    ### Act
+    response = client.delete("/api/auth/signout", headers=headers)
+
+    ### Clean-up
+    client.cookies.clear()
+
+    ### Assert
+    assert response.status_code == 200
+    assert response.json()["detail"] == "User has been signed out"
