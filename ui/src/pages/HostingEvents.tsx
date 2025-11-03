@@ -6,13 +6,25 @@ export default function HostingEvents() {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
+    const fetchEvents = async () => {
+        try {
+            const response = await fetch(
+                'http://localhost:9000/api/events/hosting',
+                {
+                    credentials: 'include',
+                }
+            );
+            const data = await response.json();
+            setEvents(data);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching events:', error);
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        fetch('/api/events/hosting', { credentials: 'include' })
-            .then((res) => res.json())
-            .then((data) => {
-                setEvents(data);
-                setLoading(false);
-            });
+        fetchEvents();
     }, []);
 
     return (

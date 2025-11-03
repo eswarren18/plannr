@@ -9,16 +9,8 @@ function Nav() {
     const location = useLocation();
 
     return (
-        <nav
-            style={{
-                display: 'flex',
-                gap: '1rem',
-                padding: '1rem',
-                borderBottom: '1px solid #eee',
-                alignItems: 'center',
-            }}
-        >
-            <div style={{ display: 'flex', gap: '1rem' }}>
+        <nav className="flex gap-4 p-4 border-b border-gray-200 items-center">
+            <div className="flex gap-4">
                 <Link to="/">
                     <button disabled={location.pathname === '/'}>Home</button>
                 </Link>
@@ -45,23 +37,21 @@ function Nav() {
                         </Link>
                     </>
                 )}
-                {!user && (
+            </div>
+            <div className="ml-auto flex gap-4">
+                {!user ? (
                     <>
                         <Link to="/signup">
                             <button disabled={location.pathname === '/signup'}>
                                 Sign Up
                             </button>
                         </Link>
+                        <Link to="/signin">
+                            <button disabled={location.pathname === '/signin'}>
+                                Sign In
+                            </button>
+                        </Link>
                     </>
-                )}
-            </div>
-            <div style={{ marginLeft: 'auto', display: 'flex', gap: '1rem' }}>
-                {!user ? (
-                    <Link to="/signin">
-                        <button disabled={location.pathname === '/signin'}>
-                            Sign In
-                        </button>
-                    </Link>
                 ) : (
                     <button onClick={signout}>Sign Out</button>
                 )}
