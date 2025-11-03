@@ -1,11 +1,11 @@
-
 import { createContext, useEffect, useState, ReactNode } from 'react';
+import { UserResponse } from '../types/user';
 import { authenticate, signout as signoutApi } from '../services/authService';
 import LoadingIcon from '../components/LoadingIcon';
 
 interface AuthContextType {
-    user: any;
-    setUser: (user: any) => void;
+    user: UserResponse | undefined;
+    setUser: (user: UserResponse | undefined) => void;
     isLoading: boolean;
     setIsLoading: (loading: boolean) => void;
     error: any;
@@ -16,8 +16,12 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
-export default function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<any>();
+interface AuthProviderProps {
+    children: ReactNode;
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
+    const [user, setUser] = useState<UserResponse | undefined>();
     const [error, setError] = useState<any>();
     const [isLoading, setIsLoading] = useState(true);
 
