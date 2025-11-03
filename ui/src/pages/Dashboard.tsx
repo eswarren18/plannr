@@ -6,14 +6,16 @@ import { Navigate } from 'react-router-dom';
 export default function Dashboard() {
     const auth = useContext(AuthContext);
     const navigate = useNavigate();
+
+    // Redirect to home if not logged in
     if (!auth?.user) {
         return <Navigate to="/" />;
     }
+
     return (
         <div className="flex flex-col items-center mt-8">
             <h1 className="mb-4 text-2xl font-bold">
-                Welcome {auth.user.firstName || auth.user.first_name} to your
-                dashboard
+                Welcome {auth.user.firstName} to your dashboard
             </h1>
             <div className="flex gap-4">
                 <button

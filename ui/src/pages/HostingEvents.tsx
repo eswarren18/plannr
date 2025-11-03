@@ -1,20 +1,25 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
+
+import { AuthContext } from '../providers/AuthProvider';
+import { fetchHostingEvents } from '../services/eventService';
 
 export default function HostingEvents() {
+    // Redirect to home if not logged in
+    const auth = useContext(AuthContext);
+    if (!auth?.user) {
+        return <Navigate to="/" />;
+    }
+
+    // State for events and loading status
+    const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
 
+    // Fetch hosting events
     const fetchEvents = async () => {
         try {
-            const response = await fetch(
-                'http://localhost:9000/api/events/hosting',
-                {
-                    credentials: 'include',
-                }
-            );
-            const data = await response.json();
+            const data = await fetchHostingEvents();
             setEvents(data);
             setLoading(false);
         } catch (error) {

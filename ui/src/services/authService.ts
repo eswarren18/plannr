@@ -18,13 +18,19 @@ export async function authenticate() {
             return new Error('Not logged in');
         }
         const result = await res.json();
-        if (typeof result.id !== 'number' || typeof result.email !== 'string') {
-            return new Error('Invalid user data');
-        }
-        return result;
-    } catch (e) {
-        if (e instanceof Error) {
-            return e;
+
+        // Transform snake_case to camelCase
+        const user: UserResponse = {
+            id: result.id,
+            email: result.email,
+            firstName: result.first_name,
+            lastName: result.last_name,
+            isRegistered: result.isRegistered ?? true,
+        };
+        return user;
+    } catch (error) {
+        if (error instanceof Error) {
+            return error;
         }
         return new Error('Something unknown happened.');
     }
