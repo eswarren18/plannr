@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../providers/AuthProvider';
 import { fetchHostingEvents } from '../services/eventService';
+import { EventOut } from '../types/event';
 
 export default function HostingEvents() {
     // Redirect to home if not logged in
@@ -13,8 +14,8 @@ export default function HostingEvents() {
 
     // State for events and loading status
     const navigate = useNavigate();
-    const [events, setEvents] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [events, setEvents] = useState<EventOut[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
     // Fetch hosting events
     const fetchEvents = async () => {
@@ -34,12 +35,20 @@ export default function HostingEvents() {
 
     return (
         <div className="w-2/3 mx-auto mt-8">
-            <button
-                className="mb-4 bg-gray-200 px-3 py-1 rounded"
-                onClick={() => navigate('/dashboard')}
-            >
-                &larr; Back to Dashboard
-            </button>
+            <div className="flex justify-between">
+                <button
+                    className="mb-4 bg-gray-200 px-3 py-1 rounded"
+                    onClick={() => navigate('/dashboard')}
+                >
+                    Back to Dashboard
+                </button>
+                <button
+                    className="mb-4 bg-blue-200 px-3 py-1 rounded"
+                    onClick={() => navigate('/events/create')}
+                >
+                    Create Event
+                </button>
+            </div>
             <h2 className="text-xl font-bold mb-2">Events You're Hosting</h2>
             {loading ? (
                 <div>Loading...</div>
@@ -54,7 +63,7 @@ export default function HostingEvents() {
                         </tr>
                     </thead>
                     <tbody>
-                        {events.map((event: any) => (
+                        {events.map((event: EventOut) => (
                             <tr key={event.id}>
                                 <td className="border px-2 py-1">
                                     {event.title}

@@ -11,6 +11,7 @@ import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import HostingEvents from './pages/HostingEvents';
 import ParticipatingEvents from './pages/ParticipatingEvents';
+import CreateEvent from './pages/CreateEvent';
 
 createRoot(document.getElementById('root') as HTMLElement).render(
     <StrictMode>
@@ -30,6 +31,7 @@ createRoot(document.getElementById('root') as HTMLElement).render(
                             path="participating-events"
                             element={<ParticipatingEvents />}
                         />
+                        <Route path="events/create" element={<CreateEvent />} />
                     </Route>
                 </Routes>
             </BrowserRouter>

@@ -6,26 +6,26 @@ if (!baseUrl) {
 }
 
 export async function authenticate() {
-    const url = `${baseUrl}/api/users/me`;
     try {
-        const res = await fetch(url, {
+        const response = await fetch(`${baseUrl}/api/users/me`, {
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
             },
         });
-        if (!res.ok) {
+        if (!response.ok) {
             return new Error('Not logged in');
         }
-        const result = await res.json();
+        // Transform Response object to JSON
+        const data = await response.json();
 
         // Transform snake_case to camelCase
         const user: UserResponse = {
-            id: result.id,
-            email: result.email,
-            firstName: result.first_name,
-            lastName: result.last_name,
-            isRegistered: result.isRegistered ?? true,
+            id: data.id,
+            email: data.email,
+            firstName: data.first_name,
+            lastName: data.last_name,
+            isRegistered: data.isRegistered ?? true,
         };
         return user;
     } catch (error) {
@@ -37,9 +37,8 @@ export async function authenticate() {
 }
 
 export async function signup(signUpRequest: SignUpRequest) {
-    const url = `${baseUrl}/api/users`;
     try {
-        const res = await fetch(url, {
+        const response = await fetch(`${baseUrl}/api/users`, {
             method: 'POST',
             body: JSON.stringify(signUpRequest),
             credentials: 'include',
@@ -47,28 +46,34 @@ export async function signup(signUpRequest: SignUpRequest) {
                 'Content-Type': 'application/json',
             },
         });
-        if (!res.ok) {
+        if (!response.ok) {
             throw new Error("Couldn't sign up");
         }
-        const result: UserResponse = await res.json();
 
-        if (typeof result.id !== 'number' || typeof result.email !== 'string') {
-            throw new Error('Invalid user data');
-        }
+        // Transform Response object to JSON
+        const data = await response.json();
 
-        return result;
-    } catch (e) {
-        if (e instanceof Error) {
-            return e;
+        // Transform snake_case to camelCase
+        const user: UserResponse = {
+            id: data.id,
+            email: data.email,
+            firstName: data.first_name,
+            lastName: data.last_name,
+            isRegistered: data.isRegistered ?? true,
+        };
+
+        return user;
+    } catch (error) {
+        if (error instanceof Error) {
+            return error;
         }
         return new Error('Something unknown happened.');
     }
 }
 
 export async function signin(userRequest: UserRequest) {
-    const url = `${baseUrl}/api/auth/signin`;
     try {
-        const res = await fetch(url, {
+        const response = await fetch(`${baseUrl}/api/auth/signin`, {
             method: 'POST',
             body: JSON.stringify(userRequest),
             credentials: 'include',
@@ -77,26 +82,33 @@ export async function signin(userRequest: UserRequest) {
             },
         });
 
-        if (!res.ok) {
+        if (!response.ok) {
             // Set default error message
             let errorMsg = 'Incorrect email or password';
             try {
-                const errorData = await res.json();
+                const errorData = await response.json();
                 if (errorData.detail) errorMsg = errorData.detail;
             } catch {
                 // fallback to default
             }
             return new Error(errorMsg);
         }
-        const result: UserResponse = await res.json();
 
-        if (typeof result.id !== 'number' || typeof result.email !== 'string') {
-            return new Error('Invalid user data');
-        }
-        return result;
-    } catch (e) {
-        if (e instanceof Error) {
-            return e;
+        // Transform Response object to JSON
+        const data = await response.json();
+
+        // Transform snake_case to camelCase
+        const user: UserResponse = {
+            id: data.id,
+            email: data.email,
+            firstName: data.first_name,
+            lastName: data.last_name,
+            isRegistered: data.isRegistered ?? true,
+        };
+        return user;
+    } catch (error) {
+        if (error instanceof Error) {
+            return error;
         }
         return new Error('Something unknown happened.');
     }
@@ -112,9 +124,9 @@ export async function signout() {
         if (!res.ok) {
             throw new Error('Failed to logout');
         }
-    } catch (e) {
-        if (e instanceof Error) {
-            return e;
+    } catch (error) {
+        if (error instanceof Error) {
+            return error;
         }
         return new Error('Something Unknown Happened');
     }

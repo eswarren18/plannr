@@ -1,7 +1,10 @@
-export interface SignUpRequest {
+export interface UserBase {
     email: string;
     firstName?: string;
     lastName?: string;
+}
+
+export interface SignUpRequest extends UserBase {
     password: string;
 }
 
@@ -10,10 +13,7 @@ export interface UserRequest {
     password: string;
 }
 
-export interface UserResponse {
+export interface UserResponse extends UserBase {
     id: number;
-    email: string;
-    firstName?: string;
-    lastName?: string;
     isRegistered: boolean;
 }
