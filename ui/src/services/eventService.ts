@@ -146,3 +146,22 @@ export async function updateEvent(
         return error instanceof Error ? error : new Error('Unknown error');
     }
 }
+
+export async function deleteEvent(eventId: number): Promise<true | Error> {
+    try {
+        const response = await fetch(`${baseUrl}/api/events/${eventId}`, {
+            method: 'DELETE',
+            credentials: 'include',
+        });
+        if (!response.ok) {
+            const errorMsg =
+                response.status === 404
+                    ? 'Event not found'
+                    : 'Failed to delete event';
+            throw new Error(errorMsg);
+        }
+        return true;
+    } catch (error) {
+        return error instanceof Error ? error : new Error('Unknown error');
+    }
+}

@@ -8,7 +8,7 @@ import {
     updateEvent,
 } from '../services/eventService';
 
-export default function CreateEvent() {
+export default function EventForm() {
     // Redirect to home if not logged in
     const auth = useContext(AuthContext);
     if (!auth?.user) {
