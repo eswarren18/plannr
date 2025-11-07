@@ -1,6 +1,9 @@
 import { EventOut, EventCreate } from '../types/event';
 
-const baseUrl = import.meta.env.VITE_API_HOST || 'http://localhost:9000';
+export const baseUrl = import.meta.env.VITE_API_HOST;
+if (!baseUrl) {
+    throw new Error('VITE_API_HOST was not defined');
+}
 
 export async function fetchHostingEvents(): Promise<EventOut[]> {
     try {

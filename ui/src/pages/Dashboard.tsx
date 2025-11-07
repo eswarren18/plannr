@@ -15,7 +15,7 @@ export default function Dashboard() {
     return (
         <div className="flex flex-col items-center mt-8">
             <h1 className="mb-4 text-2xl font-bold">
-                Welcome {auth.user.firstName} to your dashboard
+                Welcome to your dashboard {auth.user.firstName}
             </h1>
             <div className="flex gap-4">
                 <button

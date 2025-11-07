@@ -5,7 +5,7 @@ if (!baseUrl) {
     throw new Error('VITE_API_HOST was not defined');
 }
 
-export async function authenticate() {
+export async function authenticate(): Promise<UserResponse | Error> {
     try {
         const response = await fetch(`${baseUrl}/api/users/me`, {
             credentials: 'include',
@@ -36,7 +36,9 @@ export async function authenticate() {
     }
 }
 
-export async function signup(signUpRequest: SignUpRequest) {
+export async function signup(
+    signUpRequest: SignUpRequest
+): Promise<UserResponse | Error> {
     try {
         const response = await fetch(`${baseUrl}/api/users`, {
             method: 'POST',
@@ -71,7 +73,9 @@ export async function signup(signUpRequest: SignUpRequest) {
     }
 }
 
-export async function signin(userRequest: UserRequest) {
+export async function signin(
+    userRequest: UserRequest
+): Promise<UserResponse | Error> {
     try {
         const response = await fetch(`${baseUrl}/api/auth/signin`, {
             method: 'POST',
@@ -114,7 +118,7 @@ export async function signin(userRequest: UserRequest) {
     }
 }
 
-export async function signout() {
+export async function signout(): Promise<void | Error> {
     const url = `${baseUrl}/api/auth/signout`;
     try {
         const res = await fetch(url, {

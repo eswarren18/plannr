@@ -39,7 +39,7 @@ export default function ParticipatingEvents() {
                 className="mb-4 bg-gray-200 px-3 py-1 rounded"
                 onClick={() => navigate('/dashboard')}
             >
-                &larr; Back to Dashboard
+                Back to Dashboard
             </button>
             <h2 className="text-xl font-bold mb-2">
                 Events You're Participating In
