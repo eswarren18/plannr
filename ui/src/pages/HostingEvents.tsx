@@ -24,7 +24,7 @@ export default function HostingEvents() {
             setEvents(data);
             setLoading(false);
         } catch (error) {
-            console.error('Error fetching events:', error);
+            console.error(error);
             setLoading(false);
         }
     };
@@ -65,8 +65,24 @@ export default function HostingEvents() {
                     <tbody>
                         {events.map((event: EventOut) => (
                             <tr key={event.id}>
-                                <td className="border px-2 py-1">
+                                <td className="border px-2 py-1 flex items-center gap-2">
                                     {event.title}
+                                    <button
+                                        className="ml-2 p-1 rounded hover:bg-gray-100"
+                                        title="Edit Event"
+                                        onClick={() =>
+                                            navigate(`/events/edit/${event.id}`)
+                                        }
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="h-4 w-4 text-gray-500"
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor"
+                                        >
+                                            <path d="M17.414 2.586a2 2 0 00-2.828 0l-9.192 9.192A2 2 0 004 13.414V16a2 2 0 002 2h2.586a2 2 0 001.414-.586l9.192-9.192a2 2 0 000-2.828l-2.828-2.828zM5 15v-2.586l9-9L16.586 6l-9 9H5z" />
+                                        </svg>
+                                    </button>
                                 </td>
                                 <td className="border px-2 py-1">
                                     {event.description}

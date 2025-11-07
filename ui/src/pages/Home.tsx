@@ -7,5 +7,11 @@ export default function Home() {
     if (auth?.user) {
         return <Navigate to="/dashboard" />;
     }
-    return <h1>Welcome to Plannr!</h1>;
+    return (
+        <div className="flex flex-1 items-center justify-center">
+            <h1 className="text-5xl font-bold text-center">
+                Welcome to Plannr!
+            </h1>
+        </div>
+    );
 }

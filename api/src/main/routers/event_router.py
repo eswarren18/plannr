@@ -36,16 +36,24 @@ def create_event(
 
 
 @router.get("/hosting", response_model=List[EventOut])
-def list_hosting_events(
+def get_hosting_events(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
-    # Return a list of events that the authenticated user is hosting
-    return db.query(Event).filter(Event.host_id == user.id).all()
+    print("list_hosting_events called")
+    print(f"user: {user}")
+    print(f"user.id: {getattr(user, 'id', None)}")
+    try:
+        events = db.query(Event).filter(Event.host_id == user.id).all()
+        print(f"events: {events}")
+        return events
+    except Exception as e:
+        print(f"Exception in list_hosting_events: {e}")
+        raise
 
 
 @router.get("/participating", response_model=List[EventOut])
-def list_participating_events(
+def get_participating_events(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
@@ -56,6 +64,24 @@ def list_participating_events(
         .subquery()
     )
     return db.query(Event).filter(Event.id.in_(event_ids)).all()
+
+
+@router.get("/{event_id}", response_model=EventOut)
+def get_event(
+    event_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user_from_token),
+):
+    event = (
+        db.query(Event)
+        .filter(Event.id == event_id, Event.host_id == user.id)
+        .first()
+    )
+    if not event:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
+        )
+    return event
 
 
 @router.put("/{event_id}", response_model=EventOut)

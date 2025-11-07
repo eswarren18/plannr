@@ -24,6 +24,7 @@ export async function fetchHostingEvents(): Promise<EventOut[]> {
         }));
         return events;
     } catch (error) {
+        console.error('Error in fetchHostingEvents:', error);
         throw error;
     }
 }
@@ -79,5 +80,69 @@ export async function createEvent(
         return event;
     } catch (error) {
         throw error;
+    }
+}
+
+export async function fetchEventById(
+    eventId: number
+): Promise<EventOut | Error> {
+    try {
+        const response = await fetch(`${baseUrl}/api/events/${eventId}`, {
+            credentials: 'include',
+        });
+        if (!response.ok) {
+            const errorMsg =
+                response.status === 404
+                    ? 'Event not found'
+                    : 'Failed to fetch event';
+            throw new Error(errorMsg);
+        }
+
+        // Transform Response object to JSON
+        const data = await response.json();
+
+        // Transform from snake_case to camelCase
+        const event: EventOut = {
+            id: data.id,
+            title: data.title,
+            description: data.description,
+            hostId: data.host_id,
+        };
+        return event;
+    } catch (error) {
+        return error instanceof Error ? error : new Error('Unknown error');
+    }
+}
+
+export async function updateEvent(
+    eventId: number,
+    eventData: { title: string; description: string }
+): Promise<EventOut | Error> {
+    try {
+        const response = await fetch(`${baseUrl}/api/events/${eventId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(eventData),
+            credentials: 'include',
+        });
+        if (!response.ok) {
+            const errorMsg =
+                response.status === 404
+                    ? 'Event not found'
+                    : 'Failed to update event';
+            throw new Error(errorMsg);
+        }
+        const data = await response.json();
+        const event: EventOut = {
+            id: data.id,
+            title: data.title,
+            description: data.description,
+            hostId: data.host_id,
+        };
+        return event;
+    } catch (error) {
+        return error instanceof Error ? error : new Error('Unknown error');
     }
 }

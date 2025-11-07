@@ -1,8 +1,12 @@
-import { useState, useContext } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useState, useContext, useEffect } from 'react';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import { AuthContext } from '../providers/AuthProvider';
-import { createEvent } from '../services/eventService';
+import {
+    createEvent,
+    fetchEventById,
+    updateEvent,
+} from '../services/eventService';
 
 export default function CreateEvent() {
     // Redirect to home if not logged in
@@ -11,31 +15,66 @@ export default function CreateEvent() {
         return <Navigate to="/" />;
     }
 
+    // State for form data, error messages, and loading status
+    const { eventId } = useParams<{ eventId?: string }>();
+    const isEdit = !!eventId;
     const [form, setForm] = useState({ title: '', description: '' });
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(isEdit);
     const navigate = useNavigate();
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    // Fetch event for editing
+    const fetchEvent = async () => {
+        if (isEdit && eventId) {
+            setLoading(true);
+            const result = await fetchEventById(Number(eventId));
+            if (result instanceof Error) {
+                setError(result.message);
+            } else {
+                setForm({
+                    title: result.title ?? '',
+                    description: result.description ?? '',
+                });
+            }
+            setLoading(false);
+        }
+    };
 
-        // Validate submission data
+    const handleSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
         if (!form.title) {
             setError('Please enter a title');
             return;
         }
-
-        // Submit create event request
-        const result = await createEvent({
-            title: form.title,
-            description: form.description,
-        });
-        if (result instanceof Error) {
-            setError(result.message);
+        setError('');
+        if (isEdit && eventId) {
+            // Update event
+            const result = await updateEvent(Number(eventId), {
+                title: form.title,
+                description: form.description,
+            });
+            if (result instanceof Error) {
+                setError(result.message);
+            } else {
+                navigate('/hosting-events');
+            }
         } else {
-            // TODO: navigate to the newly created event page
-            navigate('/hosting-events');
+            // Create event
+            const result = await createEvent({
+                title: form.title,
+                description: form.description,
+            });
+            if (result instanceof Error) {
+                setError(result.message);
+            } else {
+                navigate('/hosting-events');
+            }
         }
     };
+
+    useEffect(() => {
+        fetchEvent();
+    }, [isEdit, eventId]);
 
     return (
         <form
@@ -43,7 +82,7 @@ export default function CreateEvent() {
             className="flex flex-col w-1/5 mx-auto my-2"
         >
             <h1 className="text-gray-800 font-bold text-2xl mb-1">
-                Create an Event!
+                {isEdit ? 'Edit Event' : 'Create an Event!'}
             </h1>
             <p className="text-sm font-normal text-gray-600 mb-4">
                 Event Details
@@ -72,6 +111,7 @@ export default function CreateEvent() {
                     placeholder="Title*"
                     type="text"
                     value={form.title}
+                    disabled={loading}
                 />
             </div>
             <div className="flex items-center border-2 py-2 px-3 rounded-2xl">
@@ -87,26 +127,37 @@ export default function CreateEvent() {
                         clipRule="evenodd"
                     />
                 </svg>
-                <input
+                <textarea
                     autoComplete="description"
                     className="pl-2 outline-none border-none w-full"
                     id="description"
+                    maxLength={200}
                     name="description"
                     onChange={(e) =>
                         setForm({ ...form, description: e.target.value })
                     }
                     placeholder="Description"
-                    type="text"
                     value={form.description}
-                />
+                    disabled={loading}
+                ></textarea>
             </div>
             {error && <div className="text-red-600 text-sm mb-2">{error}</div>}
-            <button
-                type="submit"
-                className="block w-full bg-cyan-600 mt-4 py-2 rounded-2xl text-white font-semibold mb-2 transition-colors duration-200 focus:outline-none hover:bg-cyan-400 hover:ring-2 hover:ring-cyan-300 active:bg-cyan-200 active:ring-4 active:ring-cyan-100"
-            >
-                Log In
-            </button>
+            <div className="flex gap-4 mt-4">
+                <button
+                    type="button"
+                    className="flex-1 bg-gray-200 py-2 rounded-2xl text-gray-800 font-semibold transition-colors duration-200 focus:outline-none hover:bg-gray-300"
+                    onClick={() => navigate('/hosting-events')}
+                >
+                    Cancel
+                </button>
+                <button
+                    type="submit"
+                    className="flex-1 bg-cyan-600 py-2 rounded-2xl text-white font-semibold transition-colors duration-200 focus:outline-none hover:bg-cyan-400 hover:ring-2 hover:ring-cyan-300 active:bg-cyan-200 active:ring-4 active:ring-cyan-100"
+                    disabled={loading}
+                >
+                    {isEdit ? 'Update Event' : 'Create Event'}
+                </button>
+            </div>
         </form>
     );
 }

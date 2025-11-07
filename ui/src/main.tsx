@@ -32,6 +32,10 @@ createRoot(document.getElementById('root') as HTMLElement).render(
                             element={<ParticipatingEvents />}
                         />
                         <Route path="events/create" element={<CreateEvent />} />
+                        <Route
+                            path="events/edit/:eventId"
+                            element={<CreateEvent />}
+                        />
                     </Route>
                 </Routes>
             </BrowserRouter>
