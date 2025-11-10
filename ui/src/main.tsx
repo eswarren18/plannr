@@ -5,13 +5,16 @@ import App from './App';
 import { AuthProvider } from './providers/AuthProvider';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import Home from './pages/Home';
-import Dashboard from './pages/Dashboard';
-import SignUp from './pages/SignUp';
-import SignIn from './pages/SignIn';
-import HostingEvents from './pages/HostingEvents';
-import ParticipatingEvents from './pages/ParticipatingEvents';
-import EventForm from './pages/EventForm';
+import {
+    Dashboard,
+    EventForm,
+    Home,
+    HostingEvents,
+    Invites,
+    ParticipatingEvents,
+    SignIn,
+    SignUp,
+} from './pages';
 
 createRoot(document.getElementById('root') as HTMLElement).render(
     <StrictMode>
@@ -36,6 +39,7 @@ createRoot(document.getElementById('root') as HTMLElement).render(
                             path="events/edit/:eventId"
                             element={<EventForm />}
                         />
+                        <Route path="invites" element={<Invites />} />
                     </Route>
                 </Routes>
             </BrowserRouter>
