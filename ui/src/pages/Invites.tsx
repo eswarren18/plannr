@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../providers/AuthProvider';
-import { fetchInvites } from '../services/inviteService';
+import { fetchInvites, respondToInvite } from '../services/inviteService';
 import { InviteOut } from '../types/invite';
 
 export default function Invites() {
@@ -29,6 +29,20 @@ export default function Invites() {
         }
     };
 
+    const handleResponse = async (
+        inviteId: number,
+        response: 'accepted' | 'declined'
+    ) => {
+        const invite = invites.find((i) => i.id === inviteId);
+        if (!invite) return;
+        try {
+            await respondToInvite(invite.token, response);
+            await fetchData();
+        } catch (error) {
+            alert('Failed to respond to invite.');
+        }
+    };
+
     useEffect(() => {
         fetchData();
     }, []);
@@ -41,7 +55,7 @@ export default function Invites() {
             >
                 Back to Dashboard
             </button>
-            <h2 className="text-xl font-bold mb-2">Events You're Hosting</h2>
+            <h2 className="text-xl font-bold mb-2">Invitations</h2>
             {loading ? (
                 <div>Loading...</div>
             ) : invites.length === 0 ? (
@@ -73,11 +87,26 @@ export default function Invites() {
                                     {invite.role}
                                 </td>
                                 <td className="border px-2 py-1">
-                                    {/* Placeholder for response actions */}
-                                    <button className="bg-green-200 px-2 py-1 rounded mr-2">
+                                    <button
+                                        className="bg-green-200 px-2 py-1 rounded mr-2"
+                                        onClick={() =>
+                                            handleResponse(
+                                                invite.id,
+                                                'accepted'
+                                            )
+                                        }
+                                    >
                                         Accept
                                     </button>
-                                    <button className="bg-red-200 px-2 py-1 rounded">
+                                    <button
+                                        className="bg-red-200 px-2 py-1 rounded"
+                                        onClick={() =>
+                                            handleResponse(
+                                                invite.id,
+                                                'declined'
+                                            )
+                                        }
+                                    >
                                         Decline
                                     </button>
                                 </td>

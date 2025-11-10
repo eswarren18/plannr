@@ -1,11 +1,11 @@
-import { EventOut, EventCreate } from '../types/event';
+import { EventCreate, EventFullOut, EventSummaryOut } from '../types/event';
 
 export const baseUrl = import.meta.env.VITE_API_HOST;
 if (!baseUrl) {
     throw new Error('VITE_API_HOST was not defined');
 }
 
-export async function fetchHostingEvents(): Promise<EventOut[]> {
+export async function fetchHostingEvents(): Promise<EventSummaryOut[]> {
     try {
         const response = await fetch(`${baseUrl}/api/events/hosting`, {
             credentials: 'include',
@@ -16,11 +16,10 @@ export async function fetchHostingEvents(): Promise<EventOut[]> {
         const data = await response.json();
 
         // Transform from snake_case to camelCase
-        const events: EventOut[] = data.map((event: any) => ({
+        const events: EventSummaryOut[] = data.map((event: any) => ({
             id: event.id,
             title: event.title,
-            description: event.description,
-            hostId: event.host_id,
+            hostName: event.host_name,
         }));
         return events;
     } catch (error) {
@@ -29,7 +28,7 @@ export async function fetchHostingEvents(): Promise<EventOut[]> {
     }
 }
 
-export async function fetchParticipatingEvents(): Promise<EventOut[]> {
+export async function fetchParticipatingEvents(): Promise<EventSummaryOut[]> {
     try {
         const response = await fetch(`${baseUrl}/api/events/participating`, {
             credentials: 'include',
@@ -41,11 +40,10 @@ export async function fetchParticipatingEvents(): Promise<EventOut[]> {
         const data = await response.json();
 
         // Transform from snake_case to camelCase
-        const events: EventOut[] = data.map((event: any) => ({
+        const events: EventSummaryOut[] = data.map((event: any) => ({
             id: event.id,
             title: event.title,
-            description: event.description,
-            hostId: event.host_id,
+            hostName: event.host_name,
         }));
         return events;
     } catch (error) {
@@ -55,7 +53,7 @@ export async function fetchParticipatingEvents(): Promise<EventOut[]> {
 
 export async function createEvent(
     eventData: EventCreate
-): Promise<EventOut | Error> {
+): Promise<EventFullOut | Error> {
     try {
         const response = await fetch(`${baseUrl}/api/events`, {
             method: 'POST',
@@ -71,11 +69,12 @@ export async function createEvent(
         const data = await response.json();
 
         // Transform from snake_case to camelCase
-        const event: EventOut = {
-            id: data.id,
+        const event: EventFullOut = {
             title: data.title,
+            hostName: data.host_name,
+            id: data.id,
             description: data.description,
-            hostId: data.host_id,
+            participants: data.participants,
         };
         return event;
     } catch (error) {
@@ -85,7 +84,7 @@ export async function createEvent(
 
 export async function fetchEventById(
     eventId: number
-): Promise<EventOut | Error> {
+): Promise<EventFullOut | Error> {
     try {
         const response = await fetch(`${baseUrl}/api/events/${eventId}`, {
             credentials: 'include',
@@ -102,11 +101,12 @@ export async function fetchEventById(
         const data = await response.json();
 
         // Transform from snake_case to camelCase
-        const event: EventOut = {
+        const event: EventFullOut = {
             id: data.id,
             title: data.title,
             description: data.description,
-            hostId: data.host_id,
+            hostName: data.host_name,
+            participants: data.participants,
         };
         return event;
     } catch (error) {
@@ -117,7 +117,7 @@ export async function fetchEventById(
 export async function updateEvent(
     eventId: number,
     eventData: { title: string; description: string }
-): Promise<EventOut | Error> {
+): Promise<EventFullOut | Error> {
     try {
         const response = await fetch(`${baseUrl}/api/events/${eventId}`, {
             method: 'PUT',
@@ -135,11 +135,12 @@ export async function updateEvent(
             throw new Error(errorMsg);
         }
         const data = await response.json();
-        const event: EventOut = {
+        const event: EventFullOut = {
             id: data.id,
             title: data.title,
             description: data.description,
-            hostId: data.host_id,
+            hostName: data.host_name,
+            participants: data.participants,
         };
         return event;
     } catch (error) {

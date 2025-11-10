@@ -1,9 +1,10 @@
-from typing import Optional
+from typing import List, Optional
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 
 class EventBase(BaseModel):
+    id: int
     title: str
     description: Optional[str] = None
 
@@ -12,29 +13,19 @@ class EventCreate(EventBase):
     pass
 
 
-class EventOut(EventBase):
+class EventSummaryOut(BaseModel):
     id: int
-    host_id: int
+    title: str
+    host_name: str
+
+
+class EventFullOut(EventBase):
+    id: int
+    host_name: str
+    participants: List[str]
 
 
 class ParticipantBase(BaseModel):
     event_id: int
     user_id: int
     role: str
-
-
-class InviteBase(BaseModel):
-    email: EmailStr
-    role: str
-
-
-class InviteCreate(InviteBase):
-    pass
-
-
-class InviteStatusUpdate(BaseModel):
-    status: str
-
-
-class InviteOut(InviteBase):
-    id: int

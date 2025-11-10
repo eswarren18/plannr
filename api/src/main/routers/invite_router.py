@@ -160,6 +160,7 @@ def get_invites(
                 "email": invite.email,
                 "role": invite.role,
                 "event": event_summary,
+                "token": invite.token,
             }
         )
     return result

@@ -3,7 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../providers/AuthProvider';
 import { fetchHostingEvents, deleteEvent } from '../services/eventService';
-import { EventOut } from '../types/event';
+import { EventSummaryOut } from '../types/event';
 
 export default function HostingEvents() {
     // Redirect to home if not logged in
@@ -14,7 +14,7 @@ export default function HostingEvents() {
 
     // State for events and loading status
     const navigate = useNavigate();
-    const [events, setEvents] = useState<EventOut[]>([]);
+    const [events, setEvents] = useState<EventSummaryOut[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
     // Fetch hosting events
@@ -69,15 +69,36 @@ export default function HostingEvents() {
                     <thead>
                         <tr>
                             <th className="border px-2 py-1">Title</th>
-                            <th className="border px-2 py-1">Description</th>
+                            <th className="border px-2 py-1">Host</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {events.map((event: EventOut) => (
+                        {events.map((event: EventSummaryOut) => (
                             <tr key={event.id}>
                                 <td className="border px-2 py-1">
                                     <div className="flex items-center justify-between w-full">
-                                        <span>{event.title}</span>
+                                        <span>
+                                            <button
+                                                className="text-blue-600 underline hover:text-blue-800"
+                                                style={{
+                                                    background: 'none',
+                                                    border: 'none',
+                                                    padding: 0,
+                                                    cursor: 'pointer',
+                                                }}
+                                                onClick={() => {
+                                                    console.log(
+                                                        'Event ID:',
+                                                        event.id
+                                                    );
+                                                    navigate(
+                                                        `/events/${event.id}`
+                                                    );
+                                                }}
+                                            >
+                                                {event.title}
+                                            </button>
+                                        </span>
                                         <span className="flex gap-2">
                                             <button
                                                 className="p-1 rounded hover:bg-gray-100"
@@ -129,7 +150,7 @@ export default function HostingEvents() {
                                     </div>
                                 </td>
                                 <td className="border px-2 py-1">
-                                    {event.description}
+                                    {event.hostName}
                                 </td>
                             </tr>
                         ))}

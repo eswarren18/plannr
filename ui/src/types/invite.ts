@@ -15,6 +15,7 @@ export interface EventSummary {
 export interface InviteOut extends InviteBase {
     id: number;
     event: EventSummary;
+    token: string;
 }
 
 export interface InviteStatusUpdate {

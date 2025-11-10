@@ -3,7 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../providers/AuthProvider';
 import { fetchParticipatingEvents } from '../services/eventService';
-import { EventOut } from '../types/event';
+import { EventSummaryOut } from '../types/event';
 
 export default function ParticipatingEvents() {
     // Redirect to home if not logged in
@@ -13,7 +13,7 @@ export default function ParticipatingEvents() {
     }
 
     // State for events and loading status
-    const [events, setEvents] = useState<EventOut[]>([]);
+    const [events, setEvents] = useState<EventSummaryOut[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const navigate = useNavigate();
 
@@ -53,17 +53,17 @@ export default function ParticipatingEvents() {
                     <thead>
                         <tr>
                             <th className="border px-2 py-1">Title</th>
-                            <th className="border px-2 py-1">Description</th>
+                            <th className="border px-2 py-1">Host</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {events.map((event: EventOut) => (
+                        {events.map((event: EventSummaryOut) => (
                             <tr key={event.id}>
                                 <td className="border px-2 py-1">
                                     {event.title}
                                 </td>
                                 <td className="border px-2 py-1">
-                                    {event.description}
+                                    {event.hostName}
                                 </td>
                             </tr>
                         ))}

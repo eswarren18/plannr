@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import {
     Dashboard,
     EventForm,
+    Event,
     Home,
     HostingEvents,
     Invites,
@@ -39,6 +40,7 @@ createRoot(document.getElementById('root') as HTMLElement).render(
                             path="events/edit/:eventId"
                             element={<EventForm />}
                         />
+                        <Route path="events/:eventId" element={<Event />} />
                         <Route path="invites" element={<Invites />} />
                     </Route>
                 </Routes>
