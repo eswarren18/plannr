@@ -3,7 +3,6 @@ repos:
     rev: 24.4.2
     hooks:
       - id: black
-        args: [--skip-magic-trailing-comma]
         exclude: ".venv"
   - repo: https://github.com/pycqa/flake8
     rev: 7.0.0

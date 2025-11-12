@@ -73,7 +73,7 @@ def decode_jwt_token(token: str) -> Optional[dict]:
 
 
 def get_jwt_user_data(
-    fast_api_token: Annotated[Optional[str], Cookie()] = None
+    fast_api_token: Annotated[Optional[str], Cookie()] = None,
 ) -> Optional[dict]:
     """
     Dependency to extract user data from JWT in the cookie. Returns the JWT
