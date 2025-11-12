@@ -5,20 +5,12 @@ Tests for auth_router:
  - Test token generation and validation.
 """
 
-"""
-from src.main.main import app
-from src.main.models import User
-from src.main.utils import verify_password
-client = TestClient(app)
-		self.email = email
-"""
 from fastapi.testclient import TestClient
 from src.main.database import get_db
 from src.main.main import app
-from src.main.utils import hash_password
-from src.main.schemas import UserResponse
 from src.main.routers import auth_router
-
+from src.main.schemas import UserResponse
+from src.main.utils import hash_password
 
 client = TestClient(app)
 
@@ -56,7 +48,7 @@ class MockSession:
 
 # --- Tests ---
 def test_signin_success():
-    ### Arrange
+    # Arrange
     # Set JSON
     json = {"email": "user@example.com", "password": "string"}
 
@@ -86,7 +78,7 @@ def test_signin_success():
 
 
 def test_signin_wrong_email():
-    ### Arrange
+    # Arrange
     # Set JSON
     json = {"email": "wrong@example.com", "password": "string"}
 
@@ -96,20 +88,20 @@ def test_signin_wrong_email():
 
     app.dependency_overrides[get_db] = mock_get_db
 
-    ### Act
+    # Act
     response = client.post("/api/auth/signin", json=json)
 
-    ### Clean-up
+    # Clean-up
     app.dependency_overrides = {}
 
-    ### Assert
+    # Assert
     print(response.status_code)
     assert response.status_code == 401
     assert response.json()["detail"] == "Incorrect email or password"
 
 
 def test_signin_wrong_password():
-    ### Arrange
+    # Arrange
     # Set JSON
     json = {"email": "user@example.com", "password": "wrongpw"}
 
@@ -119,59 +111,59 @@ def test_signin_wrong_password():
 
     app.dependency_overrides[get_db] = mock_get_db
 
-    ### Act
+    # Act
     response = client.post("/api/auth/signin", json=json)
 
-    ### Clean-up
+    # Clean-up
     app.dependency_overrides = {}
 
-    ### Assert
+    # Assert
     assert response.status_code == 401
     assert response.json()["detail"] == "Incorrect email or password"
 
 
 def test_signout_success():
-    ### Arrange
+    # Arrange
     client.cookies.set("fast_api_token", "token")
     headers = {"origin": "localhost"}
 
-    ### Act
+    # Act
     response = client.delete("/api/auth/signout", headers=headers)
 
-    ### Clean-up
+    # Clean-up
     client.cookies.clear()
 
-    ### Assert
+    # Assert
     assert response.status_code == 200
     assert response.json()["detail"] == "User has been signed out"
 
 
 def test_signout_no_cookie():
-    ### Arrange
+    # Arrange
     headers = {"origin": "localhost"}
 
-    ### Act
+    # Act
     response = client.delete("/api/auth/signout", headers=headers)
 
-    ### Clean-up
+    # Clean-up
     # None
 
-    ### Assert
+    # Assert
     assert response.status_code == 200
     assert response.json()["detail"] == "No user was signed in"
 
 
 def test_signout_secure_cookie():
-    ### Arrange
+    # Arrange
     client.cookies.set("fast_api_token", "token")
     headers = {"origin": "https://production.com"}
 
-    ### Act
+    # Act
     response = client.delete("/api/auth/signout", headers=headers)
 
-    ### Clean-up
+    # Clean-up
     client.cookies.clear()
 
-    ### Assert
+    # Assert
     assert response.status_code == 200
     assert response.json()["detail"] == "User has been signed out"

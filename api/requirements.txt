@@ -1,6 +1,7 @@
 # Development requirements
 black
 flake8
+httpx
 isort
 pre-commit
 pytest
