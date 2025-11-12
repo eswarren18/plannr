@@ -40,9 +40,18 @@ export async function signup(
     signUpRequest: SignUpRequest
 ): Promise<UserResponse | Error> {
     try {
+        // Transform camelCase to snake_case for backend
+        const payload = {
+            email: signUpRequest.email,
+            password: signUpRequest.password,
+            first_name: signUpRequest.firstName,
+            last_name: signUpRequest.lastName,
+        };
+
+        // Send signup request to backend
         const response = await fetch(`${baseUrl}/api/users`, {
             method: 'POST',
-            body: JSON.stringify(signUpRequest),
+            body: JSON.stringify(payload),
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
@@ -52,7 +61,7 @@ export async function signup(
             throw new Error("Couldn't sign up");
         }
 
-        // Transform Response object to JSON
+        // Transform response object to JSON
         const data = await response.json();
 
         // Transform snake_case to camelCase
@@ -98,7 +107,7 @@ export async function signin(
             return new Error(errorMsg);
         }
 
-        // Transform Response object to JSON
+        // Transform response object to JSON
         const data = await response.json();
 
         // Transform snake_case to camelCase
