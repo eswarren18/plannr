@@ -61,6 +61,12 @@ jobs:
         working-directory: api
     env:
       DATABASE_URL: sqlite:///test.db
+      JWT_SECRET_KEY: dummysecret
+      POSTGRES_USER: dummyuser
+      POSTGRES_PASSWORD: dummypassword
+      POSTGRES_DB: dummydb
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST: dummyhost
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
