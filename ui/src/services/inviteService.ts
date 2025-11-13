@@ -5,34 +5,46 @@ if (!baseUrl) {
     throw new Error('VITE_API_HOST was not defined');
 }
 
-export async function fetchInvites(): Promise<InviteOut[]> {
+function transformInvite(invite: any): InviteOut {
+    return {
+        email: invite.email,
+        role: invite.role,
+        id: invite.id,
+        token: invite.token,
+        event: {
+            id: invite.event?.id ?? 0,
+            title: invite.event?.title ?? '',
+            description: invite.event?.description ?? '',
+            hostName: invite.event?.host_name ?? '',
+        },
+    };
+}
+
+async function fetchInvitesFromEndpoint(
+    endpoint: string
+): Promise<InviteOut[]> {
     try {
-        const response = await fetch(`${baseUrl}/api/invites`, {
+        const response = await fetch(`${baseUrl}${endpoint}`, {
             credentials: 'include',
         });
         if (!response.ok) throw new Error('Failed to fetch invites');
-
-        // Transform Response object to JSON
         const data = await response.json();
-
-        // Transform from snake_case to camelCase
-        const invites: InviteOut[] = data.map((event: any) => ({
-            email: event.email,
-            role: event.role,
-            id: event.id,
-            token: event.token,
-            event: {
-                id: event.event.id,
-                title: event.event.title,
-                description: event.event.description,
-                hostName: event.event.host_name,
-            },
-        }));
-        return invites;
+        return data.map(transformInvite);
     } catch (error) {
-        console.error('Error in fetchInvites:', error);
+        console.error(
+            `Error in fetchInvitesFromEndpoint (${endpoint}):`,
+            error
+        );
         throw error;
     }
+}
+
+export async function fetchAllInvites(): Promise<InviteOut[]> {
+    return fetchInvitesFromEndpoint('/api/invites');
+}
+
+export async function fetchPendingInvites(): Promise<InviteOut[]> {
+    return fetchInvitesFromEndpoint('/api/invites/pending');
 }
 
 export async function respondToInvite(

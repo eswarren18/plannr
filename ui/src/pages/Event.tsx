@@ -62,7 +62,12 @@ export default function Event() {
                 <span className="font-semibold">Host:</span>
                 <span>{event.hostName}</span>
             </div>
-            <h2 className="text-lg font-bold mb-2">Participants</h2>
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-bold mb-2">Participants</h2>
+                <button className="bg-cyan-600 text-white px-3 py-1 rounded font-semibold hover:bg-cyan-400">
+                    Invite
+                </button>
+            </div>
             <div className="space-y-2">
                 {event.participants.map((name, idx) => (
                     <div key={idx} className="flex items-center gap-2">

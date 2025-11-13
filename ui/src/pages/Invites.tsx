@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../providers/AuthProvider';
-import { fetchInvites, respondToInvite } from '../services/inviteService';
+import { fetchAllInvites, respondToInvite } from '../services/inviteService';
 import { InviteOut } from '../types/invite';
 
 export default function Invites() {
@@ -20,7 +20,7 @@ export default function Invites() {
     // Fetch the user's invites
     const fetchData = async () => {
         try {
-            const data = await fetchInvites();
+            const data = await fetchAllInvites();
             setInvites(data);
             setLoading(false);
         } catch (error) {
