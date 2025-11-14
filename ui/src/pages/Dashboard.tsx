@@ -42,9 +42,9 @@ export default function Dashboard() {
     }, []);
 
     return (
-        <div className="flex h-screen bg-gray-50">
-            {/* Left: Profile Card */}
-            <div className="w-1/4 bg-white shadow-md flex flex-col items-center py-10 px-6">
+        <div className="flex bg-gray-50 min-h-screen z-10">
+            {/* Left: Profile Card (fixed) */}
+            <div className="w-1/4 h-screen fixed top-16 left-0 bg-white shadow-md flex flex-col items-center py-10 px-6">
                 <div className="w-24 h-24 mb-4 rounded-full bg-gray-200 flex items-center justify-center text-4xl font-bold text-gray-400">
                     {/* Placeholder for profile pic */}
                 </div>
@@ -60,8 +60,11 @@ export default function Dashboard() {
                 </button>
             </div>
 
-            {/* Right: Main Content */}
-            <div className="w-3/4 flex flex-col items-center mt-8">
+            {/* Right: Main Content (scrollable) */}
+            <div
+                className="ml-[25vw] w-[75vw] pt-20 pb-8 flex flex-col items-center overflow-y-auto"
+                style={{ maxHeight: 'calc(100vh - 2rem)' }}
+            >
                 <div className="flex flex-col w-4/5 gap-4">
                     {/* Upcoming Events */}
                     <section className="w-full mb-4">

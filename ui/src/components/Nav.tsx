@@ -9,7 +9,7 @@ function Nav() {
     const location = useLocation();
 
     return (
-        <nav className="flex gap-4 p-4 border-b border-gray-200 items-center">
+        <nav className="flex gap-4 fixed w-full p-4 border-b border-gray-200 items-center z-50 bg-white">
             <div className="flex gap-4">
                 <Link to="/">
                     <button disabled={location.pathname === '/'}>Home</button>

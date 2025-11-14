@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Nav from './components/Nav';
 
 import './index.css';
@@ -10,10 +10,14 @@ if (!API_HOST) {
 }
 
 export default function App() {
+    const location = useLocation();
+    const isHomePage = location.pathname === '/';
     return (
         <>
             <Nav />
-            <Outlet />
+            <div className={isHomePage ? '' : 'pt-16'}>
+                <Outlet />
+            </div>
         </>
     );
 }

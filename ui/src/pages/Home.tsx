@@ -8,7 +8,7 @@ export default function Home() {
         return <Navigate to="/dashboard" />;
     }
     return (
-        <div className="flex flex-1 items-center justify-center">
+        <div className="flex items-center justify-center min-h-screen">
             <h1 className="text-5xl font-bold text-center">
                 Welcome to Plannr!
             </h1>
