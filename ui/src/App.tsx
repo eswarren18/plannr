@@ -15,7 +15,7 @@ export default function App() {
     return (
         <>
             <Nav />
-            <div className={isHomePage ? '' : 'pt-16'}>
+            <div className={isHomePage ? 'pt-16' : 'pt-16'}>
                 <Outlet />
             </div>
         </>

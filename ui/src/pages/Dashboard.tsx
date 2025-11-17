@@ -43,8 +43,8 @@ export default function Dashboard() {
 
     return (
         <div className="flex bg-gray-50 min-h-screen z-10">
-            {/* Left: Profile Card (fixed) */}
-            <div className="w-1/4 h-screen fixed top-16 left-0 bg-white shadow-md flex flex-col items-center py-10 px-6">
+            {/* Left: Profile Card */}
+            <div className="w-1/4 h-full fixed left-0 bg-white shadow-md flex flex-col items-center py-10 px-6">
                 <div className="w-24 h-24 mb-4 rounded-full bg-gray-200 flex items-center justify-center text-4xl font-bold text-gray-400">
                     {/* Placeholder for profile pic */}
                 </div>
@@ -59,11 +59,13 @@ export default function Dashboard() {
                     Edit Profile
                 </button>
             </div>
-
-            {/* Right: Main Content (scrollable) */}
+            {/* Right: Main Content */}
             <div
-                className="ml-[25vw] w-[75vw] pt-20 pb-8 flex flex-col items-center overflow-y-auto"
-                style={{ maxHeight: 'calc(100vh - 2rem)' }}
+                className="fixed right-0 w-3/4 pt-20 pb-8 flex flex-col items-center overflow-y-auto"
+                style={{
+                    height: 'calc(100vh - 4rem)',
+                    maxHeight: 'calc(100vh - 4rem)',
+                }}
             >
                 <div className="flex flex-col w-4/5 gap-4">
                     {/* Upcoming Events */}
