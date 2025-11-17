@@ -80,7 +80,7 @@ export default function SignIn() {
                     value={form.email}
                 />
             </div>
-            <div className="flex items-center border-2 py-2 px-3 rounded-2xl">
+            <div className="flex items-center border-2 py-2 px-3 mb-3 rounded-2xl">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -109,12 +109,21 @@ export default function SignIn() {
                 />
             </div>
             {error && <div className="text-red-600 text-sm mb-2">{error}</div>}
-            <button
-                type="submit"
-                className="block w-full bg-cyan-600 mt-4 py-2 rounded-2xl text-white font-semibold mb-2 transition-colors duration-200 focus:outline-none hover:bg-cyan-400 hover:ring-2 hover:ring-cyan-300 active:bg-cyan-200 active:ring-4 active:ring-cyan-100"
-            >
-                Log In
-            </button>
+            <div className="flex gap-4">
+                <button
+                    type="button"
+                    className="basis-1/2 bg-gray-200 px-3 py-1 rounded-xl text-gray-800 font-semibold transition-colors duration-200 focus:outline-none hover:bg-gray-300"
+                    onClick={() => navigate('/')}
+                >
+                    Cancel
+                </button>
+                <button
+                    type="submit"
+                    className="basis-1/2 bg-cyan-600 text-white px-3 py-1 rounded-xl font-semibold hover:bg-cyan-400"
+                >
+                    Log In
+                </button>
+            </div>
         </form>
     );
 }
