@@ -10,7 +10,7 @@ from src.main.utils.authentication import get_current_user_from_token
 router = APIRouter(tags=["Events"], prefix="/api/events")
 
 
-@router.post("/", response_model=EventFullOut)
+@router.post("/", response_model=EventSummaryOut)
 def create_event(
     event: EventCreate,
     db: Session = Depends(get_db),
@@ -32,7 +32,15 @@ def create_event(
 
     # Commit event to DB. Return event details.
     db.commit()
-    return new_event
+
+    # Construct and return the event summary
+    event_summary = {
+        "id": new_event.id,
+        "title": new_event.title,
+        "host_name": f"{user.first_name or ''} {user.last_name or ''}".strip()
+        or user.email,
+    }
+    return event_summary
 
 
 @router.get("/hosting", response_model=List[EventSummaryOut])

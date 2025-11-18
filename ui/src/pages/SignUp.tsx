@@ -20,6 +20,7 @@ export default function SignUp() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         // Validate submission data
         if (!form.email.match(/^[^@]+@[^@]+\.[^@]+$/)) {
             setError('Please enter a valid email address');
@@ -37,15 +38,10 @@ export default function SignUp() {
             setError('Please enter your password');
             return;
         }
-        // TODO: require users to use strong passwords
-        /*
-        // Uncomment for strong password validation in production
-        if (!form.password.match(/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/)) {
-            setError('Password must be at least 8 characters, include a number, a letter, and a special character.');
-            return;
-        }
-        */
 
+        // TODO: require users to use strong passwords
+
+        // Call authService signup
         const result = await signup({
             email: form.email,
             password: form.password,

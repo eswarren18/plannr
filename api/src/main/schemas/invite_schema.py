@@ -1,25 +1,20 @@
 from pydantic import BaseModel, EmailStr
 
+from .event_schema import EventSummaryOut
+
 
 class InviteBase(BaseModel):
     email: EmailStr
-    role: str
+    role: str = "participant"
 
 
 class InviteCreate(InviteBase):
     pass
 
 
-class EventSummary(BaseModel):
-    id: int
-    title: str
-    description: str | None = None
-    host_name: str | None = None
-
-
 class InviteOut(InviteBase):
     id: int
-    event: EventSummary
+    event: EventSummaryOut
 
 
 class InviteStatusUpdate(BaseModel):

@@ -71,7 +71,7 @@ def create_invite(
     link = "http://localhost:5173"
     send_invite_email(invite.email, event.title, link)
 
-    return new_invite
+    return serialize_invite(new_invite, db)
 
 
 @router.put(
