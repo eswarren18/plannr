@@ -21,6 +21,7 @@ export default function Invites() {
     const fetchData = async () => {
         try {
             const data = await fetchAllInvites();
+            console.log('Fetched invites:', data);
             setInvites(data);
             setLoading(false);
         } catch (error) {
@@ -29,6 +30,7 @@ export default function Invites() {
         }
     };
 
+    // Handle invite response (accept/decline)
     const handleResponse = async (
         inviteId: number,
         response: 'accepted' | 'declined'

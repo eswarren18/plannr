@@ -12,15 +12,12 @@ class EventCreate(EventBase):
     pass
 
 
-class EventSummaryOut(BaseModel):
+class EventSummaryOut(EventBase):
     id: int
-    title: str
     host_name: str
 
 
-class EventFullOut(EventBase):
-    id: int
-    host_name: str
+class EventFullOut(EventSummaryOut):
     participants: List[str]
 
 

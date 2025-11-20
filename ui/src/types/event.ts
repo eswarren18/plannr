@@ -5,15 +5,12 @@ export interface EventBase {
 
 export interface EventCreate extends EventBase {}
 
-export interface EventSummaryOut {
+export interface EventSummaryOut extends EventBase {
     id: number;
-    title: string;
     hostName: string;
 }
 
-export interface EventFullOut extends EventBase {
-    id: number;
-    hostName: string;
+export interface EventFullOut extends EventSummaryOut {
     participants: string[];
 }
 
