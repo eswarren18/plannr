@@ -9,7 +9,7 @@ export default function Home() {
     }
     return (
         <div className="flex flex-col fixed inset-0 items-center justify-center overflow-y-auto">
-            <h1 className="text-5xl font-bold text-center">
+            <h1 className="text-5xl font-bold text-center cursor-pointer">
                 Welcome to Plannr!
             </h1>
         </div>

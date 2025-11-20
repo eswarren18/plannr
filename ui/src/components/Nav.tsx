@@ -12,19 +12,30 @@ function Nav() {
         <nav className="flex gap-4 fixed w-full p-4 border-b border-gray-200 items-center z-50 bg-white">
             <div className="flex gap-4">
                 <Link to="/">
-                    <button disabled={location.pathname === '/'}>Home</button>
+                    <button
+                        className="cursor-pointer"
+                        disabled={location.pathname === '/'}
+                    >
+                        Home
+                    </button>
                 </Link>
             </div>
             <div className="ml-auto flex gap-4">
                 {!user ? (
                     <>
                         <Link to="/signup">
-                            <button disabled={location.pathname === '/signup'}>
+                            <button
+                                className="cursor-pointer basis-1/2 bg-gray-200 px-3 py-1 rounded-xl text-gray-800 font-semibold transition-colors duration-200 focus:outline-none hover:bg-gray-300"
+                                disabled={location.pathname === '/signup'}
+                            >
                                 Sign Up
                             </button>
                         </Link>
                         <Link to="/signin">
-                            <button disabled={location.pathname === '/signin'}>
+                            <button
+                                className="cursor-pointer basis-1/2 bg-cyan-600 text-white px-3 py-1 rounded-xl font-semibold hover:bg-cyan-400"
+                                disabled={location.pathname === '/signin'}
+                            >
                                 Sign In
                             </button>
                         </Link>

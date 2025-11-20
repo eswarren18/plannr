@@ -145,14 +145,14 @@ export default function EventForm() {
             <div className="flex gap-4 mt-4">
                 <button
                     type="button"
-                    className="flex-1 bg-gray-200 py-2 rounded-2xl text-gray-800 font-semibold transition-colors duration-200 focus:outline-none hover:bg-gray-300"
+                    className="flex-1 bg-gray-200 py-2 rounded-2xl text-gray-800 font-semibold transition-colors duration-200 focus:outline-none hover:bg-gray-300 cursor-pointer"
                     onClick={() => navigate('/hosting-events')}
                 >
                     Cancel
                 </button>
                 <button
                     type="submit"
-                    className="flex-1 bg-cyan-600 py-2 rounded-2xl text-white font-semibold transition-colors duration-200 focus:outline-none hover:bg-cyan-400 hover:ring-2 hover:ring-cyan-300 active:bg-cyan-200 active:ring-4 active:ring-cyan-100"
+                    className="flex-1 bg-cyan-600 py-2 rounded-2xl text-white font-semibold transition-colors duration-200 focus:outline-none hover:bg-cyan-400 hover:ring-2 hover:ring-cyan-300 active:bg-cyan-200 active:ring-4 active:ring-cyan-100 cursor-pointer"
                     disabled={loading}
                 >
                     {isEdit ? 'Update Event' : 'Create Event'}

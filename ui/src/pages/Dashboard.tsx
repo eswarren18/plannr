@@ -53,7 +53,7 @@ export default function Dashboard() {
                 </div>
                 <div className="text-gray-500 mb-4">{auth.user.email}</div>
                 <button
-                    className="bg-cyan-600 text-white px-3 py-1 rounded-xl font-medium hover:bg-cyan-400 transition"
+                    className="cursor-pointer bg-cyan-600 text-white px-3 py-1 rounded-xl font-medium hover:bg-cyan-400 transition"
                     onClick={() => {}}
                 >
                     Edit Profile
@@ -75,7 +75,7 @@ export default function Dashboard() {
                                 Upcoming Events
                             </h2>
                             <button
-                                className="bg-cyan-600 text-white px-3 py-1 rounded-xl font-medium hover:bg-cyan-400 transition"
+                                className="cursor-pointer bg-cyan-600 text-white px-3 py-1 rounded-xl font-medium hover:bg-cyan-400 transition"
                                 onClick={() =>
                                     navigate('/participating-events')
                                 }
@@ -91,20 +91,24 @@ export default function Dashboard() {
                             <table className="w-full bg-white rounded-lg shadow-sm">
                                 <thead>
                                     <tr className="bg-gray-100 text-left">
-                                        <th className="py-2 px-4">Title</th>
-                                        <th className="py-2 px-4">Host</th>
+                                        <th className="py-2 px-4 w-2/3">
+                                            Title
+                                        </th>
+                                        <th className="py-2 px-4 w-1/3">
+                                            Host
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {participatingEvents.map((event, idx) => (
                                         <tr
                                             key={event.id || idx}
-                                            className="border-b last:border-b-0"
+                                            className="border-b last:border-b-0 border-gray-300"
                                         >
-                                            <td className="py-2 px-4">
+                                            <td className="py-2 px-4 w-2/3">
                                                 {event.title}
                                             </td>
-                                            <td className="py-2 px-4">
+                                            <td className="py-2 px-4 w-1/3 border-l border-gray-300">
                                                 {event.hostName}
                                             </td>
                                         </tr>
@@ -118,7 +122,7 @@ export default function Dashboard() {
                         <div className="flex items-center justify-between mb-2">
                             <h2 className="text-xl font-bold">My Events</h2>
                             <button
-                                className="bg-cyan-600 text-white px-3 py-1 rounded-xl font-medium hover:bg-cyan-400 transition"
+                                className="cursor-pointer bg-cyan-600 text-white px-3 py-1 rounded-xl font-medium hover:bg-cyan-400 transition"
                                 onClick={() => navigate('/hosting-events')}
                             >
                                 See All Events
@@ -132,20 +136,24 @@ export default function Dashboard() {
                             <table className="w-full bg-white rounded-lg shadow-sm">
                                 <thead>
                                     <tr className="bg-gray-100 text-left">
-                                        <th className="py-2 px-4">Title</th>
-                                        <th className="py-2 px-4">Host</th>
+                                        <th className="py-2 px-4 w-2/3">
+                                            Title
+                                        </th>
+                                        <th className="py-2 px-4 w-1/3">
+                                            Host
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {hostingEvents.map((event, idx) => (
                                         <tr
                                             key={event.id || idx}
-                                            className="border-b last:border-b-0"
+                                            className="border-b last:border-b-0 border-gray-300"
                                         >
-                                            <td className="py-2 px-4">
+                                            <td className="py-2 px-4 w-2/3">
                                                 {event.title}
                                             </td>
-                                            <td className="py-2 px-4">
+                                            <td className="py-2 px-4 w-1/3 border-l border-gray-300">
                                                 {event.hostName}
                                             </td>
                                         </tr>
@@ -159,7 +167,7 @@ export default function Dashboard() {
                         <div className="flex items-center justify-between mb-2">
                             <h2 className="text-xl font-bold">My Invites</h2>
                             <button
-                                className="bg-cyan-600 text-white px-3 py-1 rounded-xl font-medium hover:bg-cyan-400 transition"
+                                className="cursor-pointer bg-cyan-600 text-white px-3 py-1 rounded-xl font-medium hover:bg-cyan-400 transition"
                                 onClick={() => navigate('/invites')}
                             >
                                 See All Invites
@@ -173,20 +181,24 @@ export default function Dashboard() {
                             <table className="w-full bg-white rounded-lg shadow-sm">
                                 <thead>
                                     <tr className="bg-gray-100 text-left">
-                                        <th className="py-2 px-4">Title</th>
-                                        <th className="py-2 px-4">Host</th>
+                                        <th className="py-2 px-4 w-2/3">
+                                            Title
+                                        </th>
+                                        <th className="py-2 px-4 w-1/3">
+                                            Host
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {invites.map((invite, idx) => (
                                         <tr
                                             key={invite.id || idx}
-                                            className="border-b last:border-b-0"
+                                            className="border-b last:border-b-0 border-gray-300"
                                         >
-                                            <td className="py-2 px-4">
+                                            <td className="py-2 px-4 w-2/3">
                                                 {invite.event.title}
                                             </td>
-                                            <td className="py-2 px-4">
+                                            <td className="py-2 px-4 w-1/3 border-l border-gray-300">
                                                 {invite.event.hostName}
                                             </td>
                                         </tr>
