@@ -15,6 +15,7 @@ class InviteCreate(InviteBase):
 class InviteOut(InviteBase):
     id: int
     event: EventSummaryOut
+    token: str
 
 
 class InviteStatusUpdate(BaseModel):

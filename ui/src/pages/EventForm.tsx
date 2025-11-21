@@ -87,7 +87,7 @@ export default function EventForm() {
             <p className="text-sm font-normal text-gray-600 mb-4">
                 Event Details
             </p>
-            <div className="flex items-center border-2 py-2 px-3 rounded-2xl mb-3">
+            <div className="flex items-center border-2 py-2 px-3 rounded mb-3">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5 text-gray-400"
@@ -114,7 +114,7 @@ export default function EventForm() {
                     disabled={loading}
                 />
             </div>
-            <div className="flex items-center border-2 py-2 px-3 rounded-2xl">
+            <div className="flex items-center border-2 py-2 px-3 rounded">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5 text-gray-400"
@@ -145,14 +145,14 @@ export default function EventForm() {
             <div className="flex gap-4 mt-4">
                 <button
                     type="button"
-                    className="flex-1 bg-gray-200 py-2 rounded-2xl text-gray-800 font-semibold transition-colors duration-200 focus:outline-none hover:bg-gray-300 cursor-pointer"
+                    className="cursor-pointer basis-1/2 bg-gray-200 px-3 py-1 rounded text-gray-800 font-semibold transition-colors duration-200 focus:outline-none hover:bg-gray-300"
                     onClick={() => navigate('/hosting-events')}
                 >
                     Cancel
                 </button>
                 <button
                     type="submit"
-                    className="flex-1 bg-cyan-600 py-2 rounded-2xl text-white font-semibold transition-colors duration-200 focus:outline-none hover:bg-cyan-400 hover:ring-2 hover:ring-cyan-300 active:bg-cyan-200 active:ring-4 active:ring-cyan-100 cursor-pointer"
+                    className="cursor-pointer basis-1/2 bg-cyan-600 text-white px-3 py-1 rounded font-semibold hover:bg-cyan-400"
                     disabled={loading}
                 >
                     {isEdit ? 'Update Event' : 'Create Event'}

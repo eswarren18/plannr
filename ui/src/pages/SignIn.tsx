@@ -52,7 +52,7 @@ export default function SignIn() {
                 Welcome Back!
             </h1>
             <p className="text-sm font-normal text-gray-600 mb-4">Sign In</p>
-            <div className="flex items-center border-2 py-2 px-3 rounded-2xl mb-3">
+            <div className="flex items-center border-2 py-2 px-3 rounded mb-3">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -80,7 +80,7 @@ export default function SignIn() {
                     value={form.email}
                 />
             </div>
-            <div className="flex items-center border-2 py-2 px-3 mb-3 rounded-2xl">
+            <div className="flex items-center border-2 py-2 px-3 mb-3 rounded">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -112,14 +112,14 @@ export default function SignIn() {
             <div className="flex gap-4">
                 <button
                     type="button"
-                    className="basis-1/2 bg-gray-200 px-3 py-1 rounded-xl text-gray-800 font-semibold transition-colors duration-200 focus:outline-none hover:bg-gray-300"
+                    className="basis-1/2 bg-gray-200 px-3 py-1 rounded text-gray-800 font-semibold transition-colors duration-200 focus:outline-none hover:bg-gray-300"
                     onClick={() => navigate('/')}
                 >
                     Cancel
                 </button>
                 <button
                     type="submit"
-                    className="basis-1/2 bg-cyan-600 text-white px-3 py-1 rounded-xl font-semibold hover:bg-cyan-400"
+                    className="basis-1/2 bg-cyan-600 text-white px-3 py-1 rounded font-semibold hover:bg-cyan-400"
                 >
                     Log In
                 </button>

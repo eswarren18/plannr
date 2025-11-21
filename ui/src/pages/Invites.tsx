@@ -1,8 +1,12 @@
 import { useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 
+import { ProfileCard } from '../components/ProfileCard';
 import { AuthContext } from '../providers/AuthProvider';
-import { fetchAllInvites, respondToInvite } from '../services/inviteService';
+import {
+    fetchPendingInvites,
+    respondToInvite,
+} from '../services/inviteService';
 import { InviteOut } from '../types/invite';
 
 export default function Invites() {
@@ -20,8 +24,8 @@ export default function Invites() {
     // Fetch the user's invites
     const fetchData = async () => {
         try {
-            const data = await fetchAllInvites();
-            console.log('Fetched invites:', data);
+            const data = await fetchPendingInvites();
+            console.log('Fetched invites (Invites.tsx):', data);
             setInvites(data);
             setLoading(false);
         } catch (error) {
@@ -32,13 +36,11 @@ export default function Invites() {
 
     // Handle invite response (accept/decline)
     const handleResponse = async (
-        inviteId: number,
+        token: string,
         response: 'accepted' | 'declined'
     ) => {
-        const invite = invites.find((i) => i.id === inviteId);
-        if (!invite) return;
         try {
-            await respondToInvite(invite.token, response);
+            await respondToInvite(token, response);
             await fetchData();
         } catch (error) {
             alert('Failed to respond to invite.');
@@ -50,73 +52,87 @@ export default function Invites() {
     }, []);
 
     return (
-        <div className="w-2/3 mx-auto mt-8">
-            <button
-                className="mb-4 bg-gray-200 px-3 py-1 rounded"
-                onClick={() => navigate('/dashboard')}
+        <div className="flex bg-gray-50 min-h-screen z-10">
+            <ProfileCard />
+            <div
+                className="fixed right-0 w-3/4 pt-20 pb-8 flex flex-col items-center overflow-y-auto"
+                style={{
+                    height: 'calc(100vh - 4rem)',
+                    maxHeight: 'calc(100vh - 4rem)',
+                }}
             >
-                Back to Dashboard
-            </button>
-            <h2 className="text-xl font-bold mb-2">Invitations</h2>
-            {loading ? (
-                <div>Loading...</div>
-            ) : invites.length === 0 ? (
-                <div>No invites found.</div>
-            ) : (
-                <table className="w-full border">
-                    <thead>
-                        <tr>
-                            <th className="border px-2 py-1">Title</th>
-                            <th className="border px-2 py-1">Description</th>
-                            <th className="border px-2 py-1">Invited By</th>
-                            <th className="border px-2 py-1">Your Role</th>
-                            <th className="border px-2 py-1">Response</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {invites.map((invite: InviteOut) => (
-                            <tr key={invite.id}>
-                                <td className="border px-2 py-1">
-                                    {invite.event.title}
-                                </td>
-                                <td className="border px-2 py-1">
-                                    {invite.event.description}
-                                </td>
-                                <td className="border px-2 py-1">
-                                    {invite.event.hostName}
-                                </td>
-                                <td className="border px-2 py-1">
-                                    {invite.role}
-                                </td>
-                                <td className="border px-2 py-1">
-                                    <button
-                                        className="bg-green-200 px-2 py-1 rounded mr-2"
-                                        onClick={() =>
-                                            handleResponse(
-                                                invite.id,
-                                                'accepted'
-                                            )
-                                        }
+                <div className="w-4/5 mx-auto">
+                    <button
+                        className="cursor-pointer bg-gray-200 px-3 py-1 rounded text-gray-800 font-semibold transition-colors duration-200 focus:outline-none hover:bg-gray-300"
+                        onClick={() => navigate('/dashboard')}
+                    >
+                        Back to Dashboard
+                    </button>
+                    <h2 className="text-xl font-bold mt-4 mb-2">Invitations</h2>
+                    {loading ? (
+                        <div>Loading...</div>
+                    ) : invites.length === 0 ? (
+                        <div>No invites found.</div>
+                    ) : (
+                        <table className="w-full bg-white rounded-lg shadow-sm">
+                            <thead>
+                                <tr className="bg-gray-100 text-left">
+                                    <th className="py-2 px-4">Title</th>
+                                    <th className="py-2 px-4">Description</th>
+                                    <th className="py-2 px-4">Invited By</th>
+                                    <th className="py-2 px-4">Your Role</th>
+                                    <th className="py-2 px-4">Response</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {invites.map((invite: InviteOut, idx) => (
+                                    <tr
+                                        key={invite.id || idx}
+                                        className="border-b last:border-b-0 border-gray-200"
                                     >
-                                        Accept
-                                    </button>
-                                    <button
-                                        className="bg-red-200 px-2 py-1 rounded"
-                                        onClick={() =>
-                                            handleResponse(
-                                                invite.id,
-                                                'declined'
-                                            )
-                                        }
-                                    >
-                                        Decline
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            )}
+                                        <td className="py-2 px-4">
+                                            {invite.event.title}
+                                        </td>
+                                        <td className="py-2 px-4 border-l border-gray-200">
+                                            {invite.event.description}
+                                        </td>
+                                        <td className="py-2 px-4 border-l border-gray-200">
+                                            {invite.event.hostName}
+                                        </td>
+                                        <td className="py-2 px-4 border-l border-gray-200">
+                                            {invite.role}
+                                        </td>
+                                        <td className="flex gap-2 py-2 px-4 border-l border-gray-200">
+                                            <button
+                                                className="cursor-pointer bg-green-400 text-white px-3 py-1 rounded font-medium hover:bg-green-500 transition"
+                                                onClick={() =>
+                                                    handleResponse(
+                                                        invite.token,
+                                                        'accepted'
+                                                    )
+                                                }
+                                            >
+                                                Accept
+                                            </button>
+                                            <button
+                                                className="cursor-pointer bg-red-400 text-white px-3 py-1 rounded font-medium hover:bg-red-500 transition"
+                                                onClick={() =>
+                                                    handleResponse(
+                                                        invite.token,
+                                                        'declined'
+                                                    )
+                                                }
+                                            >
+                                                Decline
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }

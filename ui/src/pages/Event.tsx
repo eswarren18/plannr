@@ -40,7 +40,7 @@ export default function Event() {
             >
                 Back to Dashboard
             </button>
-            <h1 className="text-2xl font-bold mb-2">{event.title}</h1>
+            <h1 className="text-xl font-bold mb-2">{event.title}</h1>
             <div className="mb-4">{event.description}</div>
             <div className="mb-4 inline-flex items-center gap-2 border border-black rounded-full px-4 py-2 w-auto">
                 <span>

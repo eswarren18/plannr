@@ -5,21 +5,6 @@ if (!baseUrl) {
     throw new Error('VITE_API_HOST was not defined');
 }
 
-function transformInvite(invite: any): InviteOut {
-    return {
-        email: invite.email,
-        role: invite.role,
-        id: invite.id,
-        token: invite.token,
-        event: {
-            id: invite.event?.id ?? 0,
-            title: invite.event?.title ?? '',
-            description: invite.event?.description ?? '',
-            hostName: invite.event?.host_name ?? '',
-        },
-    };
-}
-
 async function fetchInvitesFromEndpoint(
     endpoint: string
 ): Promise<InviteOut[]> {
@@ -28,8 +13,26 @@ async function fetchInvitesFromEndpoint(
             credentials: 'include',
         });
         if (!response.ok) throw new Error('Failed to fetch invites');
+
+        // Transform Response object to JSON
         const data = await response.json();
-        return data.map(transformInvite);
+
+        // Transform from snake_case to camelCase
+        const invites: InviteOut[] = data.map((invite: any) => ({
+            email: invite.email,
+            role: invite.role,
+            id: invite.id,
+            token: invite.token ?? '',
+            event: {
+                id: invite.event?.id ?? 0,
+                title: invite.event?.title ?? '',
+                description: invite.event?.description ?? '',
+                hostName: invite.event?.host_name ?? '',
+            },
+        }));
+
+        console.log('Fetched invites (inviteService):', invites);
+        return invites;
     } catch (error) {
         console.error(
             `Error in fetchInvitesFromEndpoint (${endpoint}):`,

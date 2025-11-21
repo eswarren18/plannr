@@ -25,7 +25,7 @@ function Nav() {
                     <>
                         <Link to="/signup">
                             <button
-                                className="cursor-pointer basis-1/2 bg-gray-200 px-3 py-1 rounded-xl text-gray-800 font-semibold transition-colors duration-200 focus:outline-none hover:bg-gray-300"
+                                className="cursor-pointer basis-1/2 bg-gray-200 px-3 py-1 rounded text-gray-800 font-semibold transition-colors duration-200 focus:outline-none hover:bg-gray-300"
                                 disabled={location.pathname === '/signup'}
                             >
                                 Sign Up
@@ -33,7 +33,7 @@ function Nav() {
                         </Link>
                         <Link to="/signin">
                             <button
-                                className="cursor-pointer basis-1/2 bg-cyan-600 text-white px-3 py-1 rounded-xl font-semibold hover:bg-cyan-400"
+                                className="cursor-pointer basis-1/2 bg-cyan-600 text-white px-3 py-1 rounded font-semibold hover:bg-cyan-400"
                                 disabled={location.pathname === '/signin'}
                             >
                                 Sign In
@@ -46,7 +46,6 @@ function Nav() {
                             className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center mr-2 hover:bg-gray-200"
                             title="Notifications"
                         >
-                            {/* SVG placeholder */}
                             <span className="text-xl text-gray-400">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +63,12 @@ function Nav() {
                                 </svg>
                             </span>
                         </button>
-                        <button onClick={signout}>Sign Out</button>
+                        <button
+                            className="cursor-pointer bg-cyan-600 text-white px-3 py-1 rounded font-semibold hover:bg-cyan-400"
+                            onClick={signout}
+                        >
+                            Sign Out
+                        </button>
                     </>
                 )}
             </div>
