@@ -63,7 +63,7 @@ export default function HostingEvents() {
                             Create Event
                         </button>
                     </div>
-                    <h2 className="text-xl font-bold mt-4 mb-2">
+                    <h2 className="text-2xl font-bold mt-4 mb-2">
                         Events You're Hosting
                     </h2>
                     {loading ? (

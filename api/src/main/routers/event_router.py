@@ -38,7 +38,7 @@ def create_event(
     db.commit()
 
     # Use event_serialization utility to return an EventSummaryOut instance
-    return serialize_eventsummaryout(new_event, user)
+    return serialize_eventsummaryout(new_event, db)
 
 
 @router.get("/hosting", response_model=List[EventSummaryOut])

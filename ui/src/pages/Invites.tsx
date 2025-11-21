@@ -71,7 +71,9 @@ export default function Invites() {
                 }}
             >
                 <div className="w-4/5 mx-auto">
-                    <h2 className="text-xl font-bold mt-4 mb-2">Invitations</h2>
+                    <h2 className="text-2xl font-bold mt-4 mb-2">
+                        Invitations
+                    </h2>
                     {loading ? (
                         <div>Loading...</div>
                     ) : invites.length === 0 ? (
