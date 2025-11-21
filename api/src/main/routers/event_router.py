@@ -16,13 +16,15 @@ router = APIRouter(tags=["Events"], prefix="/api/events")
 
 @router.post("/", response_model=EventSummaryOut)
 def create_event(
-    event: EventCreate,
+    event_details: EventCreate,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
-    # Create the new event. Commit event to DB.
+    # Create the new event from the user event details
     new_event = Event(
-        title=event.title, description=event.description, host_id=user.id
+        title=event_details.title,
+        description=event_details.description,
+        host_id=user.id,
     )
     db.add(new_event)
     db.commit()
@@ -33,18 +35,10 @@ def create_event(
         event_id=new_event.id, user_id=user.id, role="host"
     )
     db.add(participant)
-
-    # Commit event to DB. Return event details.
     db.commit()
 
-    # Construct and return the event summary
-    event_summary = {
-        "id": new_event.id,
-        "title": new_event.title,
-        "host_name": f"{user.first_name or ''} {user.last_name or ''}".strip()
-        or user.email,
-    }
-    return event_summary
+    # Use event_serialization utility to return an EventSummaryOut instance
+    return serialize_eventsummaryout(new_event, user)
 
 
 @router.get("/hosting", response_model=List[EventSummaryOut])
@@ -56,10 +50,7 @@ def get_hosting_events(
     events = db.query(Event).filter(Event.host_id == user.id).all()
 
     # Use event_serialization utility to return a list of EventSummaryOut instances
-    result = []
-    for event in events:
-        result.append(serialize_eventsummaryout(event, user))
-    return result
+    return [serialize_eventsummaryout(event, user) for event in events]
 
 
 @router.get("/participating", response_model=List[EventSummaryOut])
@@ -76,10 +67,7 @@ def get_participating_events(
     events = db.query(Event).filter(Event.id.in_(event_ids)).all()
 
     # Use event_serialization utility to return a list of EventSummaryOut instances
-    result = []
-    for event in events:
-        result.append(serialize_eventsummaryout(event, user))
-    return result
+    return [serialize_eventsummaryout(event, user) for event in events]
 
 
 @router.get("/{event_id}", response_model=EventFullOut)
