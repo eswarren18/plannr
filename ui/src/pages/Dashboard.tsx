@@ -161,7 +161,7 @@ export default function Dashboard() {
                             </button>
                         </div>
                         {invites.length === 0 ? (
-                            <div className="text-gray-500 py-2">
+                            <div className="text-gray-500 py-2 text-center">
                                 No new invites.
                             </div>
                         ) : (

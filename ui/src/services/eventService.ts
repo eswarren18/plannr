@@ -144,7 +144,8 @@ export async function updateEvent(
         };
         return event;
     } catch (error) {
-        return error instanceof Error ? error : new Error('Unknown error');
+        console.log('Made it here');
+        return new Error('Could not update event details');
     }
 }
 

@@ -190,5 +190,4 @@ def get_pending_invites(
         .filter(Invite.user_id == user.id, Invite.status == "pending")
         .all()
     )
-    print(invites)
     return [serialize_invite(invite, db) for invite in invites]

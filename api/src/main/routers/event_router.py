@@ -6,6 +6,10 @@ from src.main.database import get_db
 from src.main.models import Event, Participant, User
 from src.main.schemas import EventCreate, EventFullOut, EventSummaryOut
 from src.main.utils.authentication import get_current_user_from_token
+from src.main.utils.event_serialization import (
+    serialize_eventfullout,
+    serialize_eventsummaryout,
+)
 
 router = APIRouter(tags=["Events"], prefix="/api/events")
 
@@ -48,18 +52,13 @@ def get_hosting_events(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
+    # Fetch events from the DB
     events = db.query(Event).filter(Event.host_id == user.id).all()
+
+    # Use event_serialization utility to return a list of EventSummaryOut instances
     result = []
     for event in events:
-        host = db.query(User).filter(User.id == event.host_id).first()
-        host_name = (
-            f"{host.first_name or ''} {host.last_name or ''}".strip()
-            if host
-            else "Unknown"
-        )
-        result.append(
-            {"id": event.id, "title": event.title, "host_name": host_name}
-        )
+        result.append(serialize_eventsummaryout(event, user))
     return result
 
 
@@ -68,23 +67,18 @@ def get_participating_events(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
+    # Fetch events from the DB
     event_ids = (
         db.query(Participant.event_id)
         .filter(Participant.user_id == user.id)
         .subquery()
     )
     events = db.query(Event).filter(Event.id.in_(event_ids)).all()
+
+    # Use event_serialization utility to return a list of EventSummaryOut instances
     result = []
     for event in events:
-        host = db.query(User).filter(User.id == event.host_id).first()
-        host_name = (
-            f"{host.first_name or ''} {host.last_name or ''}".strip()
-            if host
-            else "Unknown"
-        )
-        result.append(
-            {"id": event.id, "title": event.title, "host_name": host_name}
-        )
+        result.append(serialize_eventsummaryout(event, user))
     return result
 
 
@@ -94,44 +88,8 @@ def get_event(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
-    event = db.query(Event).filter(Event.id == event_id).first()
-    if not event:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
-        )
-    host = db.query(User).filter(User.id == event.host_id).first()
-    host_name = (
-        f"{host.first_name or ''} {host.last_name or ''}".strip()
-        if host
-        else "Unknown"
-    )
-    participants = (
-        db.query(User)
-        .join(Participant, Participant.user_id == User.id)
-        .filter(Participant.event_id == event.id)
-        .all()
-    )
-    participant_names = [
-        f"{p.first_name or ''} {p.last_name or ''}".strip() or p.email
-        for p in participants
-        if p.id != event.host_id
-    ]
-    return {
-        "id": event.id,
-        "title": event.title,
-        "description": event.description,
-        "host_name": host_name,
-        "participants": participant_names,
-    }
 
-
-@router.put("/{event_id}", response_model=EventFullOut)
-def update_event(
-    event_id: int,
-    event: EventCreate,
-    db: Session = Depends(get_db),
-    user: User = Depends(get_current_user_from_token),
-):
+    # Fetch the event from the DB
     db_event = (
         db.query(Event)
         .filter(Event.id == event_id, Event.host_id == user.id)
@@ -141,11 +99,37 @@ def update_event(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
         )
-    db_event.title = event.title
-    db_event.description = event.description
+
+    # Use event_serialization utility to return an EventFullOut instance
+    return serialize_eventfullout(db_event, db, user)
+
+
+@router.put("/{event_id}", response_model=EventFullOut)
+def update_event(
+    event_id: int,
+    event_data: EventCreate,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user_from_token),
+):
+    # Fetch the event from the DB
+    db_event = (
+        db.query(Event)
+        .filter(Event.id == event_id, Event.host_id == user.id)
+        .first()
+    )
+    if not db_event:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
+        )
+
+    # Update the event details
+    db_event.title = event_data.title
+    db_event.description = event_data.description
     db.commit()
     db.refresh(db_event)
-    return db_event
+
+    # Use event_serialization utility to return an EventFullOut instance
+    return serialize_eventfullout(db_event, db, user)
 
 
 @router.delete("/{event_id}")

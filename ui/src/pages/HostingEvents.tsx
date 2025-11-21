@@ -57,7 +57,7 @@ export default function HostingEvents() {
                 <div className="w-4/5 mx-auto">
                     <div className="flex justify-between">
                         <button
-                            className="cursor-pointer bg-gray-200 px-3 py-1 rounded text-gray-800 font-semibold transition-colors duration-200 focus:outline-none hover:bg-gray-300"
+                            className="cursor-pointer bg-gray-200 px-3 py-1 rounded text-gray-800 font-medium transition-colors duration-200 focus:outline-none hover:bg-gray-300"
                             onClick={() => navigate('/dashboard')}
                         >
                             Back to Dashboard
@@ -77,21 +77,24 @@ export default function HostingEvents() {
                     ) : events.length === 0 ? (
                         <div>No events found.</div>
                     ) : (
-                        <table className="w-full border">
+                        <table className="w-full bg-white rounded-lg shadow-sm">
                             <thead>
-                                <tr>
-                                    <th className="border px-2 py-1">Title</th>
-                                    <th className="border px-2 py-1">Host</th>
+                                <tr className="bg-gray-100 text-left">
+                                    <th className="py-2 px-4 w-2/3">Title</th>
+                                    <th className="py-2 px-4 w-1/3">Host</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {events.map((event: EventSummaryOut) => (
-                                    <tr key={event.id}>
-                                        <td className="border px-2 py-1">
+                                    <tr
+                                        key={event.id}
+                                        className="border-b last:border-b-0 border-gray-200"
+                                    >
+                                        <td className="py-2 px-4 w-2/3">
                                             <div className="flex items-center justify-between w-full">
                                                 <span>
                                                     <button
-                                                        className="text-blue-600 underline hover:text-blue-800"
+                                                        className="hover:text-cyan-400"
                                                         style={{
                                                             background: 'none',
                                                             border: 'none',
@@ -99,10 +102,6 @@ export default function HostingEvents() {
                                                             cursor: 'pointer',
                                                         }}
                                                         onClick={() => {
-                                                            console.log(
-                                                                'Event ID:',
-                                                                event.id
-                                                            );
                                                             navigate(
                                                                 `/events/${event.id}`
                                                             );
@@ -163,7 +162,7 @@ export default function HostingEvents() {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="border px-2 py-1">
+                                        <td className="py-2 px-4 w-1/3 border-l border-gray-200">
                                             {event.hostName}
                                         </td>
                                     </tr>

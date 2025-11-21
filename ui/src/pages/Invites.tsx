@@ -25,7 +25,6 @@ export default function Invites() {
     const fetchData = async () => {
         try {
             const data = await fetchPendingInvites();
-            console.log('Fetched invites (Invites.tsx):', data);
             setInvites(data);
             setLoading(false);
         } catch (error) {
@@ -73,7 +72,7 @@ export default function Invites() {
             >
                 <div className="w-4/5 mx-auto">
                     <button
-                        className="cursor-pointer bg-gray-200 px-3 py-1 rounded text-gray-800 font-semibold transition-colors duration-200 focus:outline-none hover:bg-gray-300"
+                        className="cursor-pointer bg-gray-200 px-3 py-1 rounded text-gray-800 font-medium transition-colors duration-200 focus:outline-none hover:bg-gray-300"
                         onClick={() => navigate('/dashboard')}
                     >
                         Back to Dashboard

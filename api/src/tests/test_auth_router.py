@@ -95,7 +95,6 @@ def test_signin_wrong_email():
     app.dependency_overrides = {}
 
     # Assert
-    print(response.status_code)
     assert response.status_code == 401
     assert response.json()["detail"] == "Incorrect email or password"
 

@@ -31,7 +31,6 @@ async function fetchInvitesFromEndpoint(
             },
         }));
 
-        console.log('Fetched invites (inviteService):', invites);
         return invites;
     } catch (error) {
         console.error(

@@ -28,6 +28,7 @@ export default function EventForm() {
         if (isEdit && eventId) {
             setLoading(true);
             const result = await fetchEventById(Number(eventId));
+            console.log('Fetched event for editing:', result);
             if (result instanceof Error) {
                 setError(result.message);
             } else {
@@ -145,14 +146,14 @@ export default function EventForm() {
             <div className="flex gap-4 mt-4">
                 <button
                     type="button"
-                    className="cursor-pointer basis-1/2 bg-gray-200 px-3 py-1 rounded text-gray-800 font-semibold transition-colors duration-200 focus:outline-none hover:bg-gray-300"
+                    className="cursor-pointer basis-1/2 bg-gray-200 px-3 py-1 rounded text-gray-800 font-medium transition-colors duration-200 focus:outline-none hover:bg-gray-300"
                     onClick={() => navigate('/hosting-events')}
                 >
                     Cancel
                 </button>
                 <button
                     type="submit"
-                    className="cursor-pointer basis-1/2 bg-cyan-600 text-white px-3 py-1 rounded font-semibold hover:bg-cyan-400"
+                    className="cursor-pointer basis-1/2 bg-cyan-600 text-white px-3 py-1 rounded font-medium hover:bg-cyan-400"
                     disabled={loading}
                 >
                     {isEdit ? 'Update Event' : 'Create Event'}
