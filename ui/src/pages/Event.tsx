@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { fetchEventById } from '../services/eventService';
 import { EventFullOut } from '../types/event';
 
 export default function Event() {
     const { eventId } = useParams<{ eventId: string }>();
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from || '/dashboard';
     const [event, setEvent] = useState<EventFullOut | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -35,10 +37,24 @@ export default function Event() {
     return (
         <div className="w-2/3 mx-auto mt-8">
             <button
-                className="mb-4 bg-gray-200 px-3 py-1 rounded cursor-pointer"
-                onClick={() => navigate('/dashboard')}
+                className="flex items-center gap-2 mb-4 bg-gray-200 px-3 py-1 rounded cursor-pointer"
+                onClick={() => navigate(from)}
             >
-                Back to Dashboard
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="size-5"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+                    />
+                </svg>
+                Back
             </button>
             <h1 className="text-xl font-bold mb-2">{event.title}</h1>
             {event.description ? (

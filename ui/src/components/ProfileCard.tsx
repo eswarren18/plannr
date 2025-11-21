@@ -1,8 +1,10 @@
 import { useContext } from 'react';
 import { AuthContext } from '../providers/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 
 export function ProfileCard() {
     const auth = useContext(AuthContext);
+    const navigate = useNavigate();
     if (!auth?.user) return null;
     return (
         <div className="w-1/4 h-full fixed left-0 bg-white shadow-md flex flex-col items-center py-10 px-6">

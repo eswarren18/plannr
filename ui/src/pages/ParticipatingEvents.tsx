@@ -34,6 +34,8 @@ export default function ParticipatingEvents() {
         fetchEvents();
     }, []);
 
+    const [toggle, setToggle] = useState<'upcoming' | 'all'>('upcoming');
+
     return (
         <div className="flex bg-gray-50 min-h-screen z-10">
             <ProfileCard />
@@ -45,15 +47,23 @@ export default function ParticipatingEvents() {
                 }}
             >
                 <div className="w-4/5 mx-auto">
-                    <button
-                        className="cursor-pointer bg-gray-200 px-3 py-1 rounded text-gray-800 font-medium transition-colors duration-200 focus:outline-none hover:bg-gray-300"
-                        onClick={() => navigate('/dashboard')}
-                    >
-                        Back to Dashboard
-                    </button>
-                    <h2 className="text-xl font-bold mt-4 mb-2">
-                        Events You're Participating In
-                    </h2>
+                    <div className="flex items-center justify-between mt-4 mb-2">
+                        <h2 className="text-2xl font-bold">Events</h2>
+                        <div className="flex gap-0 bg-gray-100 rounded-xl p-1">
+                            <button
+                                className={`cursor-pointer px-4 py-1 rounded-l-lg font-medium shadow transition-colors duration-150 ${toggle === 'upcoming' ? 'bg-cyan-200' : 'bg-gray-50'}`}
+                                onClick={() => setToggle('upcoming')}
+                            >
+                                Upcoming
+                            </button>
+                            <button
+                                className={`cursor-pointer px-4 py-1 rounded-r-lg font-medium shadow transition-colors duration-150 ${toggle === 'all' ? 'bg-cyan-200' : 'bg-gray-50'}`}
+                                onClick={() => setToggle('all')}
+                            >
+                                All
+                            </button>
+                        </div>
+                    </div>
                     {loading ? (
                         <div>Loading...</div>
                     ) : events.length === 0 ? (
@@ -83,7 +93,12 @@ export default function ParticipatingEvents() {
                                                 }}
                                                 onClick={() => {
                                                     navigate(
-                                                        `/events/${event.id}`
+                                                        `/events/${event.id}`,
+                                                        {
+                                                            state: {
+                                                                from: '/participating-events',
+                                                            },
+                                                        }
                                                     );
                                                 }}
                                             >

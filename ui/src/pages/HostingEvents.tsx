@@ -55,15 +55,9 @@ export default function HostingEvents() {
                 }}
             >
                 <div className="w-4/5 mx-auto">
-                    <div className="flex justify-between">
+                    <div className="flex justify-end">
                         <button
-                            className="cursor-pointer bg-gray-200 px-3 py-1 rounded text-gray-800 font-medium transition-colors duration-200 focus:outline-none hover:bg-gray-300"
-                            onClick={() => navigate('/dashboard')}
-                        >
-                            Back to Dashboard
-                        </button>
-                        <button
-                            className="cursor-pointer bg-cyan-600 text-white px-3 py-1 rounded font-medium hover:bg-cyan-400 transition"
+                            className="cursor-pointer bg-cyan-600 text-white px-3 py-1 rounded font-medium hover:bg-cyan-400 transition-colors duration-200"
                             onClick={() => navigate('/events/create')}
                         >
                             Create Event
@@ -94,7 +88,7 @@ export default function HostingEvents() {
                                             <div className="flex items-center justify-between w-full">
                                                 <span>
                                                     <button
-                                                        className="hover:text-cyan-400"
+                                                        className="hover:text-cyan-400 transition-colors duration-150"
                                                         style={{
                                                             background: 'none',
                                                             border: 'none',
@@ -103,7 +97,12 @@ export default function HostingEvents() {
                                                         }}
                                                         onClick={() => {
                                                             navigate(
-                                                                `/events/${event.id}`
+                                                                `/events/${event.id}`,
+                                                                {
+                                                                    state: {
+                                                                        from: '/hosting-events',
+                                                                    },
+                                                                }
                                                             );
                                                         }}
                                                     >
