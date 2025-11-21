@@ -41,9 +41,13 @@ export default function Event() {
                 Back to Dashboard
             </button>
             <h1 className="text-xl font-bold mb-2">{event.title}</h1>
-            <div className="mb-4">
-                {event.description || 'No event description'}
-            </div>
+            {event.description ? (
+                <div className="mb-4">{event.description}</div>
+            ) : (
+                <div className="text-gray-500 py-2 text-center mb-4">
+                    No event description
+                </div>
+            )}
             <div className="mb-4 inline-flex items-center gap-2 border border-black rounded-full px-4 py-2 w-auto">
                 <span>
                     <svg

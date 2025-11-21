@@ -50,7 +50,7 @@ def get_hosting_events(
     events = db.query(Event).filter(Event.host_id == user.id).all()
 
     # Use event_serialization utility to return a list of EventSummaryOut instances
-    return [serialize_eventsummaryout(event, user) for event in events]
+    return [serialize_eventsummaryout(event, db) for event in events]
 
 
 @router.get("/participating", response_model=List[EventSummaryOut])
@@ -67,7 +67,7 @@ def get_participating_events(
     events = db.query(Event).filter(Event.id.in_(event_ids)).all()
 
     # Use event_serialization utility to return a list of EventSummaryOut instances
-    return [serialize_eventsummaryout(event, user) for event in events]
+    return [serialize_eventsummaryout(event, db) for event in events]
 
 
 @router.get("/{event_id}", response_model=EventFullOut)
@@ -89,7 +89,7 @@ def get_event(
         )
 
     # Use event_serialization utility to return an EventFullOut instance
-    return serialize_eventfullout(db_event, db, user)
+    return serialize_eventfullout(db_event, db)
 
 
 @router.put("/{event_id}", response_model=EventFullOut)
@@ -117,7 +117,7 @@ def update_event(
     db.refresh(db_event)
 
     # Use event_serialization utility to return an EventFullOut instance
-    return serialize_eventfullout(db_event, db, user)
+    return serialize_eventfullout(db_event, db)
 
 
 @router.delete("/{event_id}")

@@ -1,7 +1,11 @@
 from src.main.models import Participant, User
 
 
-def serialize_eventfullout(event, db, user):
+def serialize_eventfullout(event, db):
+    host = db.query(User).filter(User.id == event.host_id).first()
+    host_name = (
+        f"{host.first_name or ''} {host.last_name or ''}".strip() or host.email
+    )
     # Get participants
     participants = (
         db.query(User)
@@ -19,17 +23,19 @@ def serialize_eventfullout(event, db, user):
         "id": event.id,
         "title": event.title,
         "description": event.description or None,
-        "host_name": f"{user.first_name or ''} {user.last_name or ''}".strip()
-        or user.email,
+        "host_name": host_name,
         "participants": participant_names,
     }
 
 
-def serialize_eventsummaryout(event, user):
+def serialize_eventsummaryout(event, db):
+    host = db.query(User).filter(User.id == event.host_id).first()
+    host_name = (
+        f"{host.first_name or ''} {host.last_name or ''}".strip() or host.email
+    )
     return {
         "id": event.id,
         "title": event.title,
         "description": event.description or None,
-        "host_name": f"{user.first_name or ''} {user.last_name or ''}".strip()
-        or user.email,
+        "host_name": host_name,
     }
