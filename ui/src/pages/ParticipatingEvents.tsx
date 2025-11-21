@@ -73,7 +73,22 @@ export default function ParticipatingEvents() {
                                         className="border-b last:border-b-0 border-gray-200"
                                     >
                                         <td className="py-2 px-4 w-2/3">
-                                            {event.title}
+                                            <button
+                                                className="hover:text-cyan-400"
+                                                style={{
+                                                    background: 'none',
+                                                    border: 'none',
+                                                    padding: 0,
+                                                    cursor: 'pointer',
+                                                }}
+                                                onClick={() => {
+                                                    navigate(
+                                                        `/events/${event.id}`
+                                                    );
+                                                }}
+                                            >
+                                                {event.title}
+                                            </button>
                                         </td>
                                         <td className="py-2 px-4 w-1/3 border-l border-gray-200">
                                             {event.hostName}

@@ -3,10 +3,10 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from src.main.database import get_db
-from src.main.models import Event, Participant, User
+from src.main.models import Event, Invite, Participant, User
 from src.main.schemas import EventCreate, EventFullOut, EventSummaryOut
-from src.main.utils.authentication import get_current_user_from_token
-from src.main.utils.event_serialization import (
+from src.main.utils import (
+    get_current_user_from_token,
     serialize_eventfullout,
     serialize_eventsummaryout,
 )
@@ -76,17 +76,28 @@ def get_event(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
-
-    # Fetch the event from the DB
+    # Fetch the event if the user is the host
     db_event = (
         db.query(Event)
         .filter(Event.id == event_id, Event.host_id == user.id)
         .first()
     )
     if not db_event:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
+        # If not the host, fetch the event if the user is a participant
+        db_event = (
+            db.query(Event)
+            .join(Invite, Invite.event_id == Event.id)
+            .filter(
+                Event.id == event_id,
+                Invite.user_id == user.id,
+                Invite.status == "accepted",
+            )
+            .first()
         )
+        if not db_event:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
+            )
 
     # Use event_serialization utility to return an EventFullOut instance
     return serialize_eventfullout(db_event, db)
