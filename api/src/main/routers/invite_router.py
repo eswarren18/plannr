@@ -11,7 +11,11 @@ from src.main.schemas.invite_schema import (
     InviteOut,
     InviteStatusUpdate,
 )
-from src.main.utils import get_current_user_from_token, send_invite_email
+from src.main.utils import (
+    get_current_user_from_token,
+    send_invite_email,
+    serialize_inviteout,
+)
 
 router = APIRouter(tags=["Invites"], prefix="/api")
 
@@ -71,7 +75,7 @@ def create_invite(
     link = "http://localhost:5173"
     send_invite_email(invite.email, event.title, link)
 
-    return serialize_invite(new_invite, db)
+    return serialize_inviteout(new_invite, db)
 
 
 @router.put(
@@ -112,13 +116,13 @@ def update_invite(
         db.add(event_participant)
         db.commit()
         db.refresh(invite)
-        return serialize_invite(invite, db)
+        return serialize_inviteout(invite, db)
     elif status_update.status == "accepted":
         db.refresh(invite)
-        return serialize_invite(invite, db)
+        return serialize_inviteout(invite, db)
     else:
         db.refresh(invite)
-        return serialize_invite(invite, db)
+        return serialize_inviteout(invite, db)
 
 
 @router.delete("/invites/{invite_id}", status_code=204)
@@ -138,48 +142,17 @@ def delete_invite(
     return
 
 
-# Shared serialization function
-def serialize_invite(invite, db):
-    event = db.query(Event).filter(Event.id == invite.event_id).first()
-    host = (
-        db.query(User).filter(User.id == event.host_id).first()
-        if event
-        else None
-    )
-    event_summary = None
-    if event:
-        host_name = None
-        if host:
-            host_name = (
-                f"{host.first_name or ''} {host.last_name or ''}".strip()
-                or host.email
-            )
-        event_summary = {
-            "id": event.id,
-            "title": event.title,
-            "description": event.description,
-            "host_name": host_name,
-        }
-    return {
-        "id": invite.id,
-        "email": invite.email,
-        "role": invite.role,
-        "event": event_summary,
-        "token": invite.token,
-    }
-
-
-# Endpoint for all invites
 @router.get("/invites", response_model=list[InviteOut])
 def get_all_invites(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
     invites = db.query(Invite).filter(Invite.user_id == user.id).all()
-    return [serialize_invite(invite, db) for invite in invites]
+
+    # Use invite_serialization utility to return a list of InviteOut instances
+    return [serialize_inviteout(invite, db) for invite in invites]
 
 
-# Endpoint for pending invites
 @router.get("/invites/pending", response_model=list[InviteOut])
 def get_pending_invites(
     db: Session = Depends(get_db),
@@ -190,4 +163,6 @@ def get_pending_invites(
         .filter(Invite.user_id == user.id, Invite.status == "pending")
         .all()
     )
-    return [serialize_invite(invite, db) for invite in invites]
+
+    # Use invite_serialization utility to return a list of InviteOut instances
+    return [serialize_inviteout(invite, db) for invite in invites]
