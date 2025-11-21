@@ -53,7 +53,7 @@ export async function fetchPendingInvites(): Promise<InviteOut[]> {
 export async function respondToInvite(
     token: string,
     status: 'accepted' | 'declined'
-): Promise<void> {
+): Promise<InviteOut> {
     try {
         const response = await fetch(`${baseUrl}/api/invites/${token}`, {
             method: 'PUT',
@@ -67,6 +67,23 @@ export async function respondToInvite(
             const errorText = await response.text();
             throw new Error(`Failed to respond to invite: ${errorText}`);
         }
+
+        // Transform Response object to JSON
+        const invite = await response.json();
+
+        // Transform snake_case to camelCase
+        return {
+            email: invite.email,
+            role: invite.role,
+            id: invite.id,
+            token: invite.token ?? '',
+            event: {
+                id: invite.event?.id ?? 0,
+                title: invite.event?.title ?? '',
+                description: invite.event?.description ?? '',
+                hostName: invite.event?.host_name ?? '',
+            },
+        };
     } catch (error) {
         console.error('Error in respondToInvite:', error);
         throw error;

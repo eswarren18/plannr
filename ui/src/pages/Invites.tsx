@@ -40,8 +40,18 @@ export default function Invites() {
         response: 'accepted' | 'declined'
     ) => {
         try {
-            await respondToInvite(token, response);
-            await fetchData();
+            const invite = await respondToInvite(token, response);
+            if (
+                response === 'accepted' &&
+                invite &&
+                invite.event &&
+                invite.event.id
+            ) {
+                navigate(`/events/${invite.event.id}`);
+            }
+            if (response === 'declined') {
+                await fetchData();
+            }
         } catch (error) {
             alert('Failed to respond to invite.');
         }

@@ -75,7 +75,9 @@ def create_invite(
 
 
 @router.put(
-    "/invites/{token}", summary="Respond to an invite (accept or decline)"
+    "/invites/{token}",
+    response_model=InviteOut,
+    summary="Respond to an invite (accept or decline)",
 )
 def update_invite(
     token: str,
@@ -84,29 +86,39 @@ def update_invite(
     ),
     db: Session = Depends(get_db),
 ):
+    # Fetch the invite from the DB
     invite = db.query(Invite).filter(Invite.token == token).first()
     if not invite or invite.status != "pending":
         raise HTTPException(
             status_code=404, detail="Invalid or expired invite."
         )
+
+    # Fetch the user from the DB
     user = db.query(User).filter(User.email == invite.email).first()
+
+    # Validate the new status data, update the invite status
     if status_update.status not in ["accepted", "declined"]:
         raise HTTPException(status_code=400, detail="Invalid status.")
     invite.status = status_update.status
     if user:
         invite.user_id = user.id
     db.commit()
+
+    # Add the user as a participant
     if status_update.status == "accepted" and user:
         event_participant = Participant(
             event_id=invite.event_id, user_id=user.id, role=invite.role
         )
         db.add(event_participant)
         db.commit()
-        return {"detail": "Invite accepted!"}
+        db.refresh(invite)
+        return serialize_invite(invite, db)
     elif status_update.status == "accepted":
-        return {"detail": "Invite accepted! (register to participate fully)"}
+        db.refresh(invite)
+        return serialize_invite(invite, db)
     else:
-        return {"detail": "Invite declined."}
+        db.refresh(invite)
+        return serialize_invite(invite, db)
 
 
 @router.delete("/invites/{invite_id}", status_code=204)

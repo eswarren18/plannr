@@ -64,7 +64,7 @@ function Nav() {
                             </span>
                         </button>
                         <button
-                            className="cursor-pointer bg-cyan-600 text-white px-3 py-1 rounded font-semibold hover:bg-cyan-400"
+                            className="cursor-pointer bg-cyan-600 text-white px-3 py-1 rounded font-medium hover:bg-cyan-400 transition"
                             onClick={signout}
                         >
                             Sign Out
