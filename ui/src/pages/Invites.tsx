@@ -16,12 +16,12 @@ export default function Invites() {
         return <Navigate to="/" />;
     }
 
-    // State for events and loading status
+    // Component state and navigation
     const navigate = useNavigate();
     const [invites, setInvites] = useState<InviteOut[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
-    // Fetch the user's invites
+    // Fetch invite details
     const fetchData = async () => {
         try {
             const data = await fetchPendingInvites();
@@ -33,7 +33,7 @@ export default function Invites() {
         }
     };
 
-    // Handle invite response (accept/decline)
+    // Handle user response to an invite
     const handleResponse = async (
         token: string,
         response: 'accepted' | 'declined'
@@ -56,6 +56,7 @@ export default function Invites() {
         }
     };
 
+    // Run the fetchData function on component mount
     useEffect(() => {
         fetchData();
     }, []);

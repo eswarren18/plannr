@@ -19,67 +19,69 @@ function Nav() {
                         Plannr
                     </button>
                 </Link>
-                <div className="relative group flex items-align">
-                    <button
-                        className="cursor-pointer font-medium px-3 py-1 rounded-xl bg-white border border-gray-300 shadow-sm hover:bg-gray-50 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 flex items-center"
-                        type="button"
-                    >
-                        Dashboard
-                        <svg
-                            className="ml-2 w-4 h-4 text-gray-400 group-hover:text-cyan-400 transition-colors duration-150"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
+                {user && (
+                    <div className="relative group flex items-align">
+                        <button
+                            className="cursor-pointer font-medium px-3 py-1 rounded-xl bg-white border border-gray-300 shadow-sm hover:bg-gray-50 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 flex items-center"
+                            type="button"
                         >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M19 9l-7 7-7-7"
-                            />
-                        </svg>
-                    </button>
-                    <div className="absolute left-0 mt-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-150 z-50">
-                        <ul className="py-2">
-                            <li>
-                                <Link to="/dashboard">
-                                    <span
-                                        className={`block px-4 py-2 cursor-pointer hover:bg-gray-100 ${location.pathname === '/dashboard' ? 'font-bold text-cyan-600' : 'text-gray-700'}`}
-                                    >
-                                        Dashboard
-                                    </span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/participating-events">
-                                    <span
-                                        className={`block px-4 py-2 cursor-pointer hover:bg-gray-100 ${location.pathname === '/participating-events' ? 'font-bold text-cyan-600' : 'text-gray-700'}`}
-                                    >
-                                        Upcoming Events
-                                    </span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/hosting-events">
-                                    <span
-                                        className={`block px-4 py-2 cursor-pointer hover:bg-gray-100 ${location.pathname === '/hosting-events' ? 'font-bold text-cyan-600' : 'text-gray-700'}`}
-                                    >
-                                        My Events
-                                    </span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/invites">
-                                    <span
-                                        className={`block px-4 py-2 cursor-pointer hover:bg-gray-100 ${location.pathname === '/invites' ? 'font-bold text-cyan-600' : 'text-gray-700'}`}
-                                    >
-                                        My Invitations
-                                    </span>
-                                </Link>
-                            </li>
-                        </ul>
+                            Dashboard
+                            <svg
+                                className="ml-2 w-4 h-4 text-gray-400 group-hover:text-cyan-400 transition-colors duration-150"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M19 9l-7 7-7-7"
+                                />
+                            </svg>
+                        </button>
+                        <div className="absolute left-0 mt-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-150 z-50">
+                            <ul className="py-2">
+                                <li>
+                                    <Link to="/dashboard">
+                                        <span
+                                            className={`block px-4 py-2 cursor-pointer hover:bg-gray-100 ${location.pathname === '/dashboard' ? 'font-bold text-cyan-600' : 'text-gray-700'}`}
+                                        >
+                                            Dashboard
+                                        </span>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/participating-events">
+                                        <span
+                                            className={`block px-4 py-2 cursor-pointer hover:bg-gray-100 ${location.pathname === '/participating-events' ? 'font-bold text-cyan-600' : 'text-gray-700'}`}
+                                        >
+                                            Upcoming Events
+                                        </span>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/hosting-events">
+                                        <span
+                                            className={`block px-4 py-2 cursor-pointer hover:bg-gray-100 ${location.pathname === '/hosting-events' ? 'font-bold text-cyan-600' : 'text-gray-700'}`}
+                                        >
+                                            My Events
+                                        </span>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/invites">
+                                        <span
+                                            className={`block px-4 py-2 cursor-pointer hover:bg-gray-100 ${location.pathname === '/invites' ? 'font-bold text-cyan-600' : 'text-gray-700'}`}
+                                        >
+                                            My Invitations
+                                        </span>
+                                    </Link>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
             <div className="ml-auto flex gap-4">
                 {!user ? (

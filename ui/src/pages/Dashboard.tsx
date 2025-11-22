@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { data, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../providers/AuthProvider';
 import { Navigate } from 'react-router-dom';
 
@@ -17,6 +17,7 @@ export default function Dashboard() {
         return <Navigate to="/" />;
     }
 
+    // Component state and navigation
     const navigate = useNavigate();
     const [participatingEvents, setParticipatingEvents] = useState<
         EventSummaryOut[]
@@ -38,6 +39,7 @@ export default function Dashboard() {
         }
     };
 
+    // Run the fetchData function on component mount
     useEffect(() => {
         fetchData();
     }, []);

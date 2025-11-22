@@ -15,7 +15,7 @@ export default function EventForm() {
         return <Navigate to="/" />;
     }
 
-    // State for form data, error messages, and loading status
+    // Component state and navigation
     const { eventId } = useParams<{ eventId?: string }>();
     const isEdit = !!eventId;
     const [form, setForm] = useState({ title: '', description: '' });
@@ -41,6 +41,7 @@ export default function EventForm() {
         }
     };
 
+    // Handle form submission
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         if (!form.title) {
@@ -73,6 +74,7 @@ export default function EventForm() {
         }
     };
 
+    // Run the fetchEvent function on component mount or when dependencies change
     useEffect(() => {
         fetchEvent();
     }, [isEdit, eventId]);

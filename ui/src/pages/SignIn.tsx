@@ -1,14 +1,22 @@
 import { useState, useContext } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
+
 import { AuthContext } from '../providers/AuthProvider';
 import { signin } from '../services/authService';
-import { useNavigate } from 'react-router-dom';
 
 export default function SignIn() {
+    // Redirect to dashboard if logged in
+    const auth = useContext(AuthContext);
+    if (auth?.user) {
+        return <Navigate to="/dashboard" />;
+    }
+
+    // Component state and navigation
     const [form, setForm] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
-    const auth = useContext(AuthContext);
     const navigate = useNavigate();
 
+    // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -22,13 +30,6 @@ export default function SignIn() {
             return;
         }
         // TODO: require users to use strong passwords
-        /*
-        // Uncomment for strong password validation in production
-        if (!form.password.match(/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/)) {
-            setError('Password must be at least 8 characters, include a number, a letter, and a special character.');
-            return;
-        }
-        */
 
         // Submit signin request
         const result = await signin({

@@ -1,11 +1,24 @@
-import { useEffect, useState } from 'react';
-import { useLocation, useParams, useNavigate } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import {
+    useLocation,
+    useParams,
+    useNavigate,
+    Navigate,
+} from 'react-router-dom';
 
 import { ProfileCard } from '../components/ProfileCard';
+import { AuthContext } from '../providers/AuthProvider';
 import { fetchEventById } from '../services/eventService';
 import { EventFullOut } from '../types/event';
 
 export default function Event() {
+    // Redirect to home if not logged in
+    const auth = useContext(AuthContext);
+    if (!auth?.user) {
+        return <Navigate to="/" />;
+    }
+
+    // Component state and navigation
     const { eventId } = useParams<{ eventId: string }>();
     const navigate = useNavigate();
     const location = useLocation();
@@ -14,21 +27,24 @@ export default function Event() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const data = await fetchEventById(Number(eventId));
-                if (data instanceof Error) {
-                    setError(data.message);
-                } else {
-                    setEvent(data);
-                }
-            } catch (err) {
-                setError('Failed to load event');
-            } finally {
-                setLoading(false);
+    // Fetch event details
+    async function fetchData() {
+        try {
+            const data = await fetchEventById(Number(eventId));
+            if (data instanceof Error) {
+                setError(data.message);
+            } else {
+                setEvent(data);
             }
+        } catch (err) {
+            setError('Failed to load event');
+        } finally {
+            setLoading(false);
         }
+    }
+
+    // Run the fetchData function on component mount
+    useEffect(() => {
         fetchData();
     }, [eventId]);
 

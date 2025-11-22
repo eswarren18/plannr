@@ -1,9 +1,17 @@
 import { useState, useContext } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
+
 import { AuthContext } from '../providers/AuthProvider';
 import { signup } from '../services/authService';
-import { useNavigate } from 'react-router-dom';
 
 export default function SignUp() {
+    // Redirect to dashboard if logged in
+    const auth = useContext(AuthContext);
+    if (auth?.user) {
+        return <Navigate to="/dashboard" />;
+    }
+
+    // Component state and navigation
     const [form, setForm] = useState({
         email: '',
         password: '',
@@ -11,13 +19,14 @@ export default function SignUp() {
         lastName: '',
     });
     const [error, setError] = useState('');
-    const auth = useContext(AuthContext);
     const navigate = useNavigate();
 
+    // Handle form input changes
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
+    // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 

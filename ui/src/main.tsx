@@ -19,8 +19,8 @@ import {
 
 createRoot(document.getElementById('root') as HTMLElement).render(
     <StrictMode>
-        <AuthProvider>
-            <BrowserRouter>
+        <BrowserRouter>
+            <AuthProvider>
                 <Routes>
                     <Route path="/" element={<App />}>
                         <Route index element={<Home />} />
@@ -44,7 +44,7 @@ createRoot(document.getElementById('root') as HTMLElement).render(
                         <Route path="invites" element={<Invites />} />
                     </Route>
                 </Routes>
-            </BrowserRouter>
-        </AuthProvider>
+            </AuthProvider>
+        </BrowserRouter>
     </StrictMode>
 );

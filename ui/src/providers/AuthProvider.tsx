@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState, ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 import { UserResponse } from '../types/user';
 import { authenticate, signout as signoutApi } from '../services/authService';
 import LoadingIcon from '../components/LoadingIcon';
@@ -24,8 +25,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUser] = useState<UserResponse | undefined>();
     const [error, setError] = useState<any>();
     const [isLoading, setIsLoading] = useState(true);
+    const location = useLocation();
 
+    // Authenticate on initial mount and on every route change
     useEffect(() => {
+        setIsLoading(true);
         authenticate().then((result) => {
             if (result instanceof Error) {
                 setUser(undefined);
@@ -35,7 +39,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             setUser(result);
             setIsLoading(false);
         });
-    }, []);
+    }, [location]);
 
     const signout = async () => {
         await signoutApi();

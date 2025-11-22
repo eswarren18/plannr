@@ -13,12 +13,13 @@ export default function ParticipatingEvents() {
         return <Navigate to="/" />;
     }
 
-    // State for events and loading status
+    // Component state and navigation
     const [events, setEvents] = useState<EventSummaryOut[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [toggle, setToggle] = useState<'upcoming' | 'all'>('upcoming');
     const navigate = useNavigate();
 
-    // Fetch participating events
+    // Fetch event details
     const fetchEvents = async () => {
         try {
             const data = await fetchParticipatingEvents();
@@ -30,11 +31,10 @@ export default function ParticipatingEvents() {
         }
     };
 
+    // Run the fetchEvents function on component mount
     useEffect(() => {
         fetchEvents();
     }, []);
-
-    const [toggle, setToggle] = useState<'upcoming' | 'all'>('upcoming');
 
     return (
         <div className="flex bg-gray-50 min-h-screen z-10">

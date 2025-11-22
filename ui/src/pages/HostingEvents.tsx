@@ -13,12 +13,12 @@ export default function HostingEvents() {
         return <Navigate to="/" />;
     }
 
-    // State for events and loading status
+    // Component state and navigation
     const navigate = useNavigate();
     const [events, setEvents] = useState<EventSummaryOut[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
-    // Fetch hosting events
+    // Fetch event details
     const fetchEvents = async () => {
         try {
             const data = await fetchHostingEvents();
@@ -30,6 +30,7 @@ export default function HostingEvents() {
         }
     };
 
+    // Handle event deletion
     const handleDeleteEvent = async (eventId: number) => {
         const result = await deleteEvent(eventId);
         if (result === true) {
@@ -40,6 +41,7 @@ export default function HostingEvents() {
         }
     };
 
+    // Run the fetchEvents function on component mount
     useEffect(() => {
         fetchEvents();
     }, []);
