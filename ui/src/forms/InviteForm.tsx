@@ -44,7 +44,7 @@ export default function InviteForm() {
                     'Unknown error occurred while creating invite. Please try again.'
                 );
             } else {
-                navigate(`/events/${eventId}`);
+                navigate(`/events/${eventId}`, { state: { showToast: true } });
             }
         } catch (error) {
             setError(
