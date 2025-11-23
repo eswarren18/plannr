@@ -21,6 +21,7 @@ def serialize_inviteout(invite, db):
             "id": event.id,
             "title": event.title,
             "description": event.description,
+            "host_id": event.host_id,
             "host_name": host_name,
         }
     return {

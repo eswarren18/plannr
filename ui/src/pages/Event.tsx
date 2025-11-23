@@ -116,7 +116,9 @@ export default function Event() {
                         {event.hostId === auth?.user?.id && (
                             <button
                                 className="bg-cyan-600 text-white px-3 py-1 rounded font-medium hover:bg-cyan-400 cursor-pointer"
-                                onClick={() => {}}
+                                onClick={() =>
+                                    navigate(`/invite-form/${eventId}`)
+                                }
                             >
                                 Invite
                             </button>

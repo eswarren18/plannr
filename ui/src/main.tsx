@@ -7,15 +7,13 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import {
     Dashboard,
-    EventForm,
     Event,
     Home,
     HostingEvents,
     Invites,
     ParticipatingEvents,
-    SignIn,
-    SignUp,
 } from './pages';
+import { EventForm, InviteForm, SignIn, SignUp } from './forms';
 
 createRoot(document.getElementById('root') as HTMLElement).render(
     <StrictMode>
@@ -42,6 +40,10 @@ createRoot(document.getElementById('root') as HTMLElement).render(
                         />
                         <Route path="events/:eventId" element={<Event />} />
                         <Route path="invites" element={<Invites />} />
+                        <Route
+                            path="invite-form/:eventId"
+                            element={<InviteForm />}
+                        />
                     </Route>
                 </Routes>
             </AuthProvider>
