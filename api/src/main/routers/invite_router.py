@@ -1,3 +1,4 @@
+import os
 import uuid
 
 from fastapi import APIRouter, Body, Depends, HTTPException
@@ -72,7 +73,7 @@ def create_invite(
     db.refresh(new_invite)
 
     # Send invite email with clickable link to the event
-    link = "http://localhost:5173"
+    link = os.environ.get("FRONTEND_HOST", "http://localhost:5173")
     send_invite_email(invite.email, event.title, link)
 
     return serialize_inviteout(new_invite, db)

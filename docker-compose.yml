@@ -40,7 +40,9 @@ services:
     volumes:
       - ./ui:/app
     environment:
-      VITE_API_HOST: http://localhost:9000
+      # Change between localhost and your local network IP as needed
+      FRONTEND_HOST: http://192.168.0.19:5173
+      VITE_API_HOST: http://192.168.0.19:9000
     ports:
       - "5173:5173"
     command: sh -c "npm install && npm run dev -- --host"

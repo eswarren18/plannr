@@ -44,8 +44,8 @@ def signin(user_request: UserRequest, db: Session = Depends(get_db)):
 def signout(request: Request, response: Response):
     # Signs out the user by deleting their JWT cookie.
 
-    # Secure cookies only if running on something besides localhost.
-    secure = True if request.headers.get("origin") == "localhost" else False
+    # Set secure cookies only if using HTTPS (production). For local dev (HTTP), set secure=False.
+    secure = request.url.scheme == "https"
 
     # Check if the cookie is present. Return message if not signed in.
     cookie = request.cookies.get("fast_api_token")

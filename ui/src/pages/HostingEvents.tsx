@@ -90,13 +90,7 @@ export default function HostingEvents() {
                                             <div className="flex items-center justify-between w-full">
                                                 <span>
                                                     <button
-                                                        className="hover:text-cyan-400 transition-colors duration-150"
-                                                        style={{
-                                                            background: 'none',
-                                                            border: 'none',
-                                                            padding: 0,
-                                                            cursor: 'pointer',
-                                                        }}
+                                                        className="bg-none border-none p-0 cursor-pointer hover:text-cyan-400 transition-colors duration-150"
                                                         onClick={() => {
                                                             navigate(
                                                                 `/events/${event.id}`,
