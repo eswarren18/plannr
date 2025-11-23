@@ -54,26 +54,35 @@ export async function fetchParticipatingEvents(): Promise<EventSummaryOut[]> {
 export async function createEvent(
     eventData: EventCreate
 ): Promise<EventFullOut | Error> {
+    // Transform camelCase to snake_case
+    const transformedEventData = {
+        title: eventData.title,
+        description: eventData.description,
+        host_id: eventData.hostId,
+    };
     try {
         const response = await fetch(`${baseUrl}/api/events`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(eventData),
+            body: JSON.stringify(transformedEventData),
             credentials: 'include',
         });
-        if (!response.ok) throw new Error('Failed to create event');
+        if (!response.ok) {
+            throw new Error('Failed to create event');
+        }
 
         // Transform Response object to JSON
         const data = await response.json();
 
         // Transform from snake_case to camelCase
         const event: EventFullOut = {
-            title: data.title,
-            hostName: data.host_name,
             id: data.id,
+            title: data.title,
             description: data.description,
+            hostId: data.host_id,
+            hostName: data.host_name,
             participants: data.participants,
         };
         return event;
@@ -105,6 +114,7 @@ export async function fetchEventById(
             id: data.id,
             title: data.title,
             description: data.description,
+            hostId: data.host_id,
             hostName: data.host_name,
             participants: data.participants,
         };
@@ -116,15 +126,21 @@ export async function fetchEventById(
 
 export async function updateEvent(
     eventId: number,
-    eventData: { title: string; description: string }
+    eventData: EventCreate
 ): Promise<EventFullOut | Error> {
+    // Transform camelCase to snake_case
+    const transformedEventData = {
+        title: eventData.title,
+        description: eventData.description,
+        host_id: eventData.hostId,
+    };
     try {
         const response = await fetch(`${baseUrl}/api/events/${eventId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(eventData),
+            body: JSON.stringify(transformedEventData),
             credentials: 'include',
         });
         if (!response.ok) {
@@ -134,17 +150,20 @@ export async function updateEvent(
                     : 'Failed to update event';
             throw new Error(errorMsg);
         }
+        // Transform Response object to JSON
         const data = await response.json();
+
+        // Transform from snake_case to camelCase
         const event: EventFullOut = {
             id: data.id,
             title: data.title,
             description: data.description,
+            hostId: data.host_id,
             hostName: data.host_name,
             participants: data.participants,
         };
         return event;
     } catch (error) {
-        console.log('Made it here');
         return new Error('Could not update event details');
     }
 }

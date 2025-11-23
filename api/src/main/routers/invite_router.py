@@ -73,7 +73,10 @@ def create_invite(
     db.refresh(new_invite)
 
     # Send invite email with clickable link to the event
-    link = os.environ.get("FRONTEND_HOST", "http://localhost:5173")
+    print(os.environ.get("FRONTEND_HOST"))
+    link = (
+        f"{os.environ.get('FRONTEND_HOST', 'http://localhost:5173')}/invites"
+    )
     send_invite_email(invite.email, event.title, link)
 
     return serialize_inviteout(new_invite, db)

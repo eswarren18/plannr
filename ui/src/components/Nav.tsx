@@ -106,7 +106,7 @@ function Nav() {
                 ) : (
                     <>
                         <button
-                            className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center mr-2 hover:bg-gray-200"
+                            className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center mr-2 hover:bg-gray-200 active:bg-red-600 transition-colors duration-150"
                             title="Notifications"
                         >
                             <span className="text-xl text-gray-400">

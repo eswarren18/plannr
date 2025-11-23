@@ -25,6 +25,7 @@ services:
       - db
       - mailhog
     environment:
+      FRONTEND_HOST: ${FRONTEND_HOST}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -40,9 +41,8 @@ services:
     volumes:
       - ./ui:/app
     environment:
-      # Change between localhost and your local network IP as needed
-      FRONTEND_HOST: http://192.168.0.19:5173
-      VITE_API_HOST: http://192.168.0.19:9000
+      FRONTEND_HOST: ${FRONTEND_HOST}
+      VITE_API_HOST: ${VITE_API_HOST}
     ports:
       - "5173:5173"
     command: sh -c "npm install && npm run dev -- --host"

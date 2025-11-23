@@ -23,6 +23,7 @@ def serialize_eventfullout(event, db):
         "id": event.id,
         "title": event.title,
         "description": event.description or None,
+        "host_id": event.host_id,
         "host_name": host_name,
         "participants": participant_names,
     }
@@ -37,5 +38,6 @@ def serialize_eventsummaryout(event, db):
         "id": event.id,
         "title": event.title,
         "description": event.description or None,
+        "host_id": event.host_id,
         "host_name": host_name,
     }

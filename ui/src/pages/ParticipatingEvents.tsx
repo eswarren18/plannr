@@ -51,13 +51,13 @@ export default function ParticipatingEvents() {
                         <h2 className="text-2xl font-bold">Events</h2>
                         <div className="flex gap-0 bg-gray-100 rounded-xl p-1">
                             <button
-                                className={`cursor-pointer px-4 py-1 rounded-l-lg font-medium shadow transition-colors duration-150 ${toggle === 'upcoming' ? 'bg-cyan-100' : 'bg-gray-50'}`}
+                                className={`cursor-pointer px-4 py-1 rounded-l-lg font-medium shadow transition-colors duration-150 ${toggle === 'upcoming' ? 'bg-red-600' : 'bg-gray-50'}`}
                                 onClick={() => setToggle('upcoming')}
                             >
                                 Upcoming
                             </button>
                             <button
-                                className={`cursor-pointer px-4 py-1 rounded-r-lg font-medium shadow transition-colors duration-150 ${toggle === 'all' ? 'bg-cyan-100' : 'bg-gray-50'}`}
+                                className={`cursor-pointer px-4 py-1 rounded-r-lg font-medium shadow transition-colors duration-150 ${toggle === 'all' ? 'bg-red-600' : 'bg-gray-50'}`}
                                 onClick={() => setToggle('all')}
                             >
                                 All

@@ -1,6 +1,7 @@
 export interface EventBase {
     title: string;
     description?: string;
+    hostId: number;
 }
 
 export interface EventCreate extends EventBase {}

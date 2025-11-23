@@ -15,7 +15,7 @@ export function ProfileCard() {
             </div>
             <div className="text-gray-500 mb-4">{auth.user.email}</div>
             <button
-                className="cursor-pointer bg-cyan-600 text-white px-3 py-1 rounded font-medium hover:bg-cyan-400 transition"
+                className="cursor-pointer bg-cyan-600 text-white px-3 py-1 rounded font-medium hover:bg-cyan-400 active:bg-red-600 transition-colors duration-150"
                 onClick={() => {}}
             >
                 Edit Profile

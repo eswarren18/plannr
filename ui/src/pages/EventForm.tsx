@@ -28,7 +28,6 @@ export default function EventForm() {
         if (isEdit && eventId) {
             setLoading(true);
             const result = await fetchEventById(Number(eventId));
-            console.log('Fetched event for editing:', result);
             if (result instanceof Error) {
                 setError(result.message);
             } else {
@@ -44,33 +43,45 @@ export default function EventForm() {
     // Handle form submission
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+
+        // Validate submission data
         if (!form.title) {
             setError('Please enter a title');
             return;
         }
-        setError('');
-        if (isEdit && eventId) {
-            // Update event
-            const result = await updateEvent(Number(eventId), {
-                title: form.title,
-                description: form.description,
-            });
-            if (result instanceof Error) {
-                setError(result.message);
+
+        try {
+            if (isEdit && eventId) {
+                // Update event
+                const result = await updateEvent(Number(eventId), {
+                    title: form.title,
+                    description: form.description,
+                    hostId: auth.user!.id,
+                });
+                if (result instanceof Error) {
+                    setError(result.message);
+                } else {
+                    navigate('/hosting-events');
+                }
             } else {
-                navigate('/hosting-events');
+                // Create event
+                const result = await createEvent({
+                    title: form.title,
+                    description: form.description,
+                    hostId: auth.user!.id,
+                });
+                if (result instanceof Error) {
+                    setError(
+                        'Unknown error occurred while creating event. Please try again.'
+                    );
+                } else {
+                    navigate('/hosting-events');
+                }
             }
-        } else {
-            // Create event
-            const result = await createEvent({
-                title: form.title,
-                description: form.description,
-            });
-            if (result instanceof Error) {
-                setError(result.message);
-            } else {
-                navigate('/hosting-events');
-            }
+        } catch (error) {
+            setError(
+                'Unknown error occurred while creating event. Please try again.'
+            );
         }
     };
 

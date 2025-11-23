@@ -113,9 +113,14 @@ export default function Event() {
                     </div>
                     <div className="flex gap-2 items-center mt-6 mb-2">
                         <h2 className="text-lg font-bold">Participants</h2>
-                        <button className="bg-cyan-600 text-white px-3 py-1 rounded font-medium hover:bg-cyan-400 cursor-pointer">
-                            Invite
-                        </button>
+                        {event.hostId === auth?.user?.id && (
+                            <button
+                                className="bg-cyan-600 text-white px-3 py-1 rounded font-medium hover:bg-cyan-400 cursor-pointer"
+                                onClick={() => {}}
+                            >
+                                Invite
+                            </button>
+                        )}
                     </div>
                     <div className="space-y-2">
                         {event.participants.map((name, idx) => (

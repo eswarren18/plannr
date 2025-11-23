@@ -6,6 +6,7 @@ from pydantic import BaseModel
 class EventBase(BaseModel):
     title: str
     description: Optional[str] = None
+    host_id: int
 
 
 class EventCreate(EventBase):
