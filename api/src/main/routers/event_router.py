@@ -4,22 +4,29 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from src.main.database import get_db
 from src.main.models import Event, Invite, Participant, User
-from src.main.schemas import EventCreate, EventFullOut, EventSummaryOut
-from src.main.utils import (
-    get_current_user_from_token,
-    serialize_eventfullout,
-    serialize_eventsummaryout,
-)
+from src.main.schemas import EventCreate, EventOut
+from src.main.utils import get_current_user_from_token, serialize_eventout
 
 router = APIRouter(tags=["Events"], prefix="/api/events")
 
 
-@router.post("/", response_model=EventSummaryOut)
+@router.post("/", response_model=EventOut)
 def create_event(
     event_details: EventCreate,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
+    """
+    Create a new event hosted by the current user.
+
+    Args:
+        event_details (EventCreate): Event details from request body.
+        db (Session): Database session.
+        user (User): Current authenticated user.
+
+    Returns:
+        EventOut: The created event with host information.
+    """
     # Create the new event from the user event details
     new_event = Event(
         title=event_details.title,
@@ -38,10 +45,10 @@ def create_event(
     db.commit()
 
     # Use event_serialization utility to return an EventSummaryOut instance
-    return serialize_eventsummaryout(new_event, db)
+    return serialize_eventout(new_event, db)
 
 
-@router.get("/", response_model=List[EventSummaryOut])
+@router.get("/", response_model=List[EventOut])
 def get_events(
     type: str,
     db: Session = Depends(get_db),
@@ -56,7 +63,7 @@ def get_events(
             'participant' - returns events the user is participating in.
 
     Returns:
-        List[EventSummaryOut]: List of events matching the query type.
+        List[EventOut]: List of events matching the query type.
 
     Raises:
         HTTPException: If an invalid type is provided.
@@ -65,7 +72,7 @@ def get_events(
     # Fetch the user's hosting events from the DB
     if type == "host":
         events = db.query(Event).filter(Event.host_id == user.id).all()
-        return [serialize_eventsummaryout(event, db) for event in events]
+        return [serialize_eventout(event, db) for event in events]
 
     # Fetch the user's participating events from the DB
     elif type == "participant":
@@ -75,7 +82,7 @@ def get_events(
             .subquery()
         )
         events = db.query(Event).filter(Event.id.in_(event_ids)).all()
-        return [serialize_eventsummaryout(event, db) for event in events]
+        return [serialize_eventout(event, db) for event in events]
 
     # Raise exception if invalid type is provided
     else:
@@ -85,12 +92,26 @@ def get_events(
         )
 
 
-@router.get("/{event_id}", response_model=EventFullOut)
+@router.get("/{event_id}", response_model=EventOut)
 def get_event(
     event_id: int,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
+    """
+    Retrieve a specific event for the current user.
+
+    Args:
+        event_id (int): ID of the event to fetch.
+        db (Session): Database session.
+        user (User): Current authenticated user.
+
+    Returns:
+        EventOut: The requested event if found and accessible.
+
+    Raises:
+        HTTPException: If the event is not found or not accessible.
+    """
     # Fetch the event if the user is the host
     db_event = (
         db.query(Event)
@@ -115,16 +136,31 @@ def get_event(
             )
 
     # Use event_serialization utility to return an EventFullOut instance
-    return serialize_eventfullout(db_event, db)
+    return serialize_eventout(db_event, db)
 
 
-@router.put("/{event_id}", response_model=EventFullOut)
+@router.put("/{event_id}", response_model=EventOut)
 def update_event(
     event_id: int,
     event_data: EventCreate,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
+    """
+    Update an existing event hosted by the current user.
+
+    Args:
+        event_id (int): ID of the event to update.
+        event_data (EventCreate): Updated event details.
+        db (Session): Database session.
+        user (User): Current authenticated user.
+
+    Returns:
+        EventOut: The updated event.
+
+    Raises:
+        HTTPException: If the event is not found or not accessible.
+    """
     # Fetch the event from the DB
     db_event = (
         db.query(Event)
@@ -143,7 +179,7 @@ def update_event(
     db.refresh(db_event)
 
     # Use event_serialization utility to return an EventFullOut instance
-    return serialize_eventfullout(db_event, db)
+    return serialize_eventout(db_event, db)
 
 
 @router.delete("/{event_id}")
@@ -152,6 +188,20 @@ def delete_event(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
+    """
+    Delete an event hosted by the current user.
+
+    Args:
+        event_id (int): ID of the event to delete.
+        db (Session): Database session.
+        user (User): Current authenticated user.
+
+    Returns:
+        dict: Confirmation message upon successful deletion.
+
+    Raises:
+        HTTPException: If the event is not found or not accessible.
+    """
     db_event = (
         db.query(Event)
         .filter(Event.id == event_id, Event.host_id == user.id)

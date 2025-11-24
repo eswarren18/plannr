@@ -1,4 +1,4 @@
-import { EventCreate, EventFullOut, EventSummaryOut } from '../types/event';
+import { EventCreate, EventOut } from '../types/event';
 
 export const baseUrl = import.meta.env.VITE_API_HOST;
 if (!baseUrl) {
@@ -7,7 +7,7 @@ if (!baseUrl) {
 
 export async function fetchEvents(
     type: 'host' | 'participant'
-): Promise<EventSummaryOut[]> {
+): Promise<EventOut[]> {
     try {
         const response = await fetch(`${baseUrl}/api/events?type=${type}`, {
             credentials: 'include',
@@ -18,7 +18,7 @@ export async function fetchEvents(
         const data = await response.json();
 
         // Transform from snake_case to camelCase
-        const events: EventSummaryOut[] = data.map((event: any) => ({
+        const events: EventOut[] = data.map((event: any) => ({
             id: event.id,
             title: event.title,
             hostName: event.host_name,
@@ -32,7 +32,7 @@ export async function fetchEvents(
 
 export async function createEvent(
     eventData: EventCreate
-): Promise<EventFullOut | Error> {
+): Promise<EventOut | Error> {
     // Transform camelCase to snake_case
     const transformedEventData = {
         title: eventData.title,
@@ -56,13 +56,14 @@ export async function createEvent(
         const data = await response.json();
 
         // Transform from snake_case to camelCase
-        const event: EventFullOut = {
+        const event: EventOut = {
             id: data.id,
             title: data.title,
             description: data.description,
             hostId: data.host_id,
             hostName: data.host_name,
-            participants: data.participants,
+            startTime: data.start_time,
+            endTime: data.end_time,
         };
         return event;
     } catch (error) {
@@ -72,7 +73,7 @@ export async function createEvent(
 
 export async function fetchEventById(
     eventId: number
-): Promise<EventFullOut | Error> {
+): Promise<EventOut | Error> {
     try {
         const response = await fetch(`${baseUrl}/api/events/${eventId}`, {
             credentials: 'include',
@@ -89,13 +90,14 @@ export async function fetchEventById(
         const data = await response.json();
 
         // Transform from snake_case to camelCase
-        const event: EventFullOut = {
+        const event: EventOut = {
             id: data.id,
             title: data.title,
             description: data.description,
             hostId: data.host_id,
             hostName: data.host_name,
-            participants: data.participants,
+            startTime: data.start_time,
+            endTime: data.end_time,
         };
         return event;
     } catch (error) {
@@ -106,7 +108,7 @@ export async function fetchEventById(
 export async function updateEvent(
     eventId: number,
     eventData: EventCreate
-): Promise<EventFullOut | Error> {
+): Promise<EventOut | Error> {
     // Transform camelCase to snake_case
     const transformedEventData = {
         title: eventData.title,
@@ -133,13 +135,14 @@ export async function updateEvent(
         const data = await response.json();
 
         // Transform from snake_case to camelCase
-        const event: EventFullOut = {
+        const event: EventOut = {
             id: data.id,
             title: data.title,
             description: data.description,
             hostId: data.host_id,
             hostName: data.host_name,
-            participants: data.participants,
+            startTime: data.start_time,
+            endTime: data.end_time,
         };
         return event;
     } catch (error) {

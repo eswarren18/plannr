@@ -11,7 +11,7 @@ import Toast from '../components/Toast';
 import { AuthContext } from '../providers/AuthProvider';
 import { fetchEventById } from '../services/eventService';
 import { fetchInvites } from '../services/inviteService';
-import { EventFullOut } from '../types/event';
+import { EventOut } from '../types/event';
 import { InviteOut } from '../types/invite';
 
 export default function Event() {
@@ -27,10 +27,9 @@ export default function Event() {
     const location = useLocation();
     const showToast = location.state?.showToast;
     const from = location.state?.from || '/dashboard';
-    const [event, setEvent] = useState<EventFullOut | null>(null);
+    const [event, setEvent] = useState<EventOut | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [invites, setInvites] = useState<InviteOut[]>([]);
-    const [inviteLoading, setInviteLoading] = useState(false);
     const [inviteError, setInviteError] = useState<string | null>(null);
     const [selectedStatus, setSelectedStatus] = useState<
         'all' | 'accepted' | 'declined' | 'pending'
@@ -68,10 +67,15 @@ export default function Event() {
         fetchData();
     }, []);
 
-    // Fetch invites when eventId or selectedStatus changes (only if host)
+    // Fetch invites when eventId or selectedStatus changes (for host and non-host)
     useEffect(() => {
-        if (event && event.hostId === auth?.user?.id) {
-            fetchInviteList(selectedStatus);
+        if (event) {
+            if (event.hostId === auth?.user?.id) {
+                fetchInviteList(selectedStatus);
+            } else {
+                // For non-hosts, always fetch accepted invites
+                fetchInviteList('accepted');
+            }
         }
     }, [event, selectedStatus, auth?.user?.id]);
 
@@ -227,31 +231,39 @@ export default function Event() {
                                 )}
                             </div>
                         )}
-                        {/* Default participant list for non-hosts */}
+                        {/* Participant list for non-hosts */}
                         {event.hostId !== auth?.user?.id && (
                             <div className="space-y-2">
-                                {event.participants.map((name, idx) => (
-                                    <div
-                                        key={idx}
-                                        className="flex items-center gap-2"
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth="1.5"
-                                            stroke="currentColor"
-                                            className="size-6"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                                            />
-                                        </svg>
-                                        <span>{name}</span>
+                                {inviteError ? (
+                                    <div className="text-red-500">
+                                        {inviteError}
                                     </div>
-                                ))}
+                                ) : invites.length === 0 ? (
+                                    <div>No accepted participants found.</div>
+                                ) : (
+                                    invites.map((invite, idx) => (
+                                        <div
+                                            key={invite.id || idx}
+                                            className="flex items-center gap-2"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth="1.5"
+                                                stroke="currentColor"
+                                                className="size-6"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                                />
+                                            </svg>
+                                            <span>{invite.user_name}</span>
+                                        </div>
+                                    ))
+                                )}
                             </div>
                         )}
                     </div>

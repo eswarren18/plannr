@@ -23,6 +23,8 @@ def serialize_inviteout(invite, db):
             "description": event.description,
             "host_id": event.host_id,
             "host_name": host_name,
+            "start_time": event.start_time,
+            "end_time": event.end_time,
         }
     # Get user_name from invite.user_id
     user_name = None

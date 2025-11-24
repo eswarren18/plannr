@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 
-from .event_schema import EventSummaryOut
+from .event_schema import EventOut
 
 
 class InviteBase(BaseModel):
@@ -16,7 +16,7 @@ class InviteOut(InviteBase):
     id: int
     token: str
     status: str
-    event: EventSummaryOut
+    event: EventOut
     user_name: str
 
 

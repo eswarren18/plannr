@@ -164,14 +164,41 @@ def get_invites(
     # If user_id is specified, filter by user_id
     if user_id is not None:
         query = query.filter(Invite.user_id == user_id)
-    # If event_id is specified and user_id is not, filter by event_id only
+        if event_id is not None:
+            query = query.filter(Invite.event_id == event_id)
+    # If event_id is specified and user_id is not, check permissions
     elif event_id is not None:
-        query = query.filter(Invite.event_id == event_id)
+        # Get the event
+        event = db.query(Event).filter(Event.id == event_id).first()
+        if not event:
+            raise HTTPException(status_code=404, detail="Event not found.")
+        # Check if current user is host
+        if event.host_id == current_user.id:
+            query = query.filter(Invite.event_id == event_id)
+        else:
+            # Check if current user has accepted invite for this event
+            accepted_invite = (
+                db.query(Invite)
+                .filter(
+                    Invite.event_id == event_id,
+                    Invite.user_id == current_user.id,
+                    Invite.status == "accepted",
+                )
+                .first()
+            )
+            if accepted_invite:
+                # Only allow viewing accepted invites for this event
+                query = query.filter(
+                    Invite.event_id == event_id, Invite.status == "accepted"
+                )
+            else:
+                raise HTTPException(
+                    status_code=403,
+                    detail="Not authorized to view participants for this event.",
+                )
     # If neither user_id nor event_id is specified, default to current user
     else:
         query = query.filter(Invite.user_id == current_user.id)
-    if event_id is not None and user_id is not None:
-        query = query.filter(Invite.event_id == event_id)
     if status and status != "all":
         if status not in ["pending", "accepted", "declined"]:
             raise HTTPException(
