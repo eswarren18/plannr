@@ -191,7 +191,7 @@ export default function Event() {
                                         <thead>
                                             <tr className="bg-gray-100 text-left">
                                                 <th className="py-2 px-4">
-                                                    Name/Email
+                                                    Name
                                                 </th>
                                                 <th className="py-2 px-4">
                                                     Role
@@ -208,7 +208,7 @@ export default function Event() {
                                                     className="border-b last:border-b-0 border-gray-200"
                                                 >
                                                     <td className="py-2 px-4">
-                                                        {invite.email}
+                                                        {invite.user_name}
                                                     </td>
                                                     <td className="py-2 px-4">
                                                         {invite.role}

@@ -17,6 +17,7 @@ class InviteOut(InviteBase):
     token: str
     status: str
     event: EventSummaryOut
+    user_name: str
 
 
 class InviteStatusUpdate(BaseModel):

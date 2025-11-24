@@ -24,6 +24,15 @@ def serialize_inviteout(invite, db):
             "host_id": event.host_id,
             "host_name": host_name,
         }
+    # Get user_name from invite.user_id
+    user_name = None
+    if invite.user_id:
+        user = db.query(User).filter(User.id == invite.user_id).first()
+        if user:
+            user_name = (
+                f"{user.first_name or ''} {user.last_name or ''}".strip()
+                or user.email
+            )
     return {
         "id": invite.id,
         "token": invite.token,
@@ -31,4 +40,5 @@ def serialize_inviteout(invite, db):
         "role": invite.role,
         "status": invite.status,
         "event": event_summary,
+        "user_name": user_name,
     }

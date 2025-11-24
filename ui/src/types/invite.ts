@@ -1,3 +1,5 @@
+import { EventSummaryOut } from './event';
+
 export interface InviteBase {
     email: string;
     role: string;
@@ -5,18 +7,12 @@ export interface InviteBase {
 
 export interface InviteCreate extends InviteBase {}
 
-export interface EventSummary {
-    id: number;
-    title: string;
-    description?: string | null;
-    hostName?: string | null;
-}
-
 export interface InviteOut extends InviteBase {
     id: number;
     token: string;
+    user_name: string;
     status: string;
-    event: EventSummary;
+    event: EventSummaryOut;
 }
 
 export interface InviteStatusUpdate {

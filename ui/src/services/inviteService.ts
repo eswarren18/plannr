@@ -30,6 +30,7 @@ export async function createInvite(
         const invite: InviteOut = {
             id: data.id,
             token: data.token,
+            user_name: data.user_name,
             email: data.email,
             role: data.role,
             status: data.status,
@@ -38,6 +39,7 @@ export async function createInvite(
                 title: data.event.title,
                 description: data.event.description,
                 hostName: data.event.host_name,
+                hostId: data.event.host_id,
             },
         };
         return invite;
@@ -73,14 +75,16 @@ export async function fetchInvites(
         const invites: InviteOut[] = data.map((invite: any) => ({
             id: invite.id,
             token: invite.token ?? '',
+            user_name: invite.user_name ?? '',
+            status: invite.status,
             email: invite.email,
             role: invite.role,
-            status: invite.status,
             event: {
                 id: invite.event?.id ?? 0,
+                hostName: invite.event?.host_name ?? '',
                 title: invite.event?.title ?? '',
                 description: invite.event?.description ?? '',
-                hostName: invite.event?.host_name ?? '',
+                hostId: invite.event?.host_id,
             },
         }));
 
@@ -116,14 +120,16 @@ export async function respondToInvite(
         const invite: InviteOut = {
             id: data.id,
             token: data.token ?? '',
+            user_name: data.user_name ?? '',
+            status: data.status,
             email: data.email,
             role: data.role,
-            status: data.status,
             event: {
                 id: data.event?.id ?? 0,
+                hostName: data.event?.host_name ?? '',
                 title: data.event?.title ?? '',
                 description: data.event?.description ?? '',
-                hostName: data.event?.host_name ?? '',
+                hostId: data.event?.host_id,
             },
         };
 
