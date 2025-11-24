@@ -147,26 +147,37 @@ def delete_invite(
 
 
 @router.get("/invites", response_model=list[InviteOut])
-def get_all_invites(
+def get_invites(
+    status: str,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
-    invites = db.query(Invite).filter(Invite.user_id == user.id).all()
+    """
+    Fetch invites for the current user based on the 'status' query parameter.
 
-    # Use invite_serialization utility to return a list of InviteOut instances
-    return [serialize_inviteout(invite, db) for invite in invites]
+    Args:
+        status (str):
+            'pending' - returns pending invites.
+            'accepted' - returns accepted invites.
+            'declined' - returns declined invites.
+            'all' - returns all invites.
 
-
-@router.get("/invites/pending", response_model=list[InviteOut])
-def get_pending_invites(
-    db: Session = Depends(get_db),
-    user: User = Depends(get_current_user_from_token),
-):
-    invites = (
-        db.query(Invite)
-        .filter(Invite.user_id == user.id, Invite.status == "pending")
-        .all()
-    )
-
-    # Use invite_serialization utility to return a list of InviteOut instances
+    Returns:
+        list[InviteOut]: List of invites matching the query status.
+    """
+    query = db.query(Invite).filter(Invite.user_id == user.id)
+    if status == "pending":
+        query = query.filter(Invite.status == "pending")
+    elif status == "accepted":
+        query = query.filter(Invite.status == "accepted")
+    elif status == "declined":
+        query = query.filter(Invite.status == "declined")
+    elif status == "all":
+        pass  # No additional filter
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid status parameter. Must be 'pending', 'accepted', 'declined', or 'all'.",
+        )
+    invites = query.all()
     return [serialize_inviteout(invite, db) for invite in invites]

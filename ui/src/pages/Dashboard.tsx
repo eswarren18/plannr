@@ -1,13 +1,8 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../providers/AuthProvider';
 import { Navigate } from 'react-router-dom';
 
-import { fetchHostingEvents } from '../services/eventService';
-import { fetchPendingInvites } from '../services/inviteService';
-import { fetchParticipatingEvents } from '../services/eventService';
-import { EventSummaryOut } from '../types/event';
-import { InviteOut } from '../types/invite';
 import { ProfileCard } from '../components/ProfileCard';
 
 export default function Dashboard() {
@@ -19,30 +14,6 @@ export default function Dashboard() {
 
     // Component state and navigation
     const navigate = useNavigate();
-    const [participatingEvents, setParticipatingEvents] = useState<
-        EventSummaryOut[]
-    >([]);
-    const [hostingEvents, setHostingEvents] = useState<EventSummaryOut[]>([]);
-    const [invites, setInvites] = useState<InviteOut[]>([]);
-
-    // Fetch events and invites events
-    const fetchData = async () => {
-        try {
-            const participatingData = await fetchParticipatingEvents();
-            const hostingData = await fetchHostingEvents();
-            const invitesData = await fetchPendingInvites();
-            setParticipatingEvents(participatingData);
-            setHostingEvents(hostingData);
-            setInvites(invitesData);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    // Run the fetchData function on component mount
-    useEffect(() => {
-        fetchData();
-    }, []);
 
     return (
         <div className="flex bg-gray-50 min-h-screen z-10">

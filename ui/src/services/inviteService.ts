@@ -46,13 +46,16 @@ export async function createInvite(
     }
 }
 
-async function fetchInvitesFromEndpoint(
-    endpoint: string
+export async function fetchInvites(
+    status: 'pending' | 'accepted' | 'declined' | 'all'
 ): Promise<InviteOut[]> {
     try {
-        const response = await fetch(`${baseUrl}${endpoint}`, {
-            credentials: 'include',
-        });
+        const response = await fetch(
+            `${baseUrl}/api/invites?status=${status}`,
+            {
+                credentials: 'include',
+            }
+        );
         if (!response.ok) throw new Error('Failed to fetch invites');
 
         // Transform Response object to JSON
@@ -74,20 +77,9 @@ async function fetchInvitesFromEndpoint(
 
         return invites;
     } catch (error) {
-        console.error(
-            `Error in fetchInvitesFromEndpoint (${endpoint}):`,
-            error
-        );
+        console.error(`Error in fetchInvites (${status}):`, error);
         throw error;
     }
-}
-
-export async function fetchAllInvites(): Promise<InviteOut[]> {
-    return fetchInvitesFromEndpoint('/api/invites');
-}
-
-export async function fetchPendingInvites(): Promise<InviteOut[]> {
-    return fetchInvitesFromEndpoint('/api/invites/pending');
 }
 
 export async function respondToInvite(

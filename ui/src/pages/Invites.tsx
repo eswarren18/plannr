@@ -3,10 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 
 import { ProfileCard } from '../components/ProfileCard';
 import { AuthContext } from '../providers/AuthProvider';
-import {
-    fetchPendingInvites,
-    respondToInvite,
-} from '../services/inviteService';
+import { fetchInvites, respondToInvite } from '../services/inviteService';
 import { InviteOut } from '../types/invite';
 
 export default function Invites() {
@@ -24,7 +21,7 @@ export default function Invites() {
     // Fetch invite details
     const fetchData = async () => {
         try {
-            const data = await fetchPendingInvites();
+            const data = await fetchInvites('pending');
             setInvites(data);
             setLoading(false);
         } catch (error) {

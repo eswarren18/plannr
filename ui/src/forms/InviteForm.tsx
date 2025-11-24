@@ -115,7 +115,7 @@ export default function InviteForm() {
                     onChange={(e) => setForm({ ...form, role: e.target.value })}
                 >
                     <option value="" disabled hidden>
-                        Select role*
+                        Role*
                     </option>
                     <option value="host">Host</option>
                     <option value="participant">Participant</option>
