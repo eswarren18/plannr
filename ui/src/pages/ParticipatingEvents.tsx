@@ -3,7 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 
 import { ProfileCard } from '../components/ProfileCard';
 import { AuthContext } from '../providers/AuthProvider';
-import { fetchParticipatingEvents } from '../services/eventService';
+import { fetchEvents } from '../services/eventService';
 import { EventSummaryOut } from '../types/event';
 
 export default function ParticipatingEvents() {
@@ -20,9 +20,9 @@ export default function ParticipatingEvents() {
     const navigate = useNavigate();
 
     // Fetch event details
-    const fetchEvents = async () => {
+    const fetchData = async () => {
         try {
-            const data = await fetchParticipatingEvents();
+            const data = await fetchEvents('participant');
             setEvents(data);
             setLoading(false);
         } catch (error) {
@@ -31,9 +31,9 @@ export default function ParticipatingEvents() {
         }
     };
 
-    // Run the fetchEvents function on component mount
+    // Run the fetchData function on component mount
     useEffect(() => {
-        fetchEvents();
+        fetchData();
     }, []);
 
     return (

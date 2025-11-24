@@ -41,33 +41,48 @@ def create_event(
     return serialize_eventsummaryout(new_event, db)
 
 
-@router.get("/hosting", response_model=List[EventSummaryOut])
-def get_hosting_events(
+@router.get("/", response_model=List[EventSummaryOut])
+def get_events(
+    type: str,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
-    # Fetch events from the DB
-    events = db.query(Event).filter(Event.host_id == user.id).all()
+    """
+    Fetch events for the current user based on the 'type' query parameter.
 
-    # Use event_serialization utility to return a list of EventSummaryOut instances
-    return [serialize_eventsummaryout(event, db) for event in events]
+    Args:
+        type (str):
+            'host' - returns events the user is hosting.
+            'participant' - returns events the user is participating in.
 
+    Returns:
+        List[EventSummaryOut]: List of events matching the query type.
 
-@router.get("/participating", response_model=List[EventSummaryOut])
-def get_participating_events(
-    db: Session = Depends(get_db),
-    user: User = Depends(get_current_user_from_token),
-):
-    # Fetch events from the DB
-    event_ids = (
-        db.query(Participant.event_id)
-        .filter(Participant.user_id == user.id)
-        .subquery()
-    )
-    events = db.query(Event).filter(Event.id.in_(event_ids)).all()
+    Raises:
+        HTTPException: If an invalid type is provided.
+    """
 
-    # Use event_serialization utility to return a list of EventSummaryOut instances
-    return [serialize_eventsummaryout(event, db) for event in events]
+    # Fetch the user's hosting events from the DB
+    if type == "host":
+        events = db.query(Event).filter(Event.host_id == user.id).all()
+        return [serialize_eventsummaryout(event, db) for event in events]
+
+    # Fetch the user's participating events from the DB
+    elif type == "participant":
+        event_ids = (
+            db.query(Participant.event_id)
+            .filter(Participant.user_id == user.id)
+            .subquery()
+        )
+        events = db.query(Event).filter(Event.id.in_(event_ids)).all()
+        return [serialize_eventsummaryout(event, db) for event in events]
+
+    # Raise exception if invalid type is provided
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid type parameter. Must be 'host' or 'participant'.",
+        )
 
 
 @router.get("/{event_id}", response_model=EventFullOut)

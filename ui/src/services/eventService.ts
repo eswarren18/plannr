@@ -5,12 +5,14 @@ if (!baseUrl) {
     throw new Error('VITE_API_HOST was not defined');
 }
 
-export async function fetchHostingEvents(): Promise<EventSummaryOut[]> {
+export async function fetchEvents(
+    type: 'host' | 'participant'
+): Promise<EventSummaryOut[]> {
     try {
-        const response = await fetch(`${baseUrl}/api/events/hosting`, {
+        const response = await fetch(`${baseUrl}/api/events?type=${type}`, {
             credentials: 'include',
         });
-        if (!response.ok) throw new Error('Failed to fetch hosting events');
+        if (!response.ok) throw new Error(`Failed to fetch ${type} events`);
 
         // Transform Response object to JSON
         const data = await response.json();
@@ -23,30 +25,7 @@ export async function fetchHostingEvents(): Promise<EventSummaryOut[]> {
         }));
         return events;
     } catch (error) {
-        console.error('Error in fetchHostingEvents:', error);
-        throw error;
-    }
-}
-
-export async function fetchParticipatingEvents(): Promise<EventSummaryOut[]> {
-    try {
-        const response = await fetch(`${baseUrl}/api/events/participating`, {
-            credentials: 'include',
-        });
-        if (!response.ok)
-            throw new Error('Failed to fetch participating events');
-
-        // Transform Response object to JSON
-        const data = await response.json();
-
-        // Transform from snake_case to camelCase
-        const events: EventSummaryOut[] = data.map((event: any) => ({
-            id: event.id,
-            title: event.title,
-            hostName: event.host_name,
-        }));
-        return events;
-    } catch (error) {
+        console.error(`Error in fetchEvents (${type}):`, error);
         throw error;
     }
 }

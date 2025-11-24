@@ -3,7 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 
 import { ProfileCard } from '../components/ProfileCard';
 import { AuthContext } from '../providers/AuthProvider';
-import { fetchHostingEvents, deleteEvent } from '../services/eventService';
+import { deleteEvent, fetchEvents } from '../services/eventService';
 import { EventSummaryOut } from '../types/event';
 
 export default function HostingEvents() {
@@ -19,9 +19,9 @@ export default function HostingEvents() {
     const [loading, setLoading] = useState<boolean>(true);
 
     // Fetch event details
-    const fetchEvents = async () => {
+    const fetchData = async () => {
         try {
-            const data = await fetchHostingEvents();
+            const data = await fetchEvents('host');
             setEvents(data);
             setLoading(false);
         } catch (error) {
@@ -35,15 +35,15 @@ export default function HostingEvents() {
         const result = await deleteEvent(eventId);
         if (result === true) {
             // Refresh events list
-            fetchEvents();
+            fetchData();
         } else if (result instanceof Error) {
             alert(result.message);
         }
     };
 
-    // Run the fetchEvents function on component mount
+    // Run the fetchData function on component mount
     useEffect(() => {
-        fetchEvents();
+        fetchData();
     }, []);
 
     return (
