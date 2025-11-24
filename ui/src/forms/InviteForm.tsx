@@ -16,7 +16,6 @@ export default function InviteForm() {
     const isEdit = !!eventId;
     const [form, setForm] = useState({ email: '', role: '' });
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(isEdit);
     const navigate = useNavigate();
 
     // Handle form submission
@@ -64,14 +63,14 @@ export default function InviteForm() {
             <p className="text-sm font-normal text-gray-600 mb-4">
                 Invite Details
             </p>
-            <div className="flex items-center border-2 py-2 px-3 rounded mb-3 text-gray-500">
+            <div className="flex items-center border-2 py-2 px-3 rounded mb-3 text-gray-800">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="size-5 text-gray-500"
+                    className="size-5 text-gray-800"
                 >
                     <path
                         strokeLinecap="round"
@@ -81,7 +80,7 @@ export default function InviteForm() {
                 </svg>
                 <input
                     autoComplete="email"
-                    className="pl-2 outline-none border-none w-full placeholder-gray-500"
+                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
                     id="email"
                     name="email"
                     onChange={(e) =>
@@ -92,14 +91,14 @@ export default function InviteForm() {
                     value={form.email}
                 />
             </div>
-            <div className="flex items-center border-2 py-2 px-3 rounded text-gray-500">
+            <div className="flex items-center border-2 py-2 px-3 rounded text-gray-800">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="size-5 text-gray-500"
+                    className="size-5 text-gray-800"
                 >
                     <path
                         strokeLinecap="round"
@@ -111,7 +110,7 @@ export default function InviteForm() {
                     autoComplete="role"
                     id="role"
                     name="role"
-                    className="outline-none border-none w-full pl-1 text-gray-500"
+                    className="outline-none border-none w-full pl-1 text-gray-800"
                     value={form.role}
                     onChange={(e) => setForm({ ...form, role: e.target.value })}
                 >

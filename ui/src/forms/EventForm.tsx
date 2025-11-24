@@ -101,10 +101,10 @@ export default function EventForm() {
             <p className="text-sm font-normal text-gray-600 mb-4">
                 Event Details
             </p>
-            <div className="flex items-center border-2 py-2 px-3 rounded mb-3">
+            <div className="flex items-center border-2 py-2 px-3 rounded mb-3 text-gray-800">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-gray-400"
+                    className="h-5 w-5 text-gray-800"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                 >
@@ -116,7 +116,7 @@ export default function EventForm() {
                 </svg>
                 <input
                     autoComplete="title"
-                    className="pl-2 outline-none border-none w-full"
+                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
                     id="title"
                     name="title"
                     onChange={(e) =>
@@ -128,10 +128,10 @@ export default function EventForm() {
                     disabled={loading}
                 />
             </div>
-            <div className="flex items-center border-2 py-2 px-3 rounded">
+            <div className="flex items-center border-2 py-2 px-3 rounded text-gray-800">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-gray-400"
+                    className="h-5 w-5 text-gray-800"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                 >
@@ -143,7 +143,7 @@ export default function EventForm() {
                 </svg>
                 <textarea
                     autoComplete="description"
-                    className="pl-2 outline-none border-none w-full"
+                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
                     id="description"
                     maxLength={200}
                     name="description"

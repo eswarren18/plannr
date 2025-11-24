@@ -74,14 +74,14 @@ export default function SignUp() {
                 Create Account
             </h1>
             <p className="text-sm font-normal text-gray-600 mb-4">Sign Up</p>
-            <div className="flex items-center border-2 py-2 px-3 rounded mb-3">
+            <div className="flex items-center border-2 py-2 px-3 rounded mb-3 border-gray-800">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="size-5 text-gray-400"
+                    className="size-5 text-gray-800"
                 >
                     <path
                         strokeLinecap="round"
@@ -91,7 +91,7 @@ export default function SignUp() {
                 </svg>
                 <input
                     autoComplete="email"
-                    className="pl-2 outline-none border-none w-full"
+                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
                     id="email"
                     name="email"
                     onChange={handleChange}
@@ -100,14 +100,14 @@ export default function SignUp() {
                     value={form.email}
                 />
             </div>
-            <div className="flex items-center border-2 py-2 px-3 rounded mb-3">
+            <div className="flex items-center border-2 py-2 px-3 rounded mb-3 border-gray-800">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="size-5 text-gray-400"
+                    className="size-5 text-gray-800"
                 >
                     <path
                         strokeLinecap="round"
@@ -117,7 +117,7 @@ export default function SignUp() {
                 </svg>
                 <input
                     autoComplete="given-name"
-                    className="pl-2 outline-none border-none w-full"
+                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
                     id="firstName"
                     name="firstName"
                     onChange={handleChange}
@@ -126,14 +126,14 @@ export default function SignUp() {
                     value={form.firstName}
                 />
             </div>
-            <div className="flex items-center border-2 py-2 px-3 rounded mb-3">
+            <div className="flex items-center border-2 py-2 px-3 rounded mb-3 border-gray-800">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="size-5 text-gray-400"
+                    className="size-5 text-gray-800"
                 >
                     <path
                         strokeLinecap="round"
@@ -143,7 +143,7 @@ export default function SignUp() {
                 </svg>
                 <input
                     autoComplete="family-name"
-                    className="pl-2 outline-none border-none w-full"
+                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
                     id="lastName"
                     name="lastName"
                     onChange={handleChange}
@@ -152,14 +152,14 @@ export default function SignUp() {
                     value={form.lastName}
                 />
             </div>
-            <div className="flex items-center border-2 py-2 px-3 rounded mb-3">
+            <div className="flex items-center border-2 py-2 px-3 rounded mb-3 border-gray-800">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="size-5 text-gray-400"
+                    className="size-5 text-gray-800"
                 >
                     <path
                         strokeLinecap="round"
@@ -169,7 +169,7 @@ export default function SignUp() {
                 </svg>
                 <input
                     autoComplete="new-password"
-                    className="pl-2 outline-none border-none w-full"
+                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
                     id="password"
                     name="password"
                     onChange={handleChange}

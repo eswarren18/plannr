@@ -53,14 +53,14 @@ export default function SignIn() {
                 Welcome Back!
             </h1>
             <p className="text-sm font-normal text-gray-600 mb-4">Sign In</p>
-            <div className="flex items-center border-2 py-2 px-3 rounded mb-3">
+            <div className="flex items-center border-2 border-gray-800 py-2 px-3 rounded mb-3">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="size-5 text-gray-400"
+                    className="size-5 text-gray-800"
                 >
                     <path
                         strokeLinecap="round"
@@ -70,7 +70,7 @@ export default function SignIn() {
                 </svg>
                 <input
                     autoComplete="email"
-                    className="pl-2 outline-none border-none w-full"
+                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
                     id="email"
                     name="email"
                     onChange={(e) =>
@@ -81,14 +81,14 @@ export default function SignIn() {
                     value={form.email}
                 />
             </div>
-            <div className="flex items-center border-2 py-2 px-3 mb-3 rounded">
+            <div className="flex items-center border-2 py-2 px-3 mb-3 rounded border-gray-800">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="size-5 text-gray-400"
+                    className="size-5 text-gray-800"
                 >
                     <path
                         strokeLinecap="round"
@@ -98,7 +98,7 @@ export default function SignIn() {
                 </svg>
                 <input
                     autoComplete="current-password"
-                    className="pl-2 outline-none border-none w-full"
+                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
                     id="password"
                     name="password"
                     onChange={(e) =>
