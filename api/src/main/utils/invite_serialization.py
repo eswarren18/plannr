@@ -26,8 +26,9 @@ def serialize_inviteout(invite, db):
         }
     return {
         "id": invite.id,
+        "token": invite.token,
         "email": invite.email,
         "role": invite.role,
+        "status": invite.status,
         "event": event_summary,
-        "token": invite.token,
     }

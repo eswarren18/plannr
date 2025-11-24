@@ -29,9 +29,10 @@ export async function createInvite(
         // Transform from snake_case to camelCase
         const invite: InviteOut = {
             id: data.id,
+            token: data.token,
             email: data.email,
             role: data.role,
-            token: data.token,
+            status: data.status,
             event: {
                 id: data.event.id,
                 title: data.event.title,
@@ -47,11 +48,18 @@ export async function createInvite(
 }
 
 export async function fetchInvites(
-    status: 'pending' | 'accepted' | 'declined' | 'all'
+    status: 'pending' | 'accepted' | 'declined' | 'all',
+    eventId?: number,
+    userId?: number
 ): Promise<InviteOut[]> {
     try {
+        // Build query string
+        const params = new URLSearchParams();
+        if (status) params.append('status', status);
+        if (eventId !== undefined) params.append('event_id', String(eventId));
+        if (userId !== undefined) params.append('user_id', String(userId));
         const response = await fetch(
-            `${baseUrl}/api/invites?status=${status}`,
+            `${baseUrl}/api/invites?${params.toString()}`,
             {
                 credentials: 'include',
             }
@@ -63,10 +71,11 @@ export async function fetchInvites(
 
         // Transform from snake_case to camelCase
         const invites: InviteOut[] = data.map((invite: any) => ({
-            email: invite.email,
-            role: invite.role,
             id: invite.id,
             token: invite.token ?? '',
+            email: invite.email,
+            role: invite.role,
+            status: invite.status,
             event: {
                 id: invite.event?.id ?? 0,
                 title: invite.event?.title ?? '',
@@ -105,10 +114,11 @@ export async function respondToInvite(
 
         // Transform snake_case to camelCase
         const invite: InviteOut = {
-            email: data.email,
-            role: data.role,
             id: data.id,
             token: data.token ?? '',
+            email: data.email,
+            role: data.role,
+            status: data.status,
             event: {
                 id: data.event?.id ?? 0,
                 title: data.event?.title ?? '',

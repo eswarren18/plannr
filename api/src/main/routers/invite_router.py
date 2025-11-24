@@ -1,7 +1,7 @@
 import os
 import uuid
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from src.main.database import get_db
 from src.main.models.event import Event, Participant
@@ -148,36 +148,36 @@ def delete_invite(
 
 @router.get("/invites", response_model=list[InviteOut])
 def get_invites(
-    status: str,
+    status: str = Query(
+        None, description="Invite status: pending, accepted, declined, all"
+    ),
+    user_id: int = Query(None, description="Filter by user_id"),
+    event_id: int = Query(None, description="Filter by event_id"),
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user_from_token),
+    current_user: User = Depends(get_current_user_from_token),
 ):
     """
-    Fetch invites for the current user based on the 'status' query parameter.
-
-    Args:
-        status (str):
-            'pending' - returns pending invites.
-            'accepted' - returns accepted invites.
-            'declined' - returns declined invites.
-            'all' - returns all invites.
-
-    Returns:
-        list[InviteOut]: List of invites matching the query status.
+    Fetch invites filtered by user_id, event_id, and status.
+    If no user_id is provided, defaults to current user.
     """
-    query = db.query(Invite).filter(Invite.user_id == user.id)
-    if status == "pending":
-        query = query.filter(Invite.status == "pending")
-    elif status == "accepted":
-        query = query.filter(Invite.status == "accepted")
-    elif status == "declined":
-        query = query.filter(Invite.status == "declined")
-    elif status == "all":
-        pass  # No additional filter
+    query = db.query(Invite)
+    # If user_id is specified, filter by user_id
+    if user_id is not None:
+        query = query.filter(Invite.user_id == user_id)
+    # If event_id is specified and user_id is not, filter by event_id only
+    elif event_id is not None:
+        query = query.filter(Invite.event_id == event_id)
+    # If neither user_id nor event_id is specified, default to current user
     else:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid status parameter. Must be 'pending', 'accepted', 'declined', or 'all'.",
-        )
+        query = query.filter(Invite.user_id == current_user.id)
+    if event_id is not None and user_id is not None:
+        query = query.filter(Invite.event_id == event_id)
+    if status and status != "all":
+        if status not in ["pending", "accepted", "declined"]:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid status parameter. Must be 'pending', 'accepted', 'declined', or 'all'.",
+            )
+        query = query.filter(Invite.status == status)
     invites = query.all()
     return [serialize_inviteout(invite, db) for invite in invites]

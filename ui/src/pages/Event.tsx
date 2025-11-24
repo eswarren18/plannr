@@ -10,7 +10,9 @@ import { ProfileCard } from '../components/ProfileCard';
 import Toast from '../components/Toast';
 import { AuthContext } from '../providers/AuthProvider';
 import { fetchEventById } from '../services/eventService';
+import { fetchInvites } from '../services/inviteService';
 import { EventFullOut } from '../types/event';
+import { InviteOut } from '../types/invite';
 
 export default function Event() {
     // Redirect to home if not logged in
@@ -26,8 +28,13 @@ export default function Event() {
     const showToast = location.state?.showToast;
     const from = location.state?.from || '/dashboard';
     const [event, setEvent] = useState<EventFullOut | null>(null);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [invites, setInvites] = useState<InviteOut[]>([]);
+    const [inviteLoading, setInviteLoading] = useState(false);
+    const [inviteError, setInviteError] = useState<string | null>(null);
+    const [selectedStatus, setSelectedStatus] = useState<
+        'all' | 'accepted' | 'declined' | 'pending'
+    >('accepted');
 
     // Fetch event details
     async function fetchData() {
@@ -40,17 +47,34 @@ export default function Event() {
             }
         } catch (err) {
             setError('Failed to load event');
-        } finally {
-            setLoading(false);
+        }
+    }
+
+    // Fetch invites for the event and selected status
+    async function fetchInviteList(
+        status: 'all' | 'accepted' | 'declined' | 'pending'
+    ) {
+        setInviteError(null);
+        try {
+            const data = await fetchInvites(status, Number(eventId));
+            setInvites(data);
+        } catch (err) {
+            setInviteError('Failed to load invites');
         }
     }
 
     // Run the fetchData function on component mount
     useEffect(() => {
         fetchData();
-    }, [eventId]);
+    }, []);
 
-    if (loading) return <div>Loading...</div>;
+    // Fetch invites when eventId or selectedStatus changes (only if host)
+    useEffect(() => {
+        if (event && event.hostId === auth?.user?.id) {
+            fetchInviteList(selectedStatus);
+        }
+    }, [event, selectedStatus, auth?.user?.id]);
+
     if (error) return <div>{error}</div>;
     if (!event) return <div>Event not found.</div>;
 
@@ -91,51 +115,16 @@ export default function Event() {
                             {event.title}
                         </h1>
                         {event.description ? (
-                            <div className="mb-4">{event.description}</div>
+                            <div className="mb-8">{event.description}</div>
                         ) : (
                             <div className="text-gray-500 py-2 text-center mb-4">
                                 No event description
                             </div>
                         )}
-                        <div className="mb-4 inline-flex items-center gap-2 border border-black rounded-full px-4 py-2 w-auto">
-                            <span>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth="1.5"
-                                    stroke="currentColor"
-                                    className="size-6"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                                    />
-                                </svg>
-                            </span>
-                            <span className="font-semibold">Host:</span>
-                            <span>{event.hostName}</span>
-                        </div>
-                        <div className="flex gap-2 items-center mt-6 mb-2">
-                            <h2 className="text-lg font-bold">Participants</h2>
-                            {event.hostId === auth?.user?.id && (
-                                <button
-                                    className="bg-cyan-600 text-white px-3 py-1 rounded font-medium hover:bg-cyan-400 cursor-pointer"
-                                    onClick={() =>
-                                        navigate(`/invite-form/${eventId}`)
-                                    }
-                                >
-                                    Invite
-                                </button>
-                            )}
-                        </div>
-                        <div className="space-y-2">
-                            {event.participants.map((name, idx) => (
-                                <div
-                                    key={idx}
-                                    className="flex items-center gap-2"
-                                >
+                        <div className="mb-8">
+                            <h2 className="text-lg font-bold mb-2">Host</h2>
+                            <div className="flex items-center gap-2 w-auto">
+                                <span>
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"
@@ -150,10 +139,121 @@ export default function Event() {
                                             d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
                                         />
                                     </svg>
-                                    <span>{name}</span>
-                                </div>
-                            ))}
+                                </span>
+                                <span>{event.hostName}</span>
+                            </div>
                         </div>
+                        <h2 className="text-lg font-bold mb-2">Participants</h2>
+                        {/* Host-only invite status toggle and invite list */}
+                        {event.hostId === auth?.user?.id && (
+                            <div className="mb-4">
+                                <div className="flex justify-between items-center mb-2">
+                                    <div className="flex gap-2">
+                                        {[
+                                            'accepted',
+                                            'declined',
+                                            'pending',
+                                            'all',
+                                        ].map((status) => (
+                                            <button
+                                                key={status}
+                                                className={`px-3 py-1 rounded font-medium ${selectedStatus === status ? 'bg-cyan-600 text-white' : 'bg-gray-200 text-black'}`}
+                                                onClick={() =>
+                                                    setSelectedStatus(
+                                                        status as typeof selectedStatus
+                                                    )
+                                                }
+                                            >
+                                                {status
+                                                    .charAt(0)
+                                                    .toUpperCase() +
+                                                    status.slice(1)}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <button
+                                        className="bg-cyan-600 text-white px-3 py-1 rounded font-medium hover:bg-cyan-400 cursor-pointer"
+                                        onClick={() =>
+                                            navigate(`/invite-form/${eventId}`)
+                                        }
+                                    >
+                                        Invite
+                                    </button>
+                                </div>
+                                {inviteError ? (
+                                    <div className="text-red-500">
+                                        {inviteError}
+                                    </div>
+                                ) : invites.length === 0 ? (
+                                    <div>No invites found.</div>
+                                ) : (
+                                    <table className="w-full bg-white rounded-lg shadow-sm">
+                                        <thead>
+                                            <tr className="bg-gray-100 text-left">
+                                                <th className="py-2 px-4">
+                                                    Name/Email
+                                                </th>
+                                                <th className="py-2 px-4">
+                                                    Role
+                                                </th>
+                                                <th className="py-2 px-4">
+                                                    Status
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {invites.map((invite) => (
+                                                <tr
+                                                    key={invite.id}
+                                                    className="border-b last:border-b-0 border-gray-200"
+                                                >
+                                                    <td className="py-2 px-4">
+                                                        {invite.email}
+                                                    </td>
+                                                    <td className="py-2 px-4">
+                                                        {invite.role}
+                                                    </td>
+                                                    <td className="py-2 px-4">
+                                                        {selectedStatus ===
+                                                        'all'
+                                                            ? (invite.status ??
+                                                              '')
+                                                            : selectedStatus}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                )}
+                            </div>
+                        )}
+                        {/* Default participant list for non-hosts */}
+                        {event.hostId !== auth?.user?.id && (
+                            <div className="space-y-2">
+                                {event.participants.map((name, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="flex items-center gap-2"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth="1.5"
+                                            stroke="currentColor"
+                                            className="size-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                            />
+                                        </svg>
+                                        <span>{name}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
