@@ -52,20 +52,11 @@ function Nav() {
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/participating-events">
+                                    <Link to="/events">
                                         <span
-                                            className={`block px-4 py-2 cursor-pointer hover:bg-gray-100 ${location.pathname === '/participating-events' ? 'font-bold text-cyan-600' : 'text-gray-700'}`}
+                                            className={`block px-4 py-2 cursor-pointer hover:bg-gray-100 ${location.pathname === '/events' ? 'font-bold text-cyan-600' : 'text-gray-700'}`}
                                         >
-                                            Upcoming Events
-                                        </span>
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link to="/hosting-events">
-                                        <span
-                                            className={`block px-4 py-2 cursor-pointer hover:bg-gray-100 ${location.pathname === '/hosting-events' ? 'font-bold text-cyan-600' : 'text-gray-700'}`}
-                                        >
-                                            My Events
+                                            Events
                                         </span>
                                     </Link>
                                 </li>

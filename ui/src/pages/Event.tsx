@@ -26,7 +26,6 @@ export default function Event() {
     const navigate = useNavigate();
     const location = useLocation();
     const showToast = location.state?.showToast;
-    const from = location.state?.from || '/dashboard';
     const [event, setEvent] = useState<EventOut | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [invites, setInvites] = useState<InviteOut[]>([]);
@@ -97,7 +96,7 @@ export default function Event() {
                     <div className="w-4/5 mx-auto">
                         <button
                             className="flex items-center gap-2 mb-4 bg-gray-200 px-3 py-1 rounded cursor-pointer"
-                            onClick={() => navigate(from)}
+                            onClick={() => navigate('/events')}
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"

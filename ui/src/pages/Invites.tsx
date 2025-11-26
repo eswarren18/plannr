@@ -68,10 +68,8 @@ export default function Invites() {
                     maxHeight: 'calc(100vh - 4rem)',
                 }}
             >
-                <div className="w-4/5 mx-auto">
-                    <h2 className="text-2xl font-bold mt-4 mb-2">
-                        Invitations
-                    </h2>
+                <div className="flex flex-col gap-4 w-4/5 mx-auto">
+                    <h2 className="text-2xl font-bold mt-4 mb-2">Invites</h2>
                     {loading ? (
                         <div>Loading...</div>
                     ) : invites.length === 0 ? (

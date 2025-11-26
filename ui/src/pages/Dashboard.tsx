@@ -30,22 +30,11 @@ export default function Dashboard() {
                 <div className="flex flex-row w-4/5 gap-8 justify-center">
                     <button
                         className="flex-1 bg-white rounded-lg shadow-sm px-8 py-10 flex flex-col items-center justify-center cursor-pointer hover:bg-cyan-50 transition border border-gray-200"
-                        onClick={() => navigate('/participating-events')}
+                        onClick={() => navigate('/events')}
                     >
-                        <h2 className="text-xl font-bold mb-2">
-                            Upcoming Events
-                        </h2>
+                        <h2 className="text-xl font-bold mb-2">Events</h2>
                         <span className="text-gray-500">
-                            View events you're participating in
-                        </span>
-                    </button>
-                    <button
-                        className="flex-1 bg-white rounded-lg shadow-sm px-8 py-10 flex flex-col items-center justify-center cursor-pointer hover:bg-cyan-50 transition border border-gray-200"
-                        onClick={() => navigate('/hosting-events')}
-                    >
-                        <h2 className="text-xl font-bold mb-2">My Events</h2>
-                        <span className="text-gray-500">
-                            View events you're hosting
+                            View you're events
                         </span>
                     </button>
                     <button
