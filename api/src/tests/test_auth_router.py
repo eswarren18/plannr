@@ -8,8 +8,6 @@ Tests for auth_router:
 from fastapi.testclient import TestClient
 from src.main.database import get_db
 from src.main.main import app
-from src.main.routers import auth_router
-from src.main.schemas import UserResponse
 from src.main.utils import hash_password
 
 client = TestClient(app)
@@ -67,14 +65,13 @@ def test_signin_success():
     # Assert
     assert response.status_code == 200
     data = response.json()
-    expected = {
+    assert data == {
         "email": "user@example.com",
         "first_name": "Test",
         "last_name": "User",
         "id": 1,
         "is_registered": True,
     }
-    assert data == expected
 
 
 def test_signin_wrong_email():

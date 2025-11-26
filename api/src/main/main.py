@@ -17,6 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Register all routes from each router with the app
 app.include_router(auth_router.router)
 app.include_router(event_router.router)
 app.include_router(invite_router.router)
