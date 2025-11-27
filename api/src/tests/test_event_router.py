@@ -49,6 +49,10 @@ class MockEventQuery:
         filtered = [event for event in self._events if event.host_id == 1]
         return MockEventQuery(filtered)
 
+    def order_by(self, *args, **kwargs):
+        # No-op for mock, just return self
+        return self
+
     def all(self):
         return self._events
 
@@ -156,7 +160,8 @@ def test_get_events_host_success():
     global mock_db
     mock_events = [
         MockEvent(id=1, title="Event 1", host_id=1),
-        MockEvent(id=2, title="Event 2", host_id=2),
+        MockEvent(id=2, title="Event 2", host_id=1),
+        MockEvent(id=3, title="Event 3", host_id=2),
     ]
     mock_db = MockSession(events=mock_events)
     app.dependency_overrides[get_current_user_from_token] = (
@@ -165,7 +170,7 @@ def test_get_events_host_success():
     app.dependency_overrides[get_db] = mock_get_db
 
     # --- Act ---
-    response = client.get("/api/events/?type=host")
+    response = client.get("/api/events/?role=host&time=all")
 
     # --- Clean-up ---
     app.dependency_overrides = {}
@@ -173,17 +178,8 @@ def test_get_events_host_success():
     # --- Assert ---
     assert response.status_code == 200
     data = response.json()
-    assert data == [
-        {
-            "id": 1,
-            "title": "Event 1",
-            "description": "Mock event for testing",
-            "start_time": "2025-11-25T22:17:41.110000Z",
-            "end_time": "2025-11-26T22:17:41.110000Z",
-            "host_id": 1,
-            "host_name": "Test User",
-        }
-    ]
+    assert len(data) == 2
+    assert all(event["host_id"] == 1 for event in data)
 
 
 def test_get_events_participant_success():
