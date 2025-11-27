@@ -41,22 +41,37 @@ export function EventInvites({ eventId }: EventParticipantsProps) {
             <h2 className="text-2xl font-bold mb-2">Invites</h2>
             <div className="mb-4">
                 <div className="flex justify-between items-center mb-2">
-                    <div className="flex gap-2">
+                    <div className="flex bg-gray-100 rounded-xl shadow p-1">
                         {['accepted', 'declined', 'pending', 'all'].map(
-                            (status) => (
-                                <button
-                                    key={status}
-                                    className={`px-3 py-1 rounded font-medium ${selectedStatus === status ? 'bg-cyan-600 text-white' : 'bg-gray-200 text-black'}`}
-                                    onClick={() =>
-                                        setSelectedStatus(
-                                            status as typeof selectedStatus
-                                        )
-                                    }
-                                >
-                                    {status.charAt(0).toUpperCase() +
-                                        status.slice(1)}
-                                </button>
-                            )
+                            (status, idx, arr) => {
+                                const isActive = selectedStatus === status;
+                                const baseClasses =
+                                    'px-4 py-1 font-medium transition-colors duration-150 focus:outline-none';
+                                const activeClasses = isActive
+                                    ? 'bg-cyan-600 text-white'
+                                    : 'bg-gray-50 text-gray-700';
+                                // Rounded corners for first and last buttons
+                                const rounded =
+                                    idx === 0
+                                        ? 'rounded-l-lg'
+                                        : idx === arr.length - 1
+                                          ? 'rounded-r-lg'
+                                          : '';
+                                return (
+                                    <button
+                                        key={status}
+                                        className={`${baseClasses} ${activeClasses} ${rounded}`}
+                                        onClick={() =>
+                                            setSelectedStatus(
+                                                status as typeof selectedStatus
+                                            )
+                                        }
+                                    >
+                                        {status.charAt(0).toUpperCase() +
+                                            status.slice(1)}
+                                    </button>
+                                );
+                            }
                         )}
                     </div>
                     <button

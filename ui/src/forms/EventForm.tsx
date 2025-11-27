@@ -193,10 +193,12 @@ export default function EventForm() {
                     onChange={(date: Date | null) =>
                         setForm({ ...form, startTime: date })
                     }
+                    openToDate={new Date()}
                     showTimeSelect
                     timeFormat="h:mm aa"
                     timeIntervals={15}
                     dateFormat="MMMM d, yyyy h:mm aa"
+                    wrapperClassName="w-full"
                     className="w-full placeholder-gray-400"
                     placeholderText="Start Time*"
                     disabled={loading}
@@ -226,6 +228,7 @@ export default function EventForm() {
                     timeFormat="h:mm aa"
                     timeIntervals={15}
                     dateFormat="MMMM d, yyyy h:mm aa"
+                    wrapperClassName="w-full"
                     className="w-full placeholder-gray-400"
                     placeholderText="End Time*"
                     disabled={loading}
