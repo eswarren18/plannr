@@ -37,7 +37,6 @@ export async function createEvent(
     const transformedEventData = {
         title: eventData.title,
         description: eventData.description,
-        host_id: eventData.hostId,
         start_time: eventData.startTime,
         end_time: eventData.endTime,
     };
@@ -117,7 +116,6 @@ export async function updateEvent(
     const transformedEventData = {
         title: eventData.title,
         description: eventData.description,
-        host_id: eventData.hostId,
         start_time: eventData.startTime,
         end_time: eventData.endTime,
     };

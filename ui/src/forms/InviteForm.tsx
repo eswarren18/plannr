@@ -32,8 +32,8 @@ export default function InviteForm() {
             return;
         }
 
+        // Submit POST request to the API
         try {
-            // Create invite
             const result = await createInvite(Number(eventId), {
                 email: form.email,
                 role: form.role,
@@ -43,7 +43,9 @@ export default function InviteForm() {
                     'Unknown error occurred while creating invite. Please try again.'
                 );
             } else {
-                navigate(`/events/${eventId}`, { state: { showToast: true } });
+                navigate(`/events/${eventId}`, {
+                    state: { showInviteSentToast: true },
+                });
             }
         } catch (error) {
             setError(
@@ -57,20 +59,18 @@ export default function InviteForm() {
             onSubmit={handleSubmit}
             className="flex flex-col w-5/6 sm:w-3/5 md:w-2/5 lg:w-1/5 mx-auto my-8"
         >
-            <h1 className="text-gray-800 font-bold text-2xl mb-1">
-                Invite a friend!
-            </h1>
+            <h1 className="font-bold text-2xl mb-1">Invite a friend!</h1>
             <p className="text-sm font-normal text-gray-600 mb-4">
                 Invite Details
             </p>
-            <div className="flex items-center border-2 py-2 px-3 rounded mb-3 text-gray-800">
+            <div className="flex items-center border-2 py-2 px-3 rounded mb-3">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="size-5 text-gray-800"
+                    className="size-5"
                 >
                     <path
                         strokeLinecap="round"
@@ -80,7 +80,7 @@ export default function InviteForm() {
                 </svg>
                 <input
                     autoComplete="email"
-                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
+                    className="pl-2 outline-none border-none w-full placeholder-gray-400"
                     id="email"
                     name="email"
                     onChange={(e) =>
@@ -91,14 +91,14 @@ export default function InviteForm() {
                     value={form.email}
                 />
             </div>
-            <div className="flex items-center border-2 py-2 px-3 rounded text-gray-800">
+            <div className="flex items-center border-2 py-2 px-3 rounded">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="size-5 text-gray-800"
+                    className="size-5"
                 >
                     <path
                         strokeLinecap="round"
@@ -110,7 +110,7 @@ export default function InviteForm() {
                     autoComplete="role"
                     id="role"
                     name="role"
-                    className="outline-none border-none w-full pl-1 text-gray-800"
+                    className="outline-none border-none w-full pl-1"
                     value={form.role}
                     onChange={(e) => setForm({ ...form, role: e.target.value })}
                 >
@@ -125,7 +125,7 @@ export default function InviteForm() {
             <div className="flex gap-4 mt-4">
                 <button
                     type="button"
-                    className="cursor-pointer basis-1/2 bg-gray-200 px-3 py-1 rounded text-gray-800 font-medium transition-colors duration-200 focus:outline-none hover:bg-gray-300"
+                    className="cursor-pointer basis-1/2 bg-gray-200 px-3 py-1 rounded font-medium transition-colors duration-200 focus:outline-none hover:bg-gray-300"
                     onClick={() => navigate(`/events/${eventId}`)}
                 >
                     Cancel

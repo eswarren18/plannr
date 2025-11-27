@@ -31,6 +31,7 @@ export default function SignUp() {
         e.preventDefault();
 
         // Validate submission data
+        // TODO: require users to use strong passwords
         if (!form.email.match(/^[^@]+@[^@]+\.[^@]+$/)) {
             setError('Please enter a valid email address');
             return;
@@ -48,20 +49,24 @@ export default function SignUp() {
             return;
         }
 
-        // TODO: require users to use strong passwords
-
-        // Call authService signup
-        const result = await signup({
-            email: form.email,
-            password: form.password,
-            firstName: form.firstName,
-            lastName: form.lastName,
-        });
-        if (result instanceof Error) {
-            setError(result.message);
-        } else {
-            auth?.setUser(result);
-            navigate('/dashboard');
+        // Submit POST request to the API
+        try {
+            const result = await signup({
+                email: form.email,
+                password: form.password,
+                firstName: form.firstName,
+                lastName: form.lastName,
+            });
+            if (result instanceof Error) {
+                setError(result.message);
+            } else {
+                auth?.setUser(result);
+                navigate('/dashboard');
+            }
+        } catch (error) {
+            setError(
+                'Unknown error occurred while signing up. Please try again.'
+            );
         }
     };
 
@@ -70,9 +75,7 @@ export default function SignUp() {
             onSubmit={handleSubmit}
             className="flex flex-col w-5/6 sm:w-3/5 md:w-2/5 lg:w-1/5 mx-auto my-8"
         >
-            <h1 className="text-gray-800 font-bold text-2xl mb-1">
-                Create Account
-            </h1>
+            <h1 className="font-bold text-2xl mb-1">Create Account</h1>
             <p className="text-sm font-normal text-gray-600 mb-4">Sign Up</p>
             <div className="flex items-center border-2 py-2 px-3 rounded mb-3 border-gray-800">
                 <svg
@@ -81,7 +84,7 @@ export default function SignUp() {
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="size-5 text-gray-800"
+                    className="size-5"
                 >
                     <path
                         strokeLinecap="round"
@@ -91,7 +94,7 @@ export default function SignUp() {
                 </svg>
                 <input
                     autoComplete="email"
-                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
+                    className="pl-2 outline-none border-none w-full placeholder-gray-400"
                     id="email"
                     name="email"
                     onChange={handleChange}
@@ -107,7 +110,7 @@ export default function SignUp() {
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="size-5 text-gray-800"
+                    className="size-5"
                 >
                     <path
                         strokeLinecap="round"
@@ -117,7 +120,7 @@ export default function SignUp() {
                 </svg>
                 <input
                     autoComplete="given-name"
-                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
+                    className="pl-2 outline-none border-none w-full placeholder-gray-400"
                     id="firstName"
                     name="firstName"
                     onChange={handleChange}
@@ -133,7 +136,7 @@ export default function SignUp() {
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="size-5 text-gray-800"
+                    className="size-5"
                 >
                     <path
                         strokeLinecap="round"
@@ -143,7 +146,7 @@ export default function SignUp() {
                 </svg>
                 <input
                     autoComplete="family-name"
-                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
+                    className="pl-2 outline-none border-none w-full placeholder-gray-400"
                     id="lastName"
                     name="lastName"
                     onChange={handleChange}
@@ -159,7 +162,7 @@ export default function SignUp() {
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="size-5 text-gray-800"
+                    className="size-5"
                 >
                     <path
                         strokeLinecap="round"
@@ -169,7 +172,7 @@ export default function SignUp() {
                 </svg>
                 <input
                     autoComplete="new-password"
-                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
+                    className="pl-2 outline-none border-none w-full placeholder-gray-400"
                     id="password"
                     name="password"
                     onChange={handleChange}
@@ -182,7 +185,7 @@ export default function SignUp() {
             <div className="flex gap-4">
                 <button
                     type="button"
-                    className="basis-1/2 bg-gray-200 px-3 py-1 rounded text-gray-800 font-medium transition-colors duration-200 focus:outline-none hover:bg-gray-300"
+                    className="basis-1/2 bg-gray-200 px-3 py-1 rounded font-medium transition-colors duration-200 focus:outline-none hover:bg-gray-300"
                     onClick={() => navigate('/')}
                 >
                     Cancel

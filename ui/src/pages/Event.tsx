@@ -8,7 +8,7 @@ import {
 
 import { ConfirmDelete } from '../components/ConfirmDelete';
 import { ProfileCard } from '../components/ProfileCard';
-import { Toast } from '../components/Toast';
+import { InviteSentToast } from '../components/InviteSentToast';
 import { AuthContext } from '../providers/AuthProvider';
 import { deleteEvent, fetchEventById } from '../services/eventService';
 import { fetchInvites } from '../services/inviteService';
@@ -16,8 +16,6 @@ import { EventOut } from '../types/event';
 import { InviteOut } from '../types/invite';
 
 export default function Event() {
-    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-    const [deleting, setDeleting] = useState(false);
     // Redirect to home if not logged in
     const auth = useContext(AuthContext);
     if (!auth?.user) {
@@ -28,7 +26,8 @@ export default function Event() {
     const { eventId } = useParams<{ eventId: string }>();
     const navigate = useNavigate();
     const location = useLocation();
-    const showToast = location.state?.showToast;
+    const showInviteSentToast = location.state?.showInviteSentToast;
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [event, setEvent] = useState<EventOut | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [invites, setInvites] = useState<InviteOut[]>([]);
@@ -70,7 +69,6 @@ export default function Event() {
             console.error('No event to delete.');
             return;
         }
-        setDeleting(true);
         try {
             const result = await deleteEvent(event.id);
             if (result === true) {
@@ -81,8 +79,6 @@ export default function Event() {
             }
         } catch (err) {
             console.error('Error deleting event:', err);
-        } finally {
-            setDeleting(false);
         }
     }
 
@@ -107,9 +103,23 @@ export default function Event() {
     if (error) return <div>{error}</div>;
     if (!event) return <div>Event not found.</div>;
 
+    // Format start and end times to display
+    const formattedStart = event.startTime
+        ? new Date(event.startTime).toLocaleString('en-US', {
+              dateStyle: 'medium',
+              timeStyle: 'short',
+          })
+        : '';
+    const formattedEnd = event.endTime
+        ? new Date(event.endTime).toLocaleString('en-US', {
+              dateStyle: 'medium',
+              timeStyle: 'short',
+          })
+        : '';
+
     return (
         <>
-            {showToast && <Toast message="Invite Sent" />}
+            {showInviteSentToast && <InviteSentToast message="Invite Sent" />}
             <div className="flex bg-gray-50 min-h-screen z-10">
                 <ProfileCard />
                 <div
@@ -119,63 +129,73 @@ export default function Event() {
                         maxHeight: 'calc(100vh - 4rem)',
                     }}
                 >
+                    {/* Image, summary, host, participants */}
                     <div className="flex w-4/5 mx-auto items-start">
+                        {/* Image */}
                         <div className="flex w-1/3 mx-4">
-                            {/* TODO: Placeholder for event image */}
                             <div className="w-full h-72 bg-gray-200 rounded-2xl"></div>
                         </div>
+                        {/* Summary, host, participants */}
                         <div className="flex w-2/3 flex-col mt-4 mb-6">
                             <div className="flex items-center mb-2 gap-2">
                                 <h1 className="text-2xl font-bold mr-2">
                                     {event.title}
                                 </h1>
-                                <button
-                                    title="Edit Event"
-                                    className="p-1 rounded hover:bg-gray-200"
-                                    onClick={() =>
-                                        navigate(`/event-form/${event.id}`)
-                                    }
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth="1.5"
-                                        stroke="currentColor"
-                                        className="size-6"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-                                        />
-                                    </svg>
-                                </button>
-                                <button
-                                    title="Delete Event"
-                                    className="p-1 rounded hover:bg-gray-200"
-                                    onClick={() => setShowDeleteDialog(true)}
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth="1.5"
-                                        stroke="currentColor"
-                                        className="size-6"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                                        />
-                                    </svg>
-                                </button>
+                                {event.hostId === auth?.user?.id && (
+                                    <>
+                                        <button
+                                            title="Edit Event"
+                                            className="p-1 rounded hover:bg-gray-200"
+                                            onClick={() =>
+                                                navigate(
+                                                    `/event-form/${event.id}`
+                                                )
+                                            }
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth="1.5"
+                                                stroke="currentColor"
+                                                className="size-6"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                                                />
+                                            </svg>
+                                        </button>
+                                        <button
+                                            title="Delete Event"
+                                            className="p-1 rounded hover:bg-gray-200"
+                                            onClick={() =>
+                                                setShowDeleteDialog(true)
+                                            }
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth="1.5"
+                                                stroke="currentColor"
+                                                className="size-6"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </>
+                                )}
                             </div>
                             {event.description ? (
                                 <div className="mb-8">{event.description}</div>
                             ) : (
-                                <div className="text-gray-500 py-2 text-center mb-4">
+                                <div className="text-gray-500 py-2 mb-4">
                                     No event description
                                 </div>
                             )}
@@ -194,8 +214,8 @@ export default function Event() {
                                         d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z"
                                     />
                                 </svg>
-                                <div className="text-lg text-red-400">
-                                    {event.startTime} - {event.endTime}
+                                <div className="text-lg">
+                                    {formattedStart} - {formattedEnd}
                                 </div>
                             </div>
                             <div className="flex items-center gap-2 mb-8">
@@ -243,7 +263,6 @@ export default function Event() {
                                 </span>
                                 <span>{event.hostName}</span>
                             </div>
-
                             <h2 className="text-lg font-bold mb-2">
                                 Participants
                             </h2>

@@ -31,7 +31,7 @@ export default function SignIn() {
         }
         // TODO: require users to use strong passwords
 
-        // Submit signin request
+        // Submit POST request to the API
         const result = await signin({
             email: form.email,
             password: form.password,
@@ -49,9 +49,7 @@ export default function SignIn() {
             onSubmit={handleSubmit}
             className="flex flex-col w-5/6 sm:w-3/5 md:w-2/5 lg:w-1/5 mx-auto my-8"
         >
-            <h1 className="text-gray-800 font-bold text-2xl mb-1">
-                Welcome Back!
-            </h1>
+            <h1 className="font-bold text-2xl mb-1">Welcome Back!</h1>
             <p className="text-sm font-normal text-gray-600 mb-4">Sign In</p>
             <div className="flex items-center border-2 border-gray-800 py-2 px-3 rounded mb-3">
                 <svg
@@ -60,7 +58,7 @@ export default function SignIn() {
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="size-5 text-gray-800"
+                    className="size-5"
                 >
                     <path
                         strokeLinecap="round"
@@ -70,7 +68,7 @@ export default function SignIn() {
                 </svg>
                 <input
                     autoComplete="email"
-                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
+                    className="pl-2 outline-none border-none w-full placeholder-gray-400"
                     id="email"
                     name="email"
                     onChange={(e) =>
@@ -88,7 +86,7 @@ export default function SignIn() {
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="size-5 text-gray-800"
+                    className="size-5"
                 >
                     <path
                         strokeLinecap="round"
@@ -98,7 +96,7 @@ export default function SignIn() {
                 </svg>
                 <input
                     autoComplete="current-password"
-                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
+                    className="pl-2 outline-none border-none w-full placeholder-gray-400"
                     id="password"
                     name="password"
                     onChange={(e) =>
@@ -113,7 +111,7 @@ export default function SignIn() {
             <div className="flex gap-4">
                 <button
                     type="button"
-                    className="basis-1/2 bg-gray-200 px-3 py-1 rounded text-gray-800 font-medium transition-colors duration-200 focus:outline-none hover:bg-gray-300"
+                    className="basis-1/2 bg-gray-200 px-3 py-1 rounded font-medium transition-colors duration-200 focus:outline-none hover:bg-gray-300"
                     onClick={() => navigate('/')}
                 >
                     Cancel

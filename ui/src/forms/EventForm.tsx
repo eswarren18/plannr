@@ -64,12 +64,16 @@ export default function EventForm() {
             setError('Please select start and end times');
             return;
         }
+        if (form.startTime >= form.endTime) {
+            setError('End time must be after start time');
+            return;
+        }
 
+        // Submit POST or PUT request to the API
         try {
             const payload = {
                 title: form.title,
                 description: form.description,
-                hostId: auth.user!.id,
                 startTime: form.startTime.toISOString(),
                 endTime: form.endTime.toISOString(),
             };
@@ -84,7 +88,6 @@ export default function EventForm() {
             } else {
                 // Create event
                 const result = await createEvent(payload);
-                console.log('From EventForm:', result);
                 if (result instanceof Error) {
                     setError(
                         'Unknown error occurred while creating event. Please try again.'
@@ -110,16 +113,16 @@ export default function EventForm() {
             onSubmit={handleSubmit}
             className="flex flex-col w-5/6 sm:w-3/5 md:w-2/5 lg:w-1/5 mx-auto my-8"
         >
-            <h1 className="text-gray-800 font-bold text-2xl mb-1">
+            <h1 className="font-bold text-2xl mb-1">
                 {isEdit ? 'Edit Event' : 'Create an Event!'}
             </h1>
             <p className="text-sm font-normal text-gray-600 mb-4">
                 Event Details
             </p>
-            <div className="flex items-center border-2 py-2 px-3 rounded mb-3 text-gray-800">
+            <div className="flex items-center border-2 py-2 px-3 rounded mb-3">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-gray-800"
+                    className="h-5 w-5"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                 >
@@ -131,7 +134,7 @@ export default function EventForm() {
                 </svg>
                 <input
                     autoComplete="title"
-                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
+                    className="pl-2 outline-none border-none w-full placeholder-gray-400"
                     id="title"
                     name="title"
                     onChange={(e) =>
@@ -143,10 +146,10 @@ export default function EventForm() {
                     disabled={loading}
                 />
             </div>
-            <div className="flex items-center border-2 py-2 px-3 rounded text-gray-800 mb-3">
+            <div className="flex items-center border-2 py-2 px-3 rounded mb-3">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-gray-800"
+                    className="h-5 w-5"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                 >
@@ -158,7 +161,7 @@ export default function EventForm() {
                 </svg>
                 <textarea
                     autoComplete="description"
-                    className="pl-2 outline-none border-none w-full text-gray-800 placeholder-gray-400"
+                    className="pl-2 outline-none border-none w-full placeholder-gray-400"
                     id="description"
                     maxLength={200}
                     name="description"
@@ -170,14 +173,14 @@ export default function EventForm() {
                     disabled={loading}
                 ></textarea>
             </div>
-            <div className="flex items-center border-2 py-2 px-3 rounded text-gray-800 mb-3">
+            <div className="flex items-center border-2 py-2 px-3 rounded mb-3">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="h-5 w-5 text-gray-800 mr-2"
+                    className="h-5 w-5 mr-2"
                 >
                     <path
                         strokeLinecap="round"
@@ -194,19 +197,19 @@ export default function EventForm() {
                     timeFormat="h:mm aa"
                     timeIntervals={15}
                     dateFormat="MMMM d, yyyy h:mm aa"
-                    className="w-full text-gray-800 placeholder-gray-400"
+                    className="w-full placeholder-gray-400"
                     placeholderText="Start Time*"
                     disabled={loading}
                 />
             </div>
-            <div className="flex items-center border-2 py-2 px-3 rounded text-gray-800 mb-3">
+            <div className="flex items-center border-2 py-2 px-3 rounded mb-3">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="h-5 w-5 text-gray-800 mr-2"
+                    className="h-5 w-5 mr-2"
                 >
                     <path
                         strokeLinecap="round"
@@ -223,7 +226,7 @@ export default function EventForm() {
                     timeFormat="h:mm aa"
                     timeIntervals={15}
                     dateFormat="MMMM d, yyyy h:mm aa"
-                    className="w-full text-gray-800 placeholder-gray-400"
+                    className="w-full placeholder-gray-400"
                     placeholderText="End Time*"
                     disabled={loading}
                 />
@@ -232,7 +235,7 @@ export default function EventForm() {
             <div className="flex gap-4 mt-4">
                 <button
                     type="button"
-                    className="cursor-pointer basis-1/2 bg-gray-200 px-3 py-1 rounded text-gray-800 font-medium transition-colors duration-200 focus:outline-none hover:bg-gray-300"
+                    className="cursor-pointer basis-1/2 bg-gray-200 px-3 py-1 rounded font-medium transition-colors duration-200 focus:outline-none hover:bg-gray-300"
                     onClick={() => navigate('/events')}
                 >
                     Cancel

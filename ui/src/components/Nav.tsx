@@ -79,7 +79,7 @@ function Nav() {
                     <>
                         <Link to="/signup">
                             <button
-                                className="cursor-pointer basis-1/2 bg-gray-200 px-3 py-1 rounded text-gray-800 font-medium transition-colors duration-200 focus:outline-none hover:bg-gray-300"
+                                className="cursor-pointer basis-1/2 bg-gray-200 px-3 py-1 rounded font-medium transition-colors duration-200 focus:outline-none hover:bg-gray-300"
                                 disabled={location.pathname === '/signup'}
                             >
                                 Sign Up

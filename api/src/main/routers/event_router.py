@@ -27,7 +27,6 @@ def create_event(
     Returns:
         EventOut: The created event with host information.
     """
-    print(event_details)
     # Create the new event from the user event details
     new_event = Event(
         title=event_details.title,
@@ -178,6 +177,8 @@ def update_event(
     # Update the event details
     db_event.title = event_data.title
     db_event.description = event_data.description
+    db_event.start_time = event_data.start_time
+    db_event.end_time = event_data.end_time
     db.commit()
     db.refresh(db_event)
 

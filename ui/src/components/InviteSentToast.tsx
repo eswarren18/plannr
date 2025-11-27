@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 
-interface ToastProps {
+interface InviteSentToastProps {
     message?: string;
     duration?: number;
 }
 
-export function Toast({ message = 'Success!', duration = 5000 }: ToastProps) {
+export function InviteSentToast({
+    message = 'Success!',
+    duration = 5000,
+}: InviteSentToastProps) {
     const [visible, setVisible] = useState(true);
 
     useEffect(() => {

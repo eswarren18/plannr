@@ -29,7 +29,7 @@ export function ConfirmDelete({
                 )}
                 <div className="flex gap-4 mt-2">
                     <button
-                        className="px-4 py-2 rounded bg-gray-200 text-gray-800 font-medium hover:bg-gray-300"
+                        className="px-4 py-2 rounded bg-gray-200 font-medium hover:bg-gray-300"
                         onClick={onCancel}
                     >
                         {cancelText}

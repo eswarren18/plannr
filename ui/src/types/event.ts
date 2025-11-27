@@ -1,7 +1,6 @@
 export interface EventBase {
     title: string;
     description?: string;
-    hostId: number;
     startTime: string;
     endTime: string;
 }
@@ -10,6 +9,7 @@ export interface EventCreate extends EventBase {}
 
 export interface EventOut extends EventBase {
     id: number;
+    hostId: number;
     hostName: string;
 }
 
