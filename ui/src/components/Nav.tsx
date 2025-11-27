@@ -65,7 +65,7 @@ function Nav() {
                                         <span
                                             className={`block px-4 py-2 cursor-pointer hover:bg-gray-100 ${location.pathname === '/invites' ? 'font-bold text-cyan-600' : 'text-gray-700'}`}
                                         >
-                                            My Invitations
+                                            Invites
                                         </span>
                                     </Link>
                                 </li>

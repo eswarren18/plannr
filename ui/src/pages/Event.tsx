@@ -215,7 +215,23 @@ export default function Event() {
                                     />
                                 </svg>
                                 <div className="text-lg">
-                                    {formattedStart} - {formattedEnd}
+                                    {event?.startTime
+                                        ? new Date(
+                                              event.startTime
+                                          ).toLocaleString('en-US', {
+                                              dateStyle: 'medium',
+                                              timeStyle: 'short',
+                                          })
+                                        : ''}
+                                    {' - '}
+                                    {event?.endTime
+                                        ? new Date(
+                                              event.endTime
+                                          ).toLocaleString('en-US', {
+                                              dateStyle: 'medium',
+                                              timeStyle: 'short',
+                                          })
+                                        : ''}
                                 </div>
                             </div>
                             <div className="flex items-center gap-2 mb-8">

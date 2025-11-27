@@ -6,13 +6,20 @@ if (!baseUrl) {
 }
 
 export async function fetchEvents(
-    type: 'host' | 'participant'
+    role: 'host' | 'participant',
+    time: 'upcoming' | 'past' | 'all'
 ): Promise<EventOut[]> {
     try {
-        const response = await fetch(`${baseUrl}/api/events?type=${type}`, {
-            credentials: 'include',
-        });
-        if (!response.ok) throw new Error(`Failed to fetch ${type} events`);
+        const response = await fetch(
+            `${baseUrl}/api/events?role=${role}&time=${time}`,
+            {
+                credentials: 'include',
+            }
+        );
+        if (!response.ok)
+            throw new Error(
+                `Failed to fetch ${time} events where the user is a ${role}`
+            );
 
         // Transform Response object to JSON
         const data = await response.json();
@@ -21,11 +28,15 @@ export async function fetchEvents(
         const events: EventOut[] = data.map((event: any) => ({
             id: event.id,
             title: event.title,
+            description: event.description,
+            hostId: event.host_id,
             hostName: event.host_name,
+            startTime: event.start_time,
+            endTime: event.end_time,
         }));
         return events;
     } catch (error) {
-        console.error(`Error in fetchEvents (${type}):`, error);
+        console.error('Unknown error in fetchEvents:', error);
         throw error;
     }
 }

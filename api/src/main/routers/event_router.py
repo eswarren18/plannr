@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -52,7 +53,8 @@ def create_event(
 
 @router.get("/", response_model=List[EventOut])
 def get_events(
-    type: str,
+    role: str = "participant",
+    time: str = "all",
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
@@ -70,28 +72,38 @@ def get_events(
     Raises:
         HTTPException: If an invalid type is provided.
     """
+    # Save current time to now
+    now = datetime.now()
 
-    # Fetch the user's hosting events from the DB
-    if type == "host":
-        events = db.query(Event).filter(Event.host_id == user.id).all()
-        return [serialize_eventout(event, db) for event in events]
-
-    # Fetch the user's participating events from the DB
-    elif type == "participant":
+    # Role-based event query
+    if role == "host":
+        query = db.query(Event).filter(Event.host_id == user.id)
+    elif role == "participant":
         event_ids = (
             db.query(Participant.event_id)
             .filter(Participant.user_id == user.id)
             .subquery()
         )
-        events = db.query(Event).filter(Event.id.in_(event_ids)).all()
-        return [serialize_eventout(event, db) for event in events]
-
-    # Raise exception if invalid type is provided
+        query = db.query(Event).filter(Event.id.in_(event_ids))
     else:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid type parameter. Must be 'host' or 'participant'.",
+            detail="Invalid role parameter. Must be 'host' or 'participant'.",
         )
+
+    # Time-based filtering
+    if time == "upcoming":
+        query = query.filter(Event.start_time > now)
+    elif time == "past":
+        query = query.filter(Event.end_time < now)
+    elif time != "all":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid time parameter. Must be 'upcoming', 'past', or 'all'.",
+        )
+
+    events = query.order_by(Event.start_time).all()
+    return [serialize_eventout(event, db) for event in events]
 
 
 @router.get("/{event_id}", response_model=EventOut)

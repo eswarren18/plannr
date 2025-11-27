@@ -17,7 +17,7 @@ export default function Events() {
     const [roleFilter, setRoleFilter] = useState<'host' | 'participant'>(
         'participant'
     );
-    const [dateFilter, setDateFilter] = useState<'upcoming' | 'past' | 'all'>(
+    const [timeFilter, setTimeFilter] = useState<'upcoming' | 'past' | 'all'>(
         'upcoming'
     );
     const [events, setEvents] = useState<EventOut[]>([]);
@@ -28,7 +28,7 @@ export default function Events() {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const data = await fetchEvents(roleFilter);
+            const data = await fetchEvents(roleFilter, timeFilter);
             setEvents(data);
             setLoading(false);
         } catch (error) {
@@ -37,13 +37,10 @@ export default function Events() {
         }
     };
 
-    // TODO: Filter events placeholder (for now, just show all)
-    const filteredEvents = events;
-
     // Run the fetchData function on component mount
     useEffect(() => {
         fetchData();
-    }, [roleFilter]);
+    }, [roleFilter, timeFilter]);
 
     return (
         <div className="flex bg-gray-50 min-h-screen z-10">
@@ -85,20 +82,20 @@ export default function Events() {
                             </div>
                             <div className="flex bg-gray-100 rounded-xl shadow p-1">
                                 <button
-                                    className={`px-4 py-1 rounded-l-lg font-medium transition-colors duration-150 ${dateFilter === 'upcoming' ? 'bg-red-500 text-white' : 'bg-gray-50 text-gray-700'}`}
-                                    onClick={() => setDateFilter('upcoming')}
+                                    className={`px-4 py-1 rounded-l-lg font-medium transition-colors duration-150 ${timeFilter === 'upcoming' ? 'bg-indigo-500 text-white' : 'bg-gray-50 text-gray-700'}`}
+                                    onClick={() => setTimeFilter('upcoming')}
                                 >
                                     Upcoming
                                 </button>
                                 <button
-                                    className={`px-4 py-1 font-medium transition-colors duration-150 ${dateFilter === 'past' ? 'bg-red-500 text-white' : 'bg-gray-50 text-gray-700'}`}
-                                    onClick={() => setDateFilter('past')}
+                                    className={`px-4 py-1 font-medium transition-colors duration-150 ${timeFilter === 'past' ? 'bg-indigo-500 text-white' : 'bg-gray-50 text-gray-700'}`}
+                                    onClick={() => setTimeFilter('past')}
                                 >
                                     Past
                                 </button>
                                 <button
-                                    className={`px-4 py-1 rounded-r-lg font-medium transition-colors duration-150 ${dateFilter === 'all' ? 'bg-red-500 text-white' : 'bg-gray-50 text-gray-700'}`}
-                                    onClick={() => setDateFilter('all')}
+                                    className={`px-4 py-1 rounded-r-lg font-medium transition-colors duration-150 ${timeFilter === 'all' ? 'bg-indigo-500 text-white' : 'bg-gray-50 text-gray-700'}`}
+                                    onClick={() => setTimeFilter('all')}
                                 >
                                     All
                                 </button>
@@ -110,7 +107,7 @@ export default function Events() {
                             <div className="text-center text-gray-500 py-8">
                                 Loading...
                             </div>
-                        ) : filteredEvents.length === 0 ? (
+                        ) : events.length === 0 ? (
                             <div className="text-center text-gray-400 py-8">
                                 No events found.
                             </div>
@@ -118,29 +115,20 @@ export default function Events() {
                             <table className="w-full bg-white rounded-lg shadow-sm">
                                 <thead>
                                     <tr className="bg-gray-100 text-left">
-                                        <th className="py-2 px-4 w-2/3">
-                                            Title
-                                        </th>
-                                        <th className="py-2 px-4 w-1/3">
-                                            Host
-                                        </th>
+                                        <th className="py-2 px-4">Title</th>
+                                        <th className="py-2 px-4">Date</th>
+                                        <th className="py-2 px-4">Host</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredEvents.map((event: EventOut) => (
+                                    {events.map((event) => (
                                         <tr
                                             key={event.id}
                                             className="border-b last:border-b-0 border-gray-200 hover:bg-gray-50 transition-colors"
                                         >
-                                            <td className="py-2 px-4 w-2/3">
+                                            <td className="py-2 px-4">
                                                 <button
                                                     className="hover:text-cyan-500 text-left w-full"
-                                                    style={{
-                                                        background: 'none',
-                                                        border: 'none',
-                                                        padding: 0,
-                                                        cursor: 'pointer',
-                                                    }}
                                                     onClick={() => {
                                                         navigate(
                                                             `/events/${event.id}`,
@@ -155,8 +143,28 @@ export default function Events() {
                                                     {event.title}
                                                 </button>
                                             </td>
-                                            <td className="py-2 px-4 w-1/3 border-l border-gray-200">
+                                            <td className="py-2 px-4 border-l border-gray-200">
+                                                {event.startTime
+                                                    ? new Date(
+                                                          event.startTime
+                                                      ).toLocaleDateString(
+                                                          'en-US',
+                                                          {
+                                                              month: 'short',
+                                                              day: 'numeric',
+                                                              year: 'numeric',
+                                                          }
+                                                      )
+                                                    : ''}
+                                            </td>
+                                            <td className="py-2 px-4 border-l border-gray-200">
                                                 {event.hostName}
+                                                {event.hostId ===
+                                                    auth.user?.id && (
+                                                    <span className="ml-2 px-1.5 py-0.5 bg-green-100 text-green-800 text-xs rounded-full">
+                                                        You
+                                                    </span>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}
