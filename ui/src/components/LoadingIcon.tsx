@@ -23,7 +23,7 @@ const styleSheet = `
 }
 `;
 
-export default function LoadingIcon() {
+export function LoadingIcon() {
     return (
         <div style={pulseStyle}>
             <style>{styleSheet}</style>

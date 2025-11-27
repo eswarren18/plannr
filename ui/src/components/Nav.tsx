@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../providers/AuthProvider';
 
-function Nav() {
+export function Nav() {
     const auth = useContext(AuthContext);
     const user = auth?.user;
     const signout = auth?.signout;
@@ -129,5 +129,3 @@ function Nav() {
         </nav>
     );
 }
-
-export default Nav;

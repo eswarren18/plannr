@@ -1,0 +1,104 @@
+import { useEffect, useState } from 'react';
+import { InviteOut } from '../types/invite';
+import { useNavigate } from 'react-router-dom';
+import { fetchInvites } from '../services/inviteService';
+
+interface EventParticipantsProps {
+    eventId: string | undefined;
+}
+
+export function EventInvites({ eventId }: EventParticipantsProps) {
+    // Component state and navigation
+    const [selectedStatus, setSelectedStatus] = useState<
+        'all' | 'accepted' | 'declined' | 'pending'
+    >('accepted');
+    const [error, setError] = useState<string | null>(null);
+    const [invites, setInvites] = useState<InviteOut[]>([]);
+    const navigate = useNavigate();
+
+    // Fetch accepted invite details
+    const fetchData = async () => {
+        try {
+            if (!eventId) {
+                setError('No event ID provided.');
+                return;
+            }
+            const data = await fetchInvites(selectedStatus, parseInt(eventId));
+            setInvites(data);
+        } catch (err) {
+            console.error('Failed to load participants');
+            setError('Failed to load participants');
+        }
+    };
+
+    // Run the fetchData function on component mount and when dependencies change
+    useEffect(() => {
+        fetchData();
+    }, [eventId, selectedStatus]);
+
+    return (
+        <div className="w-4/5 mb-6">
+            <h2 className="text-2xl font-bold mb-2">Invites</h2>
+            <div className="mb-4">
+                <div className="flex justify-between items-center mb-2">
+                    <div className="flex gap-2">
+                        {['accepted', 'declined', 'pending', 'all'].map(
+                            (status) => (
+                                <button
+                                    key={status}
+                                    className={`px-3 py-1 rounded font-medium ${selectedStatus === status ? 'bg-cyan-600 text-white' : 'bg-gray-200 text-black'}`}
+                                    onClick={() =>
+                                        setSelectedStatus(
+                                            status as typeof selectedStatus
+                                        )
+                                    }
+                                >
+                                    {status.charAt(0).toUpperCase() +
+                                        status.slice(1)}
+                                </button>
+                            )
+                        )}
+                    </div>
+                    <button
+                        className="bg-cyan-600 text-white px-3 py-1 rounded font-medium hover:bg-cyan-400 cursor-pointer"
+                        onClick={() => navigate(`/invite-form/${eventId}`)}
+                    >
+                        Invite
+                    </button>
+                </div>
+
+                {invites.length === 0 ? (
+                    <div>No invites found.</div>
+                ) : (
+                    <table className="w-full bg-white rounded-lg shadow-sm">
+                        <thead>
+                            <tr className="bg-gray-100 text-left">
+                                <th className="py-2 px-4">Name</th>
+                                <th className="py-2 px-4">Role</th>
+                                <th className="py-2 px-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {invites.map((invite) => (
+                                <tr
+                                    key={invite.id}
+                                    className="border-b last:border-b-0 border-gray-200"
+                                >
+                                    <td className="py-2 px-4">
+                                        {invite.user_name}
+                                    </td>
+                                    <td className="py-2 px-4">{invite.role}</td>
+                                    <td className="py-2 px-4">
+                                        {selectedStatus === 'all'
+                                            ? (invite.status ?? '')
+                                            : selectedStatus}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
+            </div>
+        </div>
+    );
+}

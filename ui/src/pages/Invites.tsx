@@ -13,7 +13,7 @@ export default function Invites() {
         return <Navigate to="/" />;
     }
 
-    // Component state and navigation
+    // Page state and navigation
     const navigate = useNavigate();
     const [invites, setInvites] = useState<InviteOut[]>([]);
     const [loading, setLoading] = useState<boolean>(true);

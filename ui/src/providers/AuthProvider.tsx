@@ -2,7 +2,7 @@ import { createContext, useEffect, useState, ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { UserResponse } from '../types/user';
 import { authenticate, signout as signoutApi } from '../services/authService';
-import LoadingIcon from '../components/LoadingIcon';
+import { LoadingIcon } from '../components';
 
 interface AuthContextType {
     user: UserResponse | undefined;

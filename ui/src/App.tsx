@@ -1,5 +1,5 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import Nav from './components/Nav';
+import { Nav } from './components';
 
 import './index.css';
 

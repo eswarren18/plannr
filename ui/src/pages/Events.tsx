@@ -13,7 +13,7 @@ export default function Events() {
         return <Navigate to="/" />;
     }
 
-    // State for role and date filters
+    // Page state and navigation
     const [roleFilter, setRoleFilter] = useState<'host' | 'participant'>(
         'participant'
     );

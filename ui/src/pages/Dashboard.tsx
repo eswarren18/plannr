@@ -12,7 +12,7 @@ export default function Dashboard() {
         return <Navigate to="/" />;
     }
 
-    // Component state and navigation
+    // Page state and navigation
     const navigate = useNavigate();
 
     return (

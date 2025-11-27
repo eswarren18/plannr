@@ -88,6 +88,7 @@ export async function fetchInvites(
             },
         }));
 
+        console.log('Fetched invites:', invites);
         return invites;
     } catch (error) {
         console.error(`Error in fetchInvites (${status}):`, error);
