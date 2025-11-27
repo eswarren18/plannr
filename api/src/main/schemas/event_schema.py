@@ -7,7 +7,6 @@ from pydantic import BaseModel
 class EventBase(BaseModel):
     title: str
     description: Optional[str] = None
-    host_id: int
     start_time: datetime
     end_time: datetime
 
@@ -18,6 +17,7 @@ class EventCreate(EventBase):
 
 class EventOut(EventBase):
     id: int
+    host_id: int
     host_name: str
 
 

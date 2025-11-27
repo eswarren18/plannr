@@ -27,11 +27,14 @@ def create_event(
     Returns:
         EventOut: The created event with host information.
     """
+    print(event_details)
     # Create the new event from the user event details
     new_event = Event(
         title=event_details.title,
         description=event_details.description,
         host_id=user.id,
+        start_time=event_details.start_time,
+        end_time=event_details.end_time,
     )
     db.add(new_event)
     db.commit()

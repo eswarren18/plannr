@@ -57,9 +57,17 @@ export default function Events() {
             >
                 <div className="w-4/5 mx-auto">
                     <div className="flex flex-col gap-4 mt-4 mb-6">
-                        <h2 className="text-2xl font-bold text-center">
-                            Events
-                        </h2>
+                        <div className="flex justify-between items-center">
+                            <h2 className="text-2xl font-bold text-center">
+                                Events
+                            </h2>
+                            <button
+                                className="bg-cyan-600 text-white px-3 py-1 rounded font-medium hover:bg-cyan-400 transition-colors duration-150"
+                                onClick={() => navigate('/event-form')}
+                            >
+                                Create Event
+                            </button>
+                        </div>
                         <div className="flex justify-center gap-4">
                             <div className="flex bg-gray-100 rounded-xl shadow p-1">
                                 <button

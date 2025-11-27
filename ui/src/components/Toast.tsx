@@ -5,10 +5,7 @@ interface ToastProps {
     duration?: number;
 }
 
-export default function Toast({
-    message = 'Success!',
-    duration = 5000,
-}: ToastProps) {
+export function Toast({ message = 'Success!', duration = 5000 }: ToastProps) {
     const [visible, setVisible] = useState(true);
 
     useEffect(() => {

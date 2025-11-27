@@ -55,7 +55,7 @@ export default function InviteForm() {
     return (
         <form
             onSubmit={handleSubmit}
-            className="flex flex-col w-5/6 sm:w-3/5 md:w-2/5 lg:w-1/5 mx-auto my-2"
+            className="flex flex-col w-5/6 sm:w-3/5 md:w-2/5 lg:w-1/5 mx-auto my-8"
         >
             <h1 className="text-gray-800 font-bold text-2xl mb-1">
                 Invite a friend!

@@ -38,7 +38,11 @@ export async function createEvent(
         title: eventData.title,
         description: eventData.description,
         host_id: eventData.hostId,
+        start_time: eventData.startTime,
+        end_time: eventData.endTime,
     };
+
+    // Send POST request to the API
     try {
         const response = await fetch(`${baseUrl}/api/events`, {
             method: 'POST',
@@ -114,7 +118,11 @@ export async function updateEvent(
         title: eventData.title,
         description: eventData.description,
         host_id: eventData.hostId,
+        start_time: eventData.startTime,
+        end_time: eventData.endTime,
     };
+
+    // Send PUT request to the API
     try {
         const response = await fetch(`${baseUrl}/api/events/${eventId}`, {
             method: 'PUT',

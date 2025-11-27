@@ -19,9 +19,9 @@ createRoot(document.getElementById('root') as HTMLElement).render(
                         <Route path="signup" element={<SignUp />} />
                         <Route path="signin" element={<SignIn />} />
                         <Route path="events" element={<Events />} />
-                        <Route path="events/create" element={<EventForm />} />
+                        <Route path="event-form" element={<EventForm />} />
                         <Route
-                            path="events/edit/:eventId"
+                            path="event-form/:eventId"
                             element={<EventForm />}
                         />
                         <Route path="events/:eventId" element={<Event />} />
