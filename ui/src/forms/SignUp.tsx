@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../providers/AuthProvider';
 import { signup } from '../services/authService';
@@ -11,15 +11,18 @@ export default function SignUp() {
         return <Navigate to="/dashboard" />;
     }
 
-    // Component state and navigation
+    // Component location, navigation, and state
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const prefillEmail = params.get('email') || '';
+    const navigate = useNavigate();
+    const [error, setError] = useState('');
     const [form, setForm] = useState({
-        email: '',
+        email: prefillEmail,
         password: '',
         firstName: '',
         lastName: '',
     });
-    const [error, setError] = useState('');
-    const navigate = useNavigate();
 
     // Handle form input changes
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

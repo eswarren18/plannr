@@ -69,8 +69,11 @@ def create_invite(
     db.refresh(new_invite)
 
     # Send invite email with clickable link to the event
-    link = f"{os.environ.get('FRONTEND_HOST', 'http://localhost:5173')}/events/token/{new_invite.token}"
-    send_invite_email(invite_details.email, event.title, link)
+    event_link = f"{os.environ.get('FRONTEND_HOST', 'http://localhost:5173')}/events/token/{new_invite.token}"
+    register_link = f"{os.environ.get('FRONTEND_HOST', 'http://localhost:5173')}/signup?email={invite_details.email}"
+    send_invite_email(
+        invite_details.email, event.title, event_link, register_link
+    )
 
     return serialize_inviteout(new_invite, db)
 
