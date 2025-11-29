@@ -30,6 +30,7 @@ export function EventParticipants({ eventId }: EventParticipantsProps) {
         fetchData();
     }, []);
 
+    // Render alternative content based on state
     if (error) return <div className="text-red-500">{error}</div>;
     if (participants.length === 0)
         return <div>No accepted participants found.</div>;

@@ -119,6 +119,40 @@ export async function fetchEventById(
     }
 }
 
+export async function fetchEventByToken(
+    token: string
+): Promise<EventOut | Error> {
+    try {
+        const response = await fetch(`${baseUrl}/api/events/token/${token}`, {
+            credentials: 'include',
+        });
+        if (!response.ok) {
+            const errorMsg =
+                response.status === 404
+                    ? 'Event not found'
+                    : 'Failed to fetch event';
+            throw new Error(errorMsg);
+        }
+
+        // Transform Response object to JSON
+        const data = await response.json();
+
+        // Transform from snake_case to camelCase
+        const event: EventOut = {
+            id: data.id,
+            title: data.title,
+            description: data.description,
+            hostId: data.host_id,
+            hostName: data.host_name,
+            startTime: data.start_time,
+            endTime: data.end_time,
+        };
+        return event;
+    } catch (error) {
+        return error instanceof Error ? error : new Error('Unknown error');
+    }
+}
+
 export async function updateEvent(
     eventId: number,
     eventData: EventCreate

@@ -22,46 +22,59 @@ router = APIRouter(tags=["Users"], prefix="/api/users")
 def create_user(
     user: UserCreate, db: Session = Depends(get_db), response: Response = None
 ):
-    # Check if email already exists. Return error if found.
     existing_user = db.query(User).filter(User.email == user.email).first()
-    if existing_user:
+    if existing_user and existing_user.is_registered == True:
         raise HTTPException(
-            status_code=400, detail="A user with this email already exists."
+            status_code=400, detail="An account already exists for this email."
         )
 
-    # Create the new user. Commit user to DB.
-    db_user = User(
-        email=user.email,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        is_registered=True,
-        hashed_password=hash_password(user.password),
-    )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
+    # Register the user's account if email already exists in the DB
+    if existing_user and existing_user.is_registered == False:
+        existing_user.first_name = user.first_name
+        existing_user.last_name = user.last_name
+        existing_user.is_registered = True
+        existing_user.hashed_password = hash_password(user.password)
+        db.commit()
+        db.refresh(existing_user)
+        user_obj = existing_user
+
+    # Otherwise, create a new user
+    else:
+        new_user = User(
+            email=user.email,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            is_registered=True,
+            hashed_password=hash_password(user.password),
+        )
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+        user_obj = new_user
+
     # Backfill invites for this email
     invites = (
         db.query(Invite)
-        .filter(Invite.email == db_user.email, Invite.user_id == None)
+        .filter(Invite.email == user_obj.email, Invite.user_id == None)
         .all()
     )
     for invite in invites:
-        invite.user_id = db_user.id
+        invite.user_id = user_obj.id
     db.commit()
-    # Sign in the user upon creation by setting the JWT cookie. Return user details.
-    return set_jwt_cookie_response(db_user, response_model=UserResponse)
+
+    # Sign in the user upon creation by setting the JWT cookie
+    return set_jwt_cookie_response(user_obj, response_model=UserResponse)
 
 
 # TODO: This lists all users even when not signed in. What situation will this be needed?
 @router.get("/", response_model=List[UserResponse])
-def list_users(db: Session = Depends(get_db)):
+def get_users(db: Session = Depends(get_db)):
     # List all users in the database. Return user details.
     return db.query(User).all()
 
 
 @router.get("/me", response_model=UserResponse)
-def list_current_user(user: User = Depends(get_current_user_from_token)):
+def get_current_user(user: User = Depends(get_current_user_from_token)):
     # Returns the current User object from the JWT token in the cookie.
     # This endpoint is similar to get_current_user_from_token, but is exposed as an API route for clients to fetch their own user data.
     return user
@@ -83,12 +96,9 @@ def delete_current_user(
 
 
 @router.get("/{user_id}", response_model=UserResponse)
-def list_user(user_id: int, db: Session = Depends(get_db)):
+def get_user(user_id: int, db: Session = Depends(get_db)):
     # Get user details by user_id. Return error if not found.
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
-
-
-# TODO: update user endpoint for users to update their account info

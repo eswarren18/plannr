@@ -25,6 +25,7 @@ createRoot(document.getElementById('root') as HTMLElement).render(
                             element={<EventForm />}
                         />
                         <Route path="events/:eventId" element={<Event />} />
+                        <Route path="events/token/:token" element={<Event />} />
                         <Route path="invites" element={<Invites />} />
                         <Route
                             path="invite-form/:eventId"

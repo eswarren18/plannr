@@ -19,18 +19,25 @@ import {
     ProfileCard,
 } from '../components';
 import { AuthContext } from '../providers/AuthProvider';
-import { deleteEvent, fetchEventById } from '../services/eventService';
+import {
+    deleteEvent,
+    fetchEventById,
+    fetchEventByToken,
+} from '../services/eventService';
 import { EventOut } from '../types/event';
 
 export default function Event() {
-    // Redirect to home if not logged in
+    // Redirect to home if user is not logged in or unregistered user doesn't have a token
     const auth = useContext(AuthContext);
-    if (!auth?.user) {
+    const { eventId, token } = useParams<{
+        eventId?: string;
+        token?: string;
+    }>();
+    if (!auth?.user && !token) {
         return <Navigate to="/" />;
     }
 
     // Page state and navigation
-    const { eventId } = useParams<{ eventId: string }>();
     const navigate = useNavigate();
     const location = useLocation();
     const showInviteSentToast = location.state?.showInviteSentToast;
@@ -50,7 +57,15 @@ export default function Event() {
     // Fetch event details
     async function fetchEventData() {
         try {
-            const data = await fetchEventById(Number(eventId));
+            let data;
+            if (eventId) {
+                data = await fetchEventById(Number(eventId));
+            } else if (token) {
+                data = await fetchEventByToken(token); // implement this API call
+            } else {
+                setError('No event ID or token provided');
+                return;
+            }
             if (data instanceof Error) {
                 setError(data.message);
             } else {
@@ -110,7 +125,11 @@ export default function Event() {
                 <ProfileCard />
                 {/* Event content */}
                 <div
-                    className="fixed right-0 w-3/4 pt-20 pb-8 flex flex-col items-center overflow-y-auto"
+                    className={
+                        auth?.user
+                            ? 'fixed right-0 w-3/4 pt-20 pb-8 flex flex-col items-center overflow-y-auto'
+                            : 'w-full pt-20 pb-8 flex flex-col items-center overflow-y-auto'
+                    }
                     style={{
                         height: 'calc(100vh - 4rem)',
                         maxHeight: 'calc(100vh - 4rem)',
@@ -119,9 +138,7 @@ export default function Event() {
                     {/* Image and summary */}
                     <div className="flex w-4/5 gap-4 items-start">
                         {/* Image */}
-                        <div className="flex w-1/3">
-                            <div className="w-full h-72 bg-gray-200 rounded-2xl"></div>
-                        </div>
+                        <div className="w-72 h-72 bg-gray-200 rounded-2xl"></div>
                         {/* Summary: title, description, datetime, location, host */}
                         <div className="flex w-2/3 flex-col mt-4 mb-6">
                             {/* Title */}

@@ -107,7 +107,7 @@ def get_events(
 
 
 @router.get("/{event_id}", response_model=EventOut)
-def get_event(
+def get_event_by_id(
     event_id: int,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
@@ -151,6 +151,37 @@ def get_event(
 
     # Use event_serialization utility to return an EventFullOut instance
     return serialize_eventout(db_event, db)
+
+
+@router.get("/token/{token}", response_model=EventOut)
+def get_event_by_token(
+    token: str,
+    db: Session = Depends(get_db),
+):
+    """
+    Retrieve event details using an invite token.
+
+    Args:
+        token (str): Invite token from the URL.
+        db (Session): Database session.
+
+    Returns:
+        EventOut: The event associated with the invite token.
+
+    Raises:
+        HTTPException: If the invite or event is not found or invalid.
+    """
+    invite = db.query(Invite).filter(Invite.token == token).first()
+    if not invite:
+        raise HTTPException(
+            status_code=404, detail="Invalid or expired invite token."
+        )
+    event = db.query(Event).filter(Event.id == invite.event_id).first()
+    if not event:
+        raise HTTPException(
+            status_code=404, detail="Event not found for this invite."
+        )
+    return serialize_eventout(event, db)
 
 
 @router.put("/{event_id}", response_model=EventOut)

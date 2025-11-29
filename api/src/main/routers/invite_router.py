@@ -28,7 +28,7 @@ router = APIRouter(tags=["Invites"], prefix="/api")
 )
 def create_invite(
     event_id: int,
-    invite: InviteCreate,
+    invite_details: InviteCreate,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
@@ -37,34 +37,30 @@ def create_invite(
     if not event or event.host_id != user.id:
         raise HTTPException(status_code=403, detail="Not authorized.")
 
-    # Get invite from DB if it already exists
+    # Handle if an invite has already been sent
     existing_invite = (
         db.query(Invite)
-        .filter(Invite.event_id == event_id, Invite.email == invite.email)
+        .filter(
+            Invite.event_id == event_id, Invite.email == invite_details.email
+        )
         .first()
     )
-
-    # Handle if an invite has already been sent for the user & event
     if existing_invite:
-        if existing_invite.status == "accepted":
-            raise HTTPException(
-                status_code=400, detail="User already accepted invite."
-            )
-        elif existing_invite.status == "pending":
-            # TODO: Optionally, resend email
-            return existing_invite
-        else:
-            # TODO: Optionally, resend email
-            raise HTTPException(
-                status_code=400, detail="User already declined invite."
-            )
+        raise HTTPException(
+            status_code=400,
+            detail="An invitation has already been sent to this email.",
+        )
 
-    # Check if the invitee is a registered user
-    invited_user = db.query(User).filter(User.email == invite.email).first()
+    # Fetch the user from the DB if registered
+    invited_user = (
+        db.query(User).filter(User.email == invite_details.email).first()
+    )
+
+    # Create the invite
     new_invite = Invite(
         event_id=event_id,
-        email=invite.email,
-        role=invite.role,
+        email=invite_details.email,
+        role=invite_details.role,
         token=str(uuid.uuid4()),
         user_id=invited_user.id if invited_user else None,
     )
@@ -73,10 +69,8 @@ def create_invite(
     db.refresh(new_invite)
 
     # Send invite email with clickable link to the event
-    link = (
-        f"{os.environ.get('FRONTEND_HOST', 'http://localhost:5173')}/invites"
-    )
-    send_invite_email(invite.email, event.title, link)
+    link = f"{os.environ.get('FRONTEND_HOST', 'http://localhost:5173')}/events/token/{new_invite.token}"
+    send_invite_email(invite_details.email, event.title, link)
 
     return serialize_inviteout(new_invite, db)
 
@@ -103,12 +97,20 @@ def update_invite(
     # Fetch the user from the DB
     user = db.query(User).filter(User.email == invite.email).first()
 
-    # Validate the new status data, update the invite status
+    # Validate the new status data and update the invite
     if status_update.status not in ["accepted", "declined"]:
         raise HTTPException(status_code=400, detail="Invalid status.")
     invite.status = status_update.status
-    if user:
-        invite.user_id = user.id
+
+    # Create an unregistered user if a registered account doesn't already exist
+    if not user:
+        user = User(email=invite.email, is_registered=False)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+    # Set the invite's user_id whether the user existed previously or not
+    invite.user_id = user.id
     db.commit()
 
     # Add the user as a participant
