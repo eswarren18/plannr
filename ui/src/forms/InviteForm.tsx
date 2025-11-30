@@ -3,6 +3,7 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import { AuthContext } from '../providers/AuthProvider';
 import { createInvite } from '../services/inviteService';
+import { InviteCreate } from '../types/invite';
 
 export default function InviteForm() {
     // Redirect to home if not logged in
@@ -11,10 +12,12 @@ export default function InviteForm() {
         return <Navigate to="/" />;
     }
 
-    // Component state and navigation
+    // Get eventId from URL params
     const { eventId } = useParams<{ eventId?: string }>();
-    const isEdit = !!eventId;
-    const [form, setForm] = useState({ email: '', role: '' });
+    const [form, setForm] = useState<{ email: string; role: string }>({
+        email: '',
+        role: '',
+    });
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
@@ -32,19 +35,20 @@ export default function InviteForm() {
             return;
         }
 
-        // Submit POST request to the API
         try {
-            const result = await createInvite(Number(eventId), {
+            const inviteData: InviteCreate = {
                 email: form.email,
                 role: form.role,
-            });
+                eventId: Number(eventId),
+            };
+            const result = await createInvite(inviteData);
             if (result instanceof Error) {
                 setError(
                     'Unknown error occurred while creating invite. Please try again.'
                 );
             } else {
                 navigate(`/events/${eventId}`, {
-                    state: { showInviteSentToast: true },
+                    state: { showInviteSentAlert: true },
                 });
             }
         } catch (error) {

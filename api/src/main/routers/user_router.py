@@ -22,6 +22,20 @@ router = APIRouter(tags=["Users"], prefix="/api/users")
 def create_user(
     user: UserCreate, db: Session = Depends(get_db), response: Response = None
 ):
+    """
+    Create a new user or register an existing unregistered user.
+
+    Args:
+        user (UserCreate): User creation payload.
+        db (Session): Database session.
+        response (Response): FastAPI response object (optional).
+
+    Returns:
+        UserResponse: The created or registered user details with JWT cookie set.
+
+    Raises:
+        HTTPException: If an account already exists for the email.
+    """
     existing_user = db.query(User).filter(User.email == user.email).first()
     if existing_user and existing_user.is_registered == True:
         raise HTTPException(
@@ -66,17 +80,17 @@ def create_user(
     return set_jwt_cookie_response(user_obj, response_model=UserResponse)
 
 
-# TODO: This lists all users even when not signed in. What situation will this be needed?
-@router.get("/", response_model=List[UserResponse])
-def get_users(db: Session = Depends(get_db)):
-    # List all users in the database. Return user details.
-    return db.query(User).all()
-
-
 @router.get("/me", response_model=UserResponse)
 def get_current_user(user: User = Depends(get_current_user_from_token)):
-    # Returns the current User object from the JWT token in the cookie.
-    # This endpoint is similar to get_current_user_from_token, but is exposed as an API route for clients to fetch their own user data.
+    """
+    Get the current user from the JWT token in the cookie.
+
+    Args:
+        user (User): Current authenticated user from token.
+
+    Returns:
+        UserResponse: The current user details.
+    """
     return user
 
 
@@ -85,6 +99,16 @@ def delete_current_user(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
+    """
+    Delete the current user and their invites.
+
+    Args:
+        db (Session): Database session.
+        user (User): Current authenticated user.
+
+    Returns:
+        None
+    """
     # Delete invites by user_id or email
     db.query(Invite).filter(
         (Invite.user_id == user.id) | (Invite.email == user.email)
@@ -97,7 +121,19 @@ def delete_current_user(
 
 @router.get("/{user_id}", response_model=UserResponse)
 def get_user(user_id: int, db: Session = Depends(get_db)):
-    # Get user details by user_id. Return error if not found.
+    """
+    Get user details by user_id.
+
+    Args:
+        user_id (int): ID of the user to fetch.
+        db (Session): Database session.
+
+    Returns:
+        UserResponse: The user details if found.
+
+    Raises:
+        HTTPException: If user not found.
+    """
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")

@@ -9,9 +9,10 @@ export async function fetchEvents(
     role: 'host' | 'participant',
     time: 'upcoming' | 'past' | 'all'
 ): Promise<EventOut[]> {
+    // Sent GET request to the API
     try {
         const response = await fetch(
-            `${baseUrl}/api/events?role=${role}&time=${time}`,
+            `${baseUrl}/api/private/events?role=${role}&time=${time}`,
             {
                 credentials: 'include',
             }
@@ -54,7 +55,7 @@ export async function createEvent(
 
     // Send POST request to the API
     try {
-        const response = await fetch(`${baseUrl}/api/events`, {
+        const response = await fetch(`${baseUrl}/api/private/events`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -89,43 +90,12 @@ export async function fetchEventById(
     eventId: number
 ): Promise<EventOut | Error> {
     try {
-        const response = await fetch(`${baseUrl}/api/events/${eventId}`, {
-            credentials: 'include',
-        });
-        if (!response.ok) {
-            const errorMsg =
-                response.status === 404
-                    ? 'Event not found'
-                    : 'Failed to fetch event';
-            throw new Error(errorMsg);
-        }
-
-        // Transform Response object to JSON
-        const data = await response.json();
-
-        // Transform from snake_case to camelCase
-        const event: EventOut = {
-            id: data.id,
-            title: data.title,
-            description: data.description,
-            hostId: data.host_id,
-            hostName: data.host_name,
-            startTime: data.start_time,
-            endTime: data.end_time,
-        };
-        return event;
-    } catch (error) {
-        return error instanceof Error ? error : new Error('Unknown error');
-    }
-}
-
-export async function fetchEventByToken(
-    token: string
-): Promise<EventOut | Error> {
-    try {
-        const response = await fetch(`${baseUrl}/api/events/token/${token}`, {
-            credentials: 'include',
-        });
+        const response = await fetch(
+            `${baseUrl}/api/private/events/${eventId}`,
+            {
+                credentials: 'include',
+            }
+        );
         if (!response.ok) {
             const errorMsg =
                 response.status === 404
@@ -167,14 +137,17 @@ export async function updateEvent(
 
     // Send PUT request to the API
     try {
-        const response = await fetch(`${baseUrl}/api/events/${eventId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(transformedEventData),
-            credentials: 'include',
-        });
+        const response = await fetch(
+            `${baseUrl}/api/private/events/${eventId}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(transformedEventData),
+                credentials: 'include',
+            }
+        );
         if (!response.ok) {
             const errorMsg =
                 response.status === 404
@@ -203,10 +176,13 @@ export async function updateEvent(
 
 export async function deleteEvent(eventId: number): Promise<true | Error> {
     try {
-        const response = await fetch(`${baseUrl}/api/events/${eventId}`, {
-            method: 'DELETE',
-            credentials: 'include',
-        });
+        const response = await fetch(
+            `${baseUrl}/api/private/events/${eventId}`,
+            {
+                method: 'DELETE',
+                credentials: 'include',
+            }
+        );
         if (!response.ok) {
             const errorMsg =
                 response.status === 404

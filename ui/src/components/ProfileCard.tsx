@@ -3,8 +3,10 @@ import { useContext } from 'react';
 import { AuthContext } from '../providers/AuthProvider';
 
 export function ProfileCard() {
+    // Redirect to home if not logged in
     const auth = useContext(AuthContext);
     if (!auth?.user) return null;
+
     return (
         <div className="w-1/4 h-full fixed left-0 bg-white shadow-md flex flex-col items-center py-10 px-6">
             <div className="w-24 h-24 mb-4 rounded-full bg-gray-200 flex items-center justify-center text-4xl font-bold text-gray-400">

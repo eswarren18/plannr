@@ -36,52 +36,6 @@ export async function authenticate(): Promise<UserResponse | Error> {
     }
 }
 
-export async function signup(
-    signUpRequest: SignUpRequest
-): Promise<UserResponse | Error> {
-    try {
-        // Transform camelCase to snake_case for backend
-        const payload = {
-            email: signUpRequest.email,
-            password: signUpRequest.password,
-            first_name: signUpRequest.firstName,
-            last_name: signUpRequest.lastName,
-        };
-
-        // Send signup request to backend
-        const response = await fetch(`${baseUrl}/api/users`, {
-            method: 'POST',
-            body: JSON.stringify(payload),
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        if (!response.ok) {
-            throw new Error("Couldn't sign up");
-        }
-
-        // Transform response object to JSON
-        const data = await response.json();
-
-        // Transform snake_case to camelCase
-        const user: UserResponse = {
-            id: data.id,
-            email: data.email,
-            firstName: data.first_name,
-            lastName: data.last_name,
-            isRegistered: data.isRegistered ?? true,
-        };
-
-        return user;
-    } catch (error) {
-        if (error instanceof Error) {
-            return error;
-        }
-        return new Error('Something unknown happened.');
-    }
-}
-
 export async function signin(
     userRequest: UserRequest
 ): Promise<UserResponse | Error> {
@@ -142,5 +96,51 @@ export async function signout(): Promise<void | Error> {
             return error;
         }
         return new Error('Something Unknown Happened');
+    }
+}
+
+export async function signup(
+    signUpRequest: SignUpRequest
+): Promise<UserResponse | Error> {
+    try {
+        // Transform camelCase to snake_case for backend
+        const payload = {
+            email: signUpRequest.email,
+            password: signUpRequest.password,
+            first_name: signUpRequest.firstName,
+            last_name: signUpRequest.lastName,
+        };
+
+        // Send signup request to backend
+        const response = await fetch(`${baseUrl}/api/users`, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if (!response.ok) {
+            throw new Error("Couldn't sign up");
+        }
+
+        // Transform response object to JSON
+        const data = await response.json();
+
+        // Transform snake_case to camelCase
+        const user: UserResponse = {
+            id: data.id,
+            email: data.email,
+            firstName: data.first_name,
+            lastName: data.last_name,
+            isRegistered: data.isRegistered ?? true,
+        };
+
+        return user;
+    } catch (error) {
+        if (error instanceof Error) {
+            return error;
+        }
+        return new Error('Something unknown happened.');
     }
 }

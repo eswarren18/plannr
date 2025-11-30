@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { InviteOut } from '../types/invite';
 import { useNavigate } from 'react-router-dom';
 import { fetchInvites } from '../services/inviteService';
+import { ErrorDisplay } from './ErrorDisplay';
 
 interface EventParticipantsProps {
     eventId: string | undefined;
@@ -11,7 +12,7 @@ export function EventInvites({ eventId }: EventParticipantsProps) {
     // Component state and navigation
     const [selectedStatus, setSelectedStatus] = useState<
         'all' | 'accepted' | 'declined' | 'pending'
-    >('accepted');
+    >('all');
     const [error, setError] = useState<string | null>(null);
     const [invites, setInvites] = useState<InviteOut[]>([]);
     const navigate = useNavigate();
@@ -36,13 +37,16 @@ export function EventInvites({ eventId }: EventParticipantsProps) {
         fetchData();
     }, [eventId, selectedStatus]);
 
+    // Display error if present
+    if (error) return <ErrorDisplay message={error} />;
+
     return (
         <div className="w-4/5 mb-6">
             <h2 className="text-2xl font-bold mb-2">Invites</h2>
             <div className="mb-4">
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex bg-gray-100 rounded-xl shadow p-1">
-                        {['accepted', 'declined', 'pending', 'all'].map(
+                        {['all', 'pending', 'accepted', 'declined'].map(
                             (status, idx, arr) => {
                                 const isActive = selectedStatus === status;
                                 const baseClasses =
@@ -88,7 +92,7 @@ export function EventInvites({ eventId }: EventParticipantsProps) {
                     <table className="w-full bg-white rounded-lg shadow-sm">
                         <thead>
                             <tr className="bg-gray-100 text-left">
-                                <th className="py-2 px-4">Name</th>
+                                <th className="py-2 px-4">Name or Email</th>
                                 <th className="py-2 px-4">Role</th>
                                 <th className="py-2 px-4">Status</th>
                             </tr>
@@ -100,7 +104,9 @@ export function EventInvites({ eventId }: EventParticipantsProps) {
                                     className="border-b last:border-b-0 border-gray-200"
                                 >
                                     <td className="py-2 px-4">
-                                        {invite.user_name}
+                                        {invite.userName
+                                            ? invite.userName
+                                            : invite.email}
                                     </td>
                                     <td className="py-2 px-4">{invite.role}</td>
                                     <td className="py-2 px-4">

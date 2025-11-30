@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface ConfirmDeleteProps {
     open: boolean;
     title?: string;

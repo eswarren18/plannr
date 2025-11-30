@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { InviteOut } from '../types/invite';
-import { fetchInvites } from '../services/inviteService';
+import { fetchParticipants } from '../services/publicEventService';
+import { ErrorDisplay } from './ErrorDisplay';
+import { ParticipantOut } from '../types/event';
 
 interface EventParticipantsProps {
     eventId: string | undefined;
@@ -8,19 +9,19 @@ interface EventParticipantsProps {
 
 export function EventParticipants({ eventId }: EventParticipantsProps) {
     // Component state
-    const [participants, setParticipants] = useState<InviteOut[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const [participants, setParticipants] = useState<ParticipantOut[]>([]);
 
-    // Fetch accepted invite details
+    // Fetch invite details
     const fetchData = async () => {
         try {
             if (!eventId) {
                 setError('No event ID provided.');
                 return;
             }
-            const data = await fetchInvites('accepted', parseInt(eventId));
+            const data = await fetchParticipants(parseInt(eventId));
             setParticipants(data);
-        } catch (err) {
+        } catch {
             setError('Failed to load participants');
         }
     };
@@ -30,33 +31,30 @@ export function EventParticipants({ eventId }: EventParticipantsProps) {
         fetchData();
     }, []);
 
-    // Render alternative content based on state
-    if (error) return <div className="text-red-500">{error}</div>;
-    if (participants.length === 0)
-        return <div>No accepted participants found.</div>;
+    // Display error if present
+    if (error) return <ErrorDisplay message={error} />;
 
     return (
         <div className="w-4/5 mb-6">
             <h3 className="text-2xl font-bold mb-2">Participants</h3>
-            <table className="w-full bg-white rounded-lg shadow-sm">
-                <thead>
-                    <tr className="bg-gray-100 text-left">
-                        <th className="py-2 px-4">Name</th>
-                        <th className="py-2 px-4">Role</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {participants.map((invite) => (
-                        <tr
-                            key={invite.id}
-                            className="border-b last:border-b-0 border-gray-200"
-                        >
-                            <td className="py-2 px-4">{invite.user_name}</td>
-                            <td className="py-2 px-4">{invite.role}</td>
-                        </tr>
+            {participants.length === 0 ? (
+                <div>No RSVPs yet!</div>
+            ) : (
+                <div className="flex gap-6 flex-wrap justify-start items-end">
+                    {participants.map((participant, index) => (
+                        <div key={index} className="flex flex-col items-center">
+                            <div className="w-12 h-12 rounded-full bg-cyan-300 flex items-center justify-center text-white text-lg font-semibold mb-1">
+                                {participant.participantName
+                                    .charAt(0)
+                                    .toUpperCase()}
+                            </div>
+                            <div className="text-xs font-medium mb-1">
+                                {participant.participantName}
+                            </div>
+                        </div>
                     ))}
-                </tbody>
-            </table>
+                </div>
+            )}
         </div>
     );
 }

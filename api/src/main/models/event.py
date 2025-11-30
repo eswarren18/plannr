@@ -5,15 +5,7 @@ Defines the structure of the events and participants, and invites tables in
 the database, including columns and constraints.
 """
 
-from sqlalchemy import (
-    TIMESTAMP,
-    Column,
-    DateTime,
-    ForeignKey,
-    Integer,
-    String,
-    Text,
-)
+from sqlalchemy import TIMESTAMP, Column, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import backref, relationship
 from src.main.database import Base
 

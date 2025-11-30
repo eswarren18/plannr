@@ -6,21 +6,25 @@ if (!baseUrl) {
 }
 
 export async function createInvite(
-    eventId: number,
     inviteData: InviteCreate
 ): Promise<InviteOut | Error> {
+    // Transform camelCase to snake_case
+    const transformedInviteData = {
+        email: inviteData.email,
+        role: inviteData.role,
+        event_id: inviteData.eventId,
+    };
+
+    // Send POST request to the API
     try {
-        const response = await fetch(
-            `${baseUrl}/api/events/${eventId}/invites`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(inviteData),
-                credentials: 'include',
-            }
-        );
+        const response = await fetch(`${baseUrl}/api/invites`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(transformedInviteData),
+            credentials: 'include',
+        });
         if (!response.ok) throw new Error('Failed to create invite');
 
         // Transform Response object to JSON
@@ -30,16 +34,18 @@ export async function createInvite(
         const invite: InviteOut = {
             id: data.id,
             token: data.token,
-            user_name: data.user_name,
+            userName: data.user_name,
             email: data.email,
             role: data.role,
             status: data.status,
             event: {
-                id: data.event.id,
-                title: data.event.title,
                 description: data.event.description,
-                hostName: data.event.host_name,
+                endTime: data.event.end_time,
                 hostId: data.event.host_id,
+                hostName: data.event.host_name,
+                id: data.event.id,
+                startTime: data.event.start_time,
+                title: data.event.title,
             },
         };
         return invite;
@@ -74,24 +80,25 @@ export async function fetchInvites(
         // Transform from snake_case to camelCase
         const invites: InviteOut[] = data.map((invite: any) => ({
             id: invite.id,
-            token: invite.token ?? '',
-            user_name: invite.user_name ?? '',
-            status: invite.status,
+            token: invite.token,
+            userName: invite.user_name,
             email: invite.email,
             role: invite.role,
+            status: invite.status,
             event: {
-                id: invite.event?.id ?? 0,
-                hostName: invite.event?.host_name ?? '',
-                title: invite.event?.title ?? '',
-                description: invite.event?.description ?? '',
-                hostId: invite.event?.host_id,
+                description: invite.event.description,
+                endTime: invite.event.end_time,
+                hostId: invite.event.host_id,
+                hostName: invite.event.host_name,
+                id: invite.event.id,
+                startTime: invite.event.start_time,
+                title: invite.event.title,
             },
         }));
 
-        console.log('Fetched invites:', invites);
         return invites;
     } catch (error) {
-        console.error(`Error in fetchInvites (${status}):`, error);
+        console.error(`Error in fetchInvites:`, error);
         throw error;
     }
 }
@@ -120,17 +127,19 @@ export async function respondToInvite(
         // Transform snake_case to camelCase
         const invite: InviteOut = {
             id: data.id,
-            token: data.token ?? '',
-            user_name: data.user_name ?? '',
-            status: data.status,
+            token: data.token,
+            userName: data.user_name,
             email: data.email,
             role: data.role,
+            status: data.status,
             event: {
-                id: data.event?.id ?? 0,
-                hostName: data.event?.host_name ?? '',
-                title: data.event?.title ?? '',
-                description: data.event?.description ?? '',
-                hostId: data.event?.host_id,
+                description: data.event.description,
+                endTime: data.event.end_time,
+                hostId: data.event.host_id,
+                hostName: data.event.host_name,
+                id: data.event.id,
+                startTime: data.event.start_time,
+                title: data.event.title,
             },
         };
 

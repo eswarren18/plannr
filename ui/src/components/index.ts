@@ -1,9 +1,10 @@
 export { Chat } from './Chat';
 export { ConfirmDelete } from './ConfirmDelete';
+export { ErrorDisplay } from './ErrorDisplay';
 export { EventInvites } from './EventInvites';
 export { EventParticipants } from './EventParticipants';
 export { Faq } from './Faq';
-export { InviteSentToast } from './InviteSentToast';
+export { InviteSentAlert } from './InviteSentAlert';
 export { Itinerary } from './Itinerary';
 export { LoadingIcon } from './LoadingIcon';
 export { Nav } from './Nav';

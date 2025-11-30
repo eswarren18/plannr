@@ -21,6 +21,19 @@ router = APIRouter(tags=["Authentication"], prefix="/api/auth")
 
 @router.post("/signin", response_model=UserResponse)
 def signin(user_request: UserRequest, db: Session = Depends(get_db)):
+    """
+    Sign in a user with email and password.
+
+    Args:
+        user_request (UserRequest): User credentials from request body.
+        db (Session): Database session.
+
+    Returns:
+        UserResponse: The signed-in user details with JWT cookie set.
+
+    Raises:
+        HTTPException: If email or password is incorrect.
+    """
     # Try to get the user from the database. Return error if not found.
     user = db.query(User).filter(User.email == user_request.email).first()
     if not user:
@@ -42,8 +55,16 @@ def signin(user_request: UserRequest, db: Session = Depends(get_db)):
 
 @router.delete("/signout")
 def signout(request: Request, response: Response):
-    # Signs out the user by deleting their JWT cookie.
+    """
+    Sign out the current user by deleting the JWT cookie.
 
+    Args:
+        request (Request): FastAPI request object.
+        response (Response): FastAPI response object.
+
+    Returns:
+        dict: Confirmation message upon successful sign out.
+    """
     # Set secure cookies only if using HTTPS (production). For local dev (HTTP), set secure=False.
     secure = request.url.scheme == "https"
 

@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-import { ProfileCard } from '../components/ProfileCard';
+import { ProfileCard } from '../components';
 import { AuthContext } from '../providers/AuthProvider';
-import { fetchEvents } from '../services/eventService';
+import { fetchEvents } from '../services';
 import { EventOut } from '../types/event';
 
 export default function Events() {

@@ -8,7 +8,7 @@ import {
     createEvent,
     fetchEventById,
     updateEvent,
-} from '../services/eventService';
+} from '../services/privateEventService';
 
 export default function EventForm() {
     // Redirect to home if not logged in

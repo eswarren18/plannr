@@ -15,3 +15,18 @@ def serialize_eventout(event, db):
         "start_time": event.start_time,
         "end_time": event.end_time,
     }
+
+
+def serialize_participantout(invite):
+    user = invite.user
+    if user:
+        name = (
+            f"{user.first_name or ''} {user.last_name or ''}".strip()
+            or user.email
+        )
+    else:
+        name = invite.email
+    return {
+        "participant_name": name,
+        "role": invite.role,
+    }

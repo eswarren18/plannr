@@ -11,7 +11,7 @@ class InviteBase(BaseModel):
 
 
 class InviteCreate(InviteBase):
-    pass
+    event_id: int
 
 
 class InviteOut(InviteBase):

@@ -12,18 +12,14 @@ import {
     EventInvites,
     EventParticipants,
     Faq,
-    InviteSentToast,
+    InviteSentAlert,
     Itinerary,
     Packing,
     Polls,
     ProfileCard,
 } from '../components';
 import { AuthContext } from '../providers/AuthProvider';
-import {
-    deleteEvent,
-    fetchEventById,
-    fetchEventByToken,
-} from '../services/eventService';
+import { deleteEvent, fetchEventById, fetchEventByToken } from '../services';
 import { EventOut } from '../types/event';
 
 export default function Event() {
@@ -40,7 +36,7 @@ export default function Event() {
     // Page state and navigation
     const navigate = useNavigate();
     const location = useLocation();
-    const showInviteSentToast = location.state?.showInviteSentToast;
+    const showInviteSentAlert = location.state?.showInviteSentAlert;
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [event, setEvent] = useState<EventOut | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -61,7 +57,7 @@ export default function Event() {
             if (eventId) {
                 data = await fetchEventById(Number(eventId));
             } else if (token) {
-                data = await fetchEventByToken(token); // implement this API call
+                data = await fetchEventByToken(token);
             } else {
                 setError('No event ID or token provided');
                 return;
@@ -120,16 +116,12 @@ export default function Event() {
 
     return (
         <>
-            {showInviteSentToast && <InviteSentToast message="Invite Sent" />}
+            {showInviteSentAlert && <InviteSentAlert message="Invite Sent" />}
             <div className="flex bg-gray-50 min-h-screen z-10">
                 <ProfileCard />
                 {/* Event content */}
                 <div
-                    className={
-                        auth?.user
-                            ? 'fixed right-0 w-3/4 pt-20 pb-8 flex flex-col items-center overflow-y-auto'
-                            : 'w-full pt-20 pb-8 flex flex-col items-center overflow-y-auto'
-                    }
+                    className={`fixed right-0 pt-20 pb-8 flex flex-col items-center overflow-y-auto ${auth?.user ? 'w-3/4' : 'w-full'}`}
                     style={{
                         height: 'calc(100vh - 4rem)',
                         maxHeight: 'calc(100vh - 4rem)',
@@ -268,25 +260,16 @@ export default function Event() {
                                 </div>
                             </div>
                             {/* Host */}
-                            <h2 className="text-lg font-bold">Host</h2>
-                            <div className="flex items-center gap-2 w-auto mb-6">
-                                <span>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth="1.5"
-                                        stroke="currentColor"
-                                        className="size-6"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                                        />
-                                    </svg>
-                                </span>
-                                <span>{event.hostName}</span>
+                            <h2 className="text-lg font-bold mb-2">Hosts</h2>
+                            <div className="flex gap-6 flex-wrap justify-start items-end">
+                                <div className="flex flex-col items-center">
+                                    <div className="w-12 h-12 rounded-full bg-cyan-300 flex items-center justify-center text-white text-xl font-semibold mb-1">
+                                        {event.hostName.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div className="text-xs font-medium mb-1">
+                                        {event.hostName}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -494,7 +477,7 @@ export default function Event() {
                     </div>
                     {/* Event feature displays */}
                     {featureSelection === 'participants' && (
-                        <EventParticipants eventId={eventId} />
+                        <EventParticipants eventId={event.id.toString()} />
                     )}
                     {/* Render EventInvites if selected */}
                     {featureSelection === 'invites' &&

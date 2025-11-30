@@ -1,20 +1,19 @@
 export interface EventBase {
-    title: string;
     description?: string;
-    startTime: string;
     endTime: string;
+    startTime: string;
+    title: string;
 }
 
 export interface EventCreate extends EventBase {}
 
 export interface EventOut extends EventBase {
-    id: number;
     hostId: number;
     hostName: string;
+    id: number;
 }
 
-export interface ParticipantBase {
-    eventId: number;
-    userId: number;
+export interface ParticipantOut {
+    participantName: string;
     role: string;
 }

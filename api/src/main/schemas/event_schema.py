@@ -21,7 +21,6 @@ class EventOut(EventBase):
     host_name: str
 
 
-class ParticipantBase(BaseModel):
-    event_id: int
-    user_id: int
+class ParticipantOut(BaseModel):
+    participant_name: str
     role: str

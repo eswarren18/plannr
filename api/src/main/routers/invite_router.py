@@ -18,22 +18,35 @@ from src.main.utils import (
     serialize_inviteout,
 )
 
-router = APIRouter(tags=["Invites"], prefix="/api")
+router = APIRouter(tags=["Invites"], prefix="/api/invites")
 
 
 @router.post(
-    "/events/{event_id}/invites",
+    "/",
     response_model=InviteOut,
     summary="Invite a participant",
 )
 def create_invite(
-    event_id: int,
-    invite_details: InviteCreate,
+    invite_details: InviteCreate = Body(...),
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
+    """
+    Create a new invite for a participant to an event.
+
+    Args:
+        invite_details (InviteCreate): Invite details from request body, including event_id, email, and role.
+        db (Session): Database session.
+        user (User): Current authenticated user (host).
+
+    Returns:
+        InviteOut: The created invite object.
+
+    Raises:
+        HTTPException: If not authorized or invite already exists.
+    """
     # Only the host can invite participants
-    event = db.query(Event).filter(Event.id == event_id).first()
+    event = db.query(Event).filter(Event.id == invite_details.event_id).first()
     if not event or event.host_id != user.id:
         raise HTTPException(status_code=403, detail="Not authorized.")
 
@@ -41,7 +54,8 @@ def create_invite(
     existing_invite = (
         db.query(Invite)
         .filter(
-            Invite.event_id == event_id, Invite.email == invite_details.email
+            Invite.event_id == invite_details.event_id,
+            Invite.email == invite_details.email,
         )
         .first()
     )
@@ -58,7 +72,7 @@ def create_invite(
 
     # Create the invite
     new_invite = Invite(
-        event_id=event_id,
+        event_id=invite_details.event_id,
         email=invite_details.email,
         role=invite_details.role,
         token=str(uuid.uuid4()),
@@ -79,7 +93,7 @@ def create_invite(
 
 
 @router.put(
-    "/invites/{token}",
+    "/{token}",
     response_model=InviteOut,
     summary="Respond to an invite (accept or decline)",
 )
@@ -90,6 +104,20 @@ def update_invite(
     ),
     db: Session = Depends(get_db),
 ):
+    """
+    Respond to an invite by accepting or declining.
+
+    Args:
+        token (str): Invite token from the URL.
+        status_update (InviteStatusUpdate): Status update payload.
+        db (Session): Database session.
+
+    Returns:
+        InviteOut: The updated invite object.
+
+    Raises:
+        HTTPException: If invite is invalid or status is invalid.
+    """
     # Fetch the invite from the DB
     invite = db.query(Invite).filter(Invite.token == token).first()
     if not invite or invite.status != "pending":
@@ -133,12 +161,26 @@ def update_invite(
         return serialize_inviteout(invite, db)
 
 
-@router.delete("/invites/{invite_id}", status_code=204)
+@router.delete("/{invite_id}", status_code=204)
 def delete_invite(
     invite_id: int,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_from_token),
 ):
+    """
+    Delete an invite by its ID.
+
+    Args:
+        invite_id (int): ID of the invite to delete.
+        db (Session): Database session.
+        user (User): Current authenticated user.
+
+    Returns:
+        None
+
+    Raises:
+        HTTPException: If invite not found or not authorized.
+    """
     invite = db.query(Invite).filter(Invite.id == invite_id).first()
     if not invite:
         raise HTTPException(status_code=404, detail="Invite not found.")
@@ -150,7 +192,7 @@ def delete_invite(
     return
 
 
-@router.get("/invites", response_model=list[InviteOut])
+@router.get("/", response_model=list[InviteOut])
 def get_invites(
     status: str = Query(
         None, description="Invite status: pending, accepted, declined, all"
@@ -158,12 +200,26 @@ def get_invites(
     user_id: int = Query(None, description="Filter by user_id"),
     event_id: int = Query(None, description="Filter by event_id"),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user_from_token),
+    user: User = Depends(get_current_user_from_token),
 ):
     """
     Fetch invites filtered by user_id, event_id, and status.
     If no user_id is provided, defaults to current user.
+
+    Args:
+        status (str): Status filter for invites.
+        user_id (int): User ID to filter invites.
+        event_id (int): Event ID to filter invites.
+        db (Session): Database session.
+        user (User): Current authenticated user.
+
+    Returns:
+        List[InviteOut]: List of invites matching the filters.
+
+    Raises:
+        HTTPException: If event not found, not authorized, or invalid status.
     """
+
     query = db.query(Invite)
     # If user_id is specified, filter by user_id
     if user_id is not None:
@@ -176,16 +232,16 @@ def get_invites(
         event = db.query(Event).filter(Event.id == event_id).first()
         if not event:
             raise HTTPException(status_code=404, detail="Event not found.")
-        # Check if current user is host
-        if event.host_id == current_user.id:
+        # Check if user is host
+        if event.host_id == user.id:
             query = query.filter(Invite.event_id == event_id)
         else:
-            # Check if current user has accepted invite for this event
+            # Check if user has accepted invite for this event
             accepted_invite = (
                 db.query(Invite)
                 .filter(
                     Invite.event_id == event_id,
-                    Invite.user_id == current_user.id,
+                    Invite.user_id == user.id,
                     Invite.status == "accepted",
                 )
                 .first()
@@ -202,7 +258,7 @@ def get_invites(
                 )
     # If neither user_id nor event_id is specified, default to current user
     else:
-        query = query.filter(Invite.user_id == current_user.id)
+        query = query.filter(Invite.user_id == user.id)
     if status and status != "all":
         if status not in ["pending", "accepted", "declined"]:
             raise HTTPException(
