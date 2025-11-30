@@ -170,7 +170,7 @@ def test_get_events_host_success():
     app.dependency_overrides[get_db] = mock_get_db
 
     # --- Act ---
-    response = client.get("/api/events/?role=host&time=all")
+    response = client.get("/api/private/events/?role=host&time=all")
 
     # --- Clean-up ---
     app.dependency_overrides = {}
