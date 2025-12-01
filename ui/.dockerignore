@@ -1,0 +1,37 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Cache and logs
+*.log
+.cache/
+
+# Test files and coverage
+coverage/
+*.test.*
+*.spec.*
+
+# Vite and environment files
+.vite/
+.env*
+!.env.prod
+
+# Git and VCS
+.git/
+.gitignore
+
+# Docker and Compose
+Dockerfile
+Dockerfile.prod
+docker-compose.yml
+docker-compose.prod.yml
+
+# Configs (not needed in image)
+.prettierrc
+eslint.config.js
+
+# Misc
+*.DS_Store

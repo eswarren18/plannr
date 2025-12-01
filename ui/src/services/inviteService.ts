@@ -17,7 +17,7 @@ export async function createInvite(
 
     // Send POST request to the API
     try {
-        const response = await fetch(`${baseUrl}/api/invites`, {
+        const response = await fetch(`${baseUrl}/api/invites/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ export async function fetchInvites(
         if (eventId !== undefined) params.append('event_id', String(eventId));
         if (userId !== undefined) params.append('user_id', String(userId));
         const response = await fetch(
-            `${baseUrl}/api/invites?${params.toString()}`,
+            `${baseUrl}/api/invites/?${params.toString()}`,
             {
                 credentials: 'include',
             }

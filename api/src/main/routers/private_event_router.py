@@ -84,7 +84,7 @@ def get_events(
             .filter(Participant.user_id == user.id)
             .subquery()
         )
-        query = db.query(Event).filter(Event.id.in_(event_ids))
+        query = db.query(Event).filter(Event.id.in_(event_ids.select()))
     else:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

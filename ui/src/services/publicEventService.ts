@@ -1,4 +1,5 @@
 import { EventOut, ParticipantOut } from '../types/event';
+
 export const baseUrl = import.meta.env.VITE_API_HOST;
 if (!baseUrl) {
     throw new Error('VITE_API_HOST was not defined');
@@ -47,7 +48,7 @@ export async function fetchParticipants(
     // Sent GET request to the API
     try {
         const response = await fetch(
-            `/api/public/events/${eventId}/participants`
+            `${baseUrl}/api/public/events/${eventId}/participants/`
         );
         if (!response.ok) {
             throw new Error('Failed to fetch participants');

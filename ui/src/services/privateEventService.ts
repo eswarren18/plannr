@@ -12,7 +12,7 @@ export async function fetchEvents(
     // Sent GET request to the API
     try {
         const response = await fetch(
-            `${baseUrl}/api/private/events?role=${role}&time=${time}`,
+            `${baseUrl}/api/private/events/?role=${role}&time=${time}`,
             {
                 credentials: 'include',
             }
@@ -55,7 +55,7 @@ export async function createEvent(
 
     // Send POST request to the API
     try {
-        const response = await fetch(`${baseUrl}/api/private/events`, {
+        const response = await fetch(`${baseUrl}/api/private/events/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -112,7 +112,7 @@ export async function signup(
         };
 
         // Send signup request to backend
-        const response = await fetch(`${baseUrl}/api/users`, {
+        const response = await fetch(`${baseUrl}/api/users/`, {
             method: 'POST',
             body: JSON.stringify(payload),
             credentials: 'include',

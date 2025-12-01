@@ -7,7 +7,8 @@ from alembic import context
 
 import sys
 import os
-from dotenv import load_dotenv
+
+# from dotenv import load_dotenv
 
 sys.path.append(
     os.path.abspath(
@@ -19,7 +20,7 @@ from src.main.database import Base
 import src.main.models.user
 
 # Load environment variables from .env file
-load_dotenv()
+# load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 # this is the Alembic Config object, which provides

@@ -1,0 +1,40 @@
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+*.log
+
+# Virtual environments
+venv/
+env/
+ENV/
+*.env
+
+# Test files
+tests/
+*.cover
+.coverage
+coverage.xml
+htmlcov/
+
+# Git and VCS
+.git/
+.gitignore
+
+# Docker and Compose
+Dockerfile
+Dockerfile.prod
+docker-compose.yml
+docker-compose.prod.yml
+
+# Configs (not needed in image)
+.flake8
+.pre-commit-config.yaml
+
+# Alembic cache
+alembic/versions/__pycache__/
