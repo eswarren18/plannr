@@ -25,7 +25,15 @@ export async function createInvite(
             body: JSON.stringify(transformedInviteData),
             credentials: 'include',
         });
-        if (!response.ok) throw new Error('Failed to create invite');
+        if (!response.ok) {
+            let errorDetail =
+                'Could not create invite. Please try again later.';
+            const errorData = await response.json();
+            if (errorData && errorData.detail) {
+                errorDetail = errorData.detail;
+            }
+            return new Error(errorDetail);
+        }
 
         // Transform Response object to JSON
         const data = await response.json();
@@ -51,7 +59,9 @@ export async function createInvite(
         return invite;
     } catch (error) {
         console.error('Error in createInvite:', error);
-        return new Error('Could not create invite');
+        return error instanceof Error
+            ? error
+            : new Error('Could not create invite. Please try again later.');
     }
 }
 

@@ -3,6 +3,7 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import { AuthContext } from '../providers/AuthProvider';
 import { createInvite } from '../services/inviteService';
+import { ErrorDisplay } from '../components/ErrorDisplay';
 import { InviteCreate } from '../types/invite';
 
 export default function InviteForm() {
@@ -43,18 +44,14 @@ export default function InviteForm() {
             };
             const result = await createInvite(inviteData);
             if (result instanceof Error) {
-                setError(
-                    'Unknown error occurred while creating invite. Please try again.'
-                );
+                setError(result.message);
             } else {
                 navigate(`/events/${eventId}`, {
                     state: { showInviteSentAlert: true },
                 });
             }
         } catch (error) {
-            setError(
-                'Unknown error occurred while creating invite. Please try again.'
-            );
+            setError('Could not create invite. Please try again later.');
         }
     };
 
@@ -125,7 +122,7 @@ export default function InviteForm() {
                     <option value="participant">Participant</option>
                 </select>
             </div>
-            {error && <div className="text-red-600 text-sm mb-2">{error}</div>}
+            {error && <ErrorDisplay message={error} className="my-2" />}
             <div className="flex gap-4 mt-4">
                 <button
                     type="button"
