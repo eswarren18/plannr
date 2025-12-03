@@ -1,5 +1,5 @@
 # Environment variable files
-.env
+.env*
 
 # Python virtual environments
 .venv/

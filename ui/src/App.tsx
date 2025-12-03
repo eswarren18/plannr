@@ -3,10 +3,10 @@ import { Nav } from './components';
 
 import './index.css';
 
-const API_HOST = import.meta.env.VITE_API_HOST;
+const API_HOST = import.meta.env.VITE_API_URL;
 
 if (!API_HOST) {
-    throw new Error('VITE_API_HOST is not defined');
+    throw new Error('VITE_API_URL is not defined');
 }
 
 export default function App() {

@@ -1,8 +1,8 @@
 import { SignUpRequest, UserRequest, UserResponse } from '../types/user';
 
-export const baseUrl = import.meta.env.VITE_API_HOST;
+export const baseUrl = import.meta.env.VITE_API_URL;
 if (!baseUrl) {
-    throw new Error('VITE_API_HOST was not defined');
+    throw new Error('VITE_API_URL was not defined');
 }
 
 export async function authenticate(): Promise<UserResponse | Error> {
