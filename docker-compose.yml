@@ -26,7 +26,7 @@ services:
       - mailhog
     environment:
       ENV: ${ENV}
-      FRONTEND_URL: ${FRONTEND_URL}
+      UI_URL: ${UI_URL}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -42,7 +42,7 @@ services:
     volumes:
       - ./ui:/app
     environment:
-      FRONTEND_URL: ${FRONTEND_URL}
+      UI_URL: ${UI_URL}
       VITE_API_URL: ${VITE_API_URL}
     ports:
       - "5173:5173"

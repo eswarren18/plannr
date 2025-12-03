@@ -1,6 +1,13 @@
 # Build step
 FROM node:20-alpine AS builder
 WORKDIR /app
+
+ARG UI_URL
+ARG VITE_API_URL
+
+ENV UI_URL=$UI_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 COPY ui/ .
 COPY .env.prod .env
 RUN npm install && npm run build

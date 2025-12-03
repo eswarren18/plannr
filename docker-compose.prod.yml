@@ -40,6 +40,9 @@ services:
     build:
       context: .
       dockerfile: ui/Dockerfile.prod
+      args:
+        UI_URL: ${UI_URL}
+        VITE_API_URL: ${VITE_API_URL}
     container_name: vite_frontend
     ports:
       - "80:80"
