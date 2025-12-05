@@ -7,23 +7,11 @@ on:
     branches: [main]
 
 jobs:
-  # lint-frontend:
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: ui
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Set up Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: "22"
-  #     - name: Install dependencies
-  #       run: npm install
-  #     - name: Run ESLint
-  #       run: npm run lint
-  #     - name: Run Prettier
-  #       run: npx prettier --check .
+  noop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: No operation
+        run: echo "No jobs enabled. CI always succeeds."
 
   # lint-backend:
   #   runs-on: ubuntu-latest
