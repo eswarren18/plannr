@@ -9,7 +9,7 @@ ENV UI_URL=$UI_URL
 ENV VITE_API_URL=$VITE_API_URL
 
 COPY ui/ .
-COPY ../.env.prod .env
+COPY ../.env .env
 RUN npm install && npm run build
 
 # Serve static files with Nginx

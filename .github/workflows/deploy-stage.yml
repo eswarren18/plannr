@@ -52,7 +52,7 @@ jobs:
       - name: Add SSH key
         uses: webfactory/ssh-agent@v0.8.0
         with:
-          ssh-private-key: ${{ secrets.EC2_SSH_KEY_STAGE }}
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
       - name: Deploy on EC2
         run: |
