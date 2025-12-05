@@ -13,9 +13,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   api:
-    build:
-      context: ./api
-      dockerfile: Dockerfile.prod
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/loopdin-api:${IMAGE_TAG}
     container_name: fastapi_backend
     command: uvicorn src.main.main:app --host 0.0.0.0 --port 9000
     ports:
@@ -37,12 +35,7 @@ services:
       SES_FROM_EMAIL: ${SES_FROM_EMAIL}
 
   ui:
-    build:
-      context: .
-      dockerfile: ui/Dockerfile.prod
-      args:
-        UI_URL: ${UI_URL}
-        VITE_API_URL: ${VITE_API_URL}
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/loopdin-ui:${IMAGE_TAG}
     container_name: vite_frontend
     ports:
       - "80:80"
