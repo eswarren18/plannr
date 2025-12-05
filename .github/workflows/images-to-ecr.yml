@@ -1,4 +1,4 @@
-name: Deploy to STAGE
+name: Push Images to ECR
 
 on:
   workflow_run:
