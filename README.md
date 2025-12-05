@@ -1,18 +1,16 @@
-# Plannr
+# Loopd In
 
 ## Overview
 
-Plannr is a web app for event planning that supports group creation, role-based access, recurring events, RSVPs with custom surveys, polls, file sharing, and calendar sync. Includes engagement tools like reminders, event feeds, and post-event photo sharing.
+Loopd In is a web app for event planning that supports group creation, role-based access, recurring events, RSVPs with custom surveys, polls, file sharing, and calendar sync. Includes engagement tools like reminders, event feeds, and post-event photo sharing.
 
 ## Getting Started
-
-Follow these steps to set up and run The Pharmacy Farm locally.
 
 1. **Clone the Repository**
 
    ```sh
-   git clone <your-repo-url>
-   cd plannr
+   git clone https://github.com/eswarren18/getloopdin.git
+   cd getloopdin
    ```
 
 2. **Configure Environment Variables**
