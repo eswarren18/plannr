@@ -17,6 +17,7 @@ app.add_middleware(
         "http://localhost:80",
         "http://localhost:5173",
         "http://getloopd.in",
+        "http://www.getloopd.in",
         "http://18.119.176.60",
     ],
     allow_credentials=True,
