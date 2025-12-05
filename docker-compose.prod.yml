@@ -3,8 +3,6 @@ services:
     image: postgres:15
     container_name: postgres_db
     restart: always
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -13,13 +11,9 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   api:
-    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/loopdin-api:${IMAGE_TAG}
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/loopdin-api
     container_name: fastapi_backend
     command: uvicorn src.main.main:app --host 0.0.0.0 --port 9000
-    ports:
-      - "9000:9000"
-    depends_on:
-      - db
     environment:
       ENV: ${ENV}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -33,14 +27,25 @@ services:
       SES_SMTP_USERNAME: ${SES_SMTP_USERNAME}
       SES_SMTP_PASSWORD: ${SES_SMTP_PASSWORD}
       SES_FROM_EMAIL: ${SES_FROM_EMAIL}
+    networks:
+      - loopdin_net
 
   ui:
-    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/loopdin-ui:${IMAGE_TAG}
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/loopdin-ui
     container_name: vite_frontend
-    ports:
-      - "80:80"
     depends_on:
       - api
+    networks:
+      - loopdin_net
+    # We'll run Nginx in this container as the frontend server
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./build:/usr/share/nginx/html:ro
+    ports:
+      - "80:80"
+
+networks:
+  loopdin_net:
 
 volumes:
   postgres_data:
