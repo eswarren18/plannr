@@ -27,7 +27,7 @@ jobs:
       IMAGE_TAG: ${{ github.sha }}
       EC2_HOST: getloopd.in
       EC2_USER: ec2-user
-      DOCKER_COMPOSE_PATH: /home/${{ env.EC2_USER }}/getloopdin/docker-compose.prod.yml
+      DOCKER_COMPOSE_PATH: /home/ec2-user/getloopdin/docker-compose.prod.yml
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
