@@ -39,13 +39,13 @@ services:
   ui:
     build:
       context: .
-      dockerfile: ui/Dockerfile.prod
-      args:
-        UI_URL: ${UI_URL}
-        VITE_API_URL: ${VITE_API_URL}
+      dockerfile: ui/Dockerfile.stage
     container_name: vite_frontend
     ports:
       - "80:80"
+    environment:
+      UI_URL: ${UI_URL}
+      VITE_API_URL: ${VITE_API_URL}
     depends_on:
       - api
 
