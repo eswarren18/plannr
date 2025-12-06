@@ -22,6 +22,7 @@ services:
       - "9000:9000"
     depends_on:
       - db
+    # Pass runtime environment variables to the container
     environment:
       ENV: ${ENV}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -40,12 +41,12 @@ services:
     build:
       context: .
       dockerfile: ui/Dockerfile.stage
+      # Pass build arguments to the Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL}
     container_name: vite_frontend
     ports:
       - "80:80"
-    environment:
-      UI_URL: ${UI_URL}
-      VITE_API_URL: ${VITE_API_URL}
     depends_on:
       - api
 
