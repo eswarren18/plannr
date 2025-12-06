@@ -1,48 +1,48 @@
-name: Push Images to ECR
+# name: Push Images to ECR
 
-on:
-  workflow_run:
-    workflows: ["CI Pipeline"]
-    types:
-      - completed
+# on:
+#   workflow_run:
+#     workflows: ["CI Pipeline"]
+#     types:
+#       - completed
 
-jobs:
-  deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    runs-on: ubuntu-latest
-    env:
-      AWS_REGION: us-east-2
-      ECR_API_REPO: loopdin-api
-      ECR_UI_REPO: loopdin-ui
-      EC2_HOST: 18.119.176.60
-      EC2_USER: ec2-user
-      DOCKER_COMPOSE_PATH: /home/ec2-user/getloopdin/docker-compose.prod.yml
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+# jobs:
+#   deploy:
+#     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+#     runs-on: ubuntu-latest
+#     env:
+#       AWS_REGION: us-east-2
+#       ECR_API_REPO: loopdin-api
+#       ECR_UI_REPO: loopdin-ui
+#       EC2_HOST: 18.119.176.60
+#       EC2_USER: ec2-user
+#       DOCKER_COMPOSE_PATH: /home/ec2-user/getloopdin/docker-compose.prod.yml
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v4
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+#       - name: Login to Amazon ECR
+#         id: login-ecr
+#         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build API Docker image
-        run: |
-          docker build -f api/Dockerfile.prod -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_API_REPO }}:latest ./api
+#       - name: Build API Docker image
+#         run: |
+#           docker build -f api/Dockerfile.prod -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_API_REPO }}:latest ./api
 
-      - name: Build UI Docker image
-        run: |
-          docker build -f ui/Dockerfile.prod -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_UI_REPO }}:latest ./ui
-      - name: Push API Docker image to ECR
-        run: |
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_API_REPO }}:latest
+#       - name: Build UI Docker image
+#         run: |
+#           docker build -f ui/Dockerfile.prod -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_UI_REPO }}:latest ./ui
+#       - name: Push API Docker image to ECR
+#         run: |
+#           docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_API_REPO }}:latest
 
-      - name: Push UI Docker image to ECR
-        run: |
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_UI_REPO }}:latest
+#       - name: Push UI Docker image to ECR
+#         run: |
+#           docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_UI_REPO }}:latest

@@ -15,7 +15,7 @@ services:
   api:
     build:
       context: ./api
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile.stage
     container_name: fastapi_backend
     command: uvicorn src.main.main:app --host 0.0.0.0 --port 9000
     ports:

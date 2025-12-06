@@ -13,55 +13,55 @@ jobs:
       - name: No operation
         run: echo "No jobs enabled. CI always succeeds."
 
-  # lint-backend:
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: api
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: "3.10"
-  #     - name: Install dependencies
-  #       run: pip install -r requirements.txt
-  #     - name: Run flake8
-  #       run: flake8 src
-  #     - name: Run isort
-  #       run: isort --check-only src
-  #     - name: Run black
-  #       run: black --check src
+  lint-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run flake8
+        run: flake8 src
+      - name: Run isort
+        run: isort --check-only src
+      - name: Run black
+        run: black --check src
 
-  # test-frontend:
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: ui
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     # Add frontend test steps here when available
+  test-frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ui
+    steps:
+      - uses: actions/checkout@v4
+      # Add frontend test steps here when available
 
-  # test-backend:
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: api
-  #   env:
-  #     DATABASE_URL: sqlite:///test.db
-  #     JWT_SECRET_KEY: dummysecret
-  #     POSTGRES_USER: dummyuser
-  #     POSTGRES_PASSWORD: dummypassword
-  #     POSTGRES_DB: dummydb
-  #     POSTGRES_PORT: 5432
-  #     POSTGRES_HOST: dummyhost
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: "3.10"
-  #     - name: Install dependencies
-  #       run: pip install -r requirements.txt
-  #     - name: Run pytest
-  #       run: pytest tests
+  test-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    env:
+      DATABASE_URL: sqlite:///test.db
+      JWT_SECRET_KEY: dummysecret
+      POSTGRES_USER: dummyuser
+      POSTGRES_PASSWORD: dummypassword
+      POSTGRES_DB: dummydb
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST: dummyhost
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run pytest
+        run: pytest tests
