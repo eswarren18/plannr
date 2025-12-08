@@ -58,4 +58,4 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Run pytest
-        run: pytest tests/unit
+        run: PYTHONPATH=src pytest tests/unit
