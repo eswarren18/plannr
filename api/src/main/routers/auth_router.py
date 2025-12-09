@@ -78,3 +78,4 @@ def signout(request: Request, response: Response):
     )
 
     return {"detail": "User has been signed out"}
+#
