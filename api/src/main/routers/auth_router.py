@@ -1,7 +1,6 @@
 """
 API Router for Authentication CRUD endpoints
 """
-
 from fastapi import (
     APIRouter,
     Depends,

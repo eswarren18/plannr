@@ -1,5 +1,8 @@
+from contextlib import asynccontextmanager
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from src.main.database import init_engine_and_session, engine
 from src.main.routers import (
     auth_router,
     invite_router,
@@ -8,8 +11,19 @@ from src.main.routers import (
     user_router,
 )
 
+# Initialize the FastAPI app
 app = FastAPI()
 
+# Initialize database engine and session
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    if engine is None:
+        DATABASE_URL = os.getenv("DATABASE_URL")
+        if DATABASE_URL:
+            init_engine_and_session(DATABASE_URL)
+    yield
+
+# Configure app middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[

@@ -103,6 +103,33 @@ def mock_get_db():
 
 
 # --- Tests ---
+def test_get_events_host_success():
+    # --- Arrange ---
+    global mock_db
+    mock_events = [
+        MockEvent(id=1, title="Event 1", host_id=1),
+        MockEvent(id=2, title="Event 2", host_id=1),
+        MockEvent(id=3, title="Event 3", host_id=2),
+    ]
+    mock_db = MockSession(events=mock_events)
+    app.dependency_overrides[get_current_user_from_token] = (
+        mock_get_current_user_from_token
+    )
+    app.dependency_overrides[get_db] = mock_get_db
+
+    # --- Act ---
+    response = client.get("/api/private/events/?role=host&time=all")
+
+    # --- Clean-up ---
+    app.dependency_overrides = {}
+
+    # --- Assert ---
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 2
+    assert all(event["host_id"] == 1 for event in data)
+
+
 # def test_create_event_success():
 #     # Arrange
 #     mock_event = MockEvent()
@@ -145,118 +172,91 @@ def mock_get_db():
 #     }
 
 
-def test_create_event_missing_fields():
-    # TODO: add test
-    pass
+# def test_create_event_missing_fields():
+#     # TODO: add test
+#     pass
 
 
-def test_create_event_unauthenticated():
-    # TODO: add test
-    pass
+# def test_create_event_unauthenticated():
+#     # TODO: add test
+#     pass
 
 
-def test_get_events_host_success():
-    # --- Arrange ---
-    global mock_db
-    mock_events = [
-        MockEvent(id=1, title="Event 1", host_id=1),
-        MockEvent(id=2, title="Event 2", host_id=1),
-        MockEvent(id=3, title="Event 3", host_id=2),
-    ]
-    mock_db = MockSession(events=mock_events)
-    app.dependency_overrides[get_current_user_from_token] = (
-        mock_get_current_user_from_token
-    )
-    app.dependency_overrides[get_db] = mock_get_db
-
-    # --- Act ---
-    response = client.get("/api/private/events/?role=host&time=all")
-
-    # --- Clean-up ---
-    app.dependency_overrides = {}
-
-    # --- Assert ---
-    assert response.status_code == 200
-    data = response.json()
-    assert len(data) == 2
-    assert all(event["host_id"] == 1 for event in data)
+# def test_get_events_participant_success():
+#     # TODO: add test
+#     pass
 
 
-def test_get_events_participant_success():
-    # TODO: add test
-    pass
+# def test_get_events_invalid_type():
+#     # TODO: add test
+#     pass
 
 
-def test_get_events_invalid_type():
-    # TODO: add test
-    pass
+# def test_get_event_as_host_success():
+#     # TODO: add test
+#     pass
 
 
-def test_get_event_as_host_success():
-    # TODO: add test
-    pass
+# def test_get_event_as_participant_success():
+#     # TODO: add test
+#     pass
 
 
-def test_get_event_as_participant_success():
-    # TODO: add test
-    pass
+# def test_get_event_not_found():
+#     # TODO: add test
+#     pass
 
 
-def test_get_event_not_found():
-    # TODO: add test
-    pass
+# def test_update_event_success():
+#     # TODO: add test
+#     pass
 
 
-def test_update_event_success():
-    # TODO: add test
-    pass
+# def test_update_event_not_found():
+#     # TODO: add test
+#     pass
 
 
-def test_update_event_not_found():
-    # TODO: add test
-    pass
+# def test_update_event_unauthorized():
+#     # TODO: add test
+#     pass
 
 
-def test_update_event_unauthorized():
-    # TODO: add test
-    pass
+# def test_delete_event_success():
+#     # TODO: add test
+#     pass
 
 
-def test_delete_event_success():
-    # TODO: add test
-    pass
+# def test_delete_event_not_found():
+#     # TODO: add test
+#     pass
 
 
-def test_delete_event_not_found():
-    # TODO: add test
-    pass
+# def test_delete_event_unauthorized():
+#     # TODO: add test
+#     pass
 
 
-def test_delete_event_unauthorized():
-    # TODO: add test
-    pass
+# def test_event_permissions_host_only():
+#     # TODO: add test
+#     pass
 
 
-def test_event_permissions_host_only():
-    # TODO: add test
-    pass
+# def test_event_participation_logic():
+#     # TODO: add test
+#     pass
 
 
-def test_event_participation_logic():
-    # TODO: add test
-    pass
+# def test_create_event_db_error():
+#     # TODO: add test
+#     pass
 
 
-def test_create_event_db_error():
-    # TODO: add test
-    pass
+# def test_update_event_db_error():
+#     # TODO: add test
+#     pass
 
 
-def test_update_event_db_error():
-    # TODO: add test
-    pass
-
-
-def test_delete_event_db_error():
-    # TODO: add test
-    pass
+# def test_delete_event_db_error():
+#     # TODO: add test
+#     pass

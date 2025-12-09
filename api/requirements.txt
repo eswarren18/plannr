@@ -4,8 +4,10 @@ flake8
 httpx
 isort
 pre-commit
+python-dotenv
 pytest
 pytest-asyncio
+testcontainers[postgres]
 
 # Production requirements
 alembic==1.16.1
