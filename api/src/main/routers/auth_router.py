@@ -1,6 +1,7 @@
 """
 API Router for Authentication CRUD endpoints
 """
+
 from fastapi import (
     APIRouter,
     Depends,
@@ -78,4 +79,3 @@ def signout(request: Request, response: Response):
     )
 
     return {"detail": "User has been signed out"}
-#

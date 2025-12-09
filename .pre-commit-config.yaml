@@ -4,12 +4,13 @@ repos:
     hooks:
       - id: black
         exclude: ".venv"
+        files: api/src
   - repo: https://github.com/pycqa/flake8
     rev: 7.0.0
     hooks:
       - id: flake8
         additional_dependencies: []
-        files: src
+        files: api/src
         args: [--config=api/.flake8]
         exclude: ".venv"
   - repo: https://github.com/PyCQA/isort
@@ -17,5 +18,5 @@ repos:
     hooks:
       - id: isort
         args: [--settings-path=api/pyproject.toml]
-        files: src
+        files: api/src
         exclude: ".venv"
