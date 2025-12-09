@@ -38,6 +38,9 @@ jobs:
 
   test-backend-unit:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
     env:
       DATABASE_URL: test.db
       JWT_SECRET_KEY: dummysecret
@@ -50,10 +53,15 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Run pytest
-        run: pytest api/tests/unit
+        run: pytest tests/unit
 
   test-backend-integration:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    env:
+      JWT_SECRET_KEY: dummysecret
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -63,4 +71,4 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Run integration tests
-        run: pytest api/tests/integration
+        run: pytest tests/integration
