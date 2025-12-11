@@ -12,9 +12,6 @@ from src.main.routers import (
     user_router,
 )
 
-# Initialize the FastAPI app
-app = FastAPI()
-
 
 # Initialize database engine and session
 @asynccontextmanager
@@ -25,6 +22,9 @@ async def lifespan(app: FastAPI):
             init_engine_and_session(DATABASE_URL)
     yield
 
+
+# Initialize the FastAPI app
+app = FastAPI(lifespan=lifespan)
 
 # Configure app middleware
 app.add_middleware(
