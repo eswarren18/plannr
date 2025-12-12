@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-import { ProfileCard } from '../components/ProfileCard';
 import { AuthContext } from '../providers/AuthProvider';
+import { useSidebar } from '../providers/SidebarProvider';
 import { fetchInvites, respondToInvite } from '../services/inviteService';
 import { InviteOut } from '../types/invite';
 
@@ -13,8 +13,9 @@ export default function Invites() {
         return <Navigate to="/" />;
     }
 
-    // Page state and navigation
+    // Page state and hooks
     const navigate = useNavigate();
+    const collapsed = useSidebar();
     const [invites, setInvites] = useState<InviteOut[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -60,13 +61,8 @@ export default function Invites() {
 
     return (
         <div className="flex bg-gray-50 min-h-screen z-10">
-            <ProfileCard />
             <div
-                className="fixed right-0 w-3/4 pt-20 pb-8 flex flex-col items-center overflow-y-auto"
-                style={{
-                    height: 'calc(100vh - 4rem)',
-                    maxHeight: 'calc(100vh - 4rem)',
-                }}
+                className={`main-content-container hide-scrollbar ${collapsed ? 'collapsed' : 'uncollapsed'}`}
             >
                 <div className="flex flex-col gap-4 w-4/5 mx-auto">
                     <h2 className="text-2xl font-bold mt-4 mb-2">Invites</h2>

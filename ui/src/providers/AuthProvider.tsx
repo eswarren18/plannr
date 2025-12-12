@@ -1,7 +1,6 @@
 import { createContext, useEffect, useState, ReactNode } from 'react';
-import { useLocation } from 'react-router-dom';
 import { UserResponse } from '../types/user';
-import { authenticate, signout as signoutApi } from '../services/authService';
+import { authenticate, signOut as signOutApi } from '../services/authService';
 import { LoadingIcon } from '../components';
 
 interface AuthContextType {
@@ -12,7 +11,7 @@ interface AuthContextType {
     error: any;
     setError: (error: any) => void;
     isLoggedIn: boolean;
-    signout: () => Promise<void>;
+    signOut: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -25,9 +24,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUser] = useState<UserResponse | undefined>();
     const [error, setError] = useState<any>();
     const [isLoading, setIsLoading] = useState(true);
-    const location = useLocation();
 
-    // Authenticate on initial mount and on every route change
+    // Authenticate user on mount
     useEffect(() => {
         setIsLoading(true);
         authenticate().then((result) => {
@@ -39,10 +37,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
             setUser(result);
             setIsLoading(false);
         });
-    }, [location]);
+    }, []);
 
-    const signout = async () => {
-        await signoutApi();
+    const signOut = async () => {
+        await signOutApi();
         setUser(undefined);
     };
 
@@ -56,7 +54,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 error,
                 setError,
                 isLoggedIn: !!user,
-                signout,
+                signOut,
             }}
         >
             {isLoading ? <LoadingIcon /> : children}

@@ -1,4 +1,4 @@
-export { authenticate, signin, signout, signup } from './authService';
+export { authenticate, signin, signOut, signup } from './authService';
 export { createInvite, fetchInvites, respondToInvite } from './inviteService';
 export {
     deleteEvent,

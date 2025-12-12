@@ -5,10 +5,10 @@ import { AuthContext } from '../providers/AuthProvider';
 import { signin } from '../services/authService';
 
 export default function SignIn() {
-    // Redirect to dashboard if logged in
+    // Redirect to events if logged in
     const auth = useContext(AuthContext);
     if (auth?.user) {
-        return <Navigate to="/dashboard" />;
+        return <Navigate to="/events" />;
     }
 
     // Component state and navigation
@@ -40,7 +40,7 @@ export default function SignIn() {
             setError(result.message);
         } else {
             auth?.setUser(result);
-            navigate('/dashboard');
+            navigate('/events');
         }
     };
 

@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-import { ProfileCard } from '../components';
 import { AuthContext } from '../providers/AuthProvider';
+import { useSidebar } from '../providers/SidebarProvider';
 import { fetchEvents } from '../services';
 import { EventOut } from '../types/event';
+import '../styles/main-content-container.css';
 
 export default function Events() {
     // Redirect to home if not logged in
@@ -13,16 +14,17 @@ export default function Events() {
         return <Navigate to="/" />;
     }
 
-    // Page state and navigation
+    // Page state and hooks
+    const navigate = useNavigate();
+    const collapsed = useSidebar();
+    const [events, setEvents] = useState<EventOut[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
     const [roleFilter, setRoleFilter] = useState<'host' | 'participant'>(
         'participant'
     );
     const [timeFilter, setTimeFilter] = useState<'upcoming' | 'past' | 'all'>(
         'upcoming'
     );
-    const [events, setEvents] = useState<EventOut[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const navigate = useNavigate();
 
     // Fetch events details
     const fetchData = async () => {
@@ -44,15 +46,10 @@ export default function Events() {
 
     return (
         <div className="flex bg-gray-50 min-h-screen z-10">
-            <ProfileCard />
             <div
-                className="fixed right-0 w-3/4 pt-20 pb-8 flex flex-col items-center overflow-y-auto"
-                style={{
-                    height: 'calc(100vh - 4rem)',
-                    maxHeight: 'calc(100vh - 4rem)',
-                }}
+                className={`main-content-container hide-scrollbar ${collapsed ? 'collapsed' : 'uncollapsed'}`}
             >
-                <div className="w-4/5 mx-auto">
+                <div className="w-5/6 mx-auto">
                     <div className="flex flex-col gap-4 mt-4 mb-6">
                         <div className="flex justify-between items-center">
                             <h2 className="text-2xl font-bold text-center">

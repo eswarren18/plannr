@@ -1,5 +1,8 @@
 import { Outlet, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import { Nav } from './components';
+import { Sidebar } from './components/Sidebar';
+import { SidebarProvider } from './providers/SidebarProvider';
 
 import './index.css';
 
@@ -10,14 +13,26 @@ if (!API_HOST) {
 }
 
 export default function App() {
-    const location = useLocation();
-    const isHomePage = location.pathname === '/';
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
     return (
         <>
-            <Nav />
-            <div className={isHomePage ? 'pt-16' : 'pt-16'}>
-                <Outlet />
-            </div>
+            <Nav
+                sidebarCollapsed={sidebarCollapsed}
+                setSidebarCollapsed={setSidebarCollapsed}
+            />
+            <SidebarProvider collapsed={sidebarCollapsed}>
+                <div className="pt-16">
+                    <Sidebar />
+                    <div
+                        className={`transition-all duration-300 ${
+                            sidebarCollapsed ? 'ml-16' : 'ml-[20%]'
+                        }`}
+                    >
+                        <Outlet />
+                    </div>
+                </div>
+            </SidebarProvider>
         </>
     );
 }

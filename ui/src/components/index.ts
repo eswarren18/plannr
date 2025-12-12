@@ -8,6 +8,6 @@ export { InviteSentAlert } from './InviteSentAlert';
 export { Itinerary } from './Itinerary';
 export { LoadingIcon } from './LoadingIcon';
 export { Nav } from './Nav';
-export { ProfileCard } from './ProfileCard';
+export { Sidebar } from './Sidebar';
 export { Packing } from './Packing';
 export { Polls } from './Polls';

@@ -16,7 +16,6 @@ import {
     Itinerary,
     Packing,
     Polls,
-    ProfileCard,
 } from '../components';
 import { AuthContext } from '../providers/AuthProvider';
 import { deleteEvent, fetchEventById, fetchEventByToken } from '../services';
@@ -118,10 +117,9 @@ export default function Event() {
         <>
             {showInviteSentAlert && <InviteSentAlert message="Invite Sent" />}
             <div className="flex bg-gray-50 min-h-screen z-10">
-                <ProfileCard />
                 {/* Event content */}
                 <div
-                    className={`fixed right-0 pt-20 pb-8 flex flex-col items-center overflow-y-auto ${auth?.user ? 'w-3/4' : 'w-full'}`}
+                    className={`fixed right-0 pt-20 pb-8 flex flex-col items-center overflow-y-auto ${auth?.user ? 'w-4/5' : 'w-full'}`}
                     style={{
                         height: 'calc(100vh - 4rem)',
                         maxHeight: 'calc(100vh - 4rem)',

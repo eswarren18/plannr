@@ -81,7 +81,7 @@ export async function signin(
     }
 }
 
-export async function signout(): Promise<void | Error> {
+export async function signOut(): Promise<void | Error> {
     const url = `${baseUrl}/api/auth/signout`;
     try {
         const res = await fetch(url, {

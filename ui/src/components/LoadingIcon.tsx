@@ -39,7 +39,7 @@ export function LoadingIcon() {
                     textAnchor="middle"
                     x="50"
                 >
-                    P
+                    L I
                 </text>
             </svg>
         </div>
