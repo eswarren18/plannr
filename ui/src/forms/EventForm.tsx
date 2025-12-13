@@ -17,18 +17,18 @@ export default function EventForm() {
         return <Navigate to="/" />;
     }
 
-    // Component state and navigation
+    // Form state and hooks
+    const navigate = useNavigate();
     const { eventId } = useParams<{ eventId?: string }>();
     const isEdit = !!eventId;
+    const [error, setError] = useState('');
     const [form, setForm] = useState({
         title: '',
         description: '',
         startTime: null as Date | null,
         endTime: null as Date | null,
     });
-    const [error, setError] = useState('');
     const [loading, setLoading] = useState(isEdit);
-    const navigate = useNavigate();
 
     // Fetch event for editing
     const fetchEvent = async () => {
@@ -111,7 +111,7 @@ export default function EventForm() {
     return (
         <form
             onSubmit={handleSubmit}
-            className="flex flex-col w-5/6 sm:w-3/5 md:w-2/5 lg:w-1/5 mx-auto my-8"
+            className="flex flex-col w-3/10 mx-auto my-8"
         >
             <h1 className="font-bold text-2xl mb-1">
                 {isEdit ? 'Edit Event' : 'Create an Event!'}

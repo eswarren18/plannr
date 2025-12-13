@@ -48,8 +48,7 @@ def generate_jwt_token(user: UserRequest) -> str:
     role.
     """
 
-    expiration = datetime.now(timezone.utc) + timedelta(hours=1)
-    payload = {"sub": user.email, "exp": int(expiration.timestamp())}
+    payload = {"sub": user.email}
     # Only add role if present
     if hasattr(user, "role") and user.role is not None:
         payload["role"] = user.role

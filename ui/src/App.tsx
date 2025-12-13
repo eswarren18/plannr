@@ -1,8 +1,9 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Nav } from './components';
 import { Sidebar } from './components/Sidebar';
 import { SidebarProvider } from './providers/SidebarProvider';
+import { AuthContext } from './providers/AuthProvider';
 
 import './index.css';
 
@@ -14,6 +15,8 @@ if (!API_HOST) {
 
 export default function App() {
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+    const auth = useContext(AuthContext);
+    const user = auth?.user;
 
     return (
         <>
@@ -23,10 +26,14 @@ export default function App() {
             />
             <SidebarProvider collapsed={sidebarCollapsed}>
                 <div className="pt-16">
-                    <Sidebar />
+                    {user && <Sidebar />}
                     <div
                         className={`transition-all duration-300 ${
-                            sidebarCollapsed ? 'ml-16' : 'ml-[20%]'
+                            user
+                                ? sidebarCollapsed
+                                    ? 'ml-16'
+                                    : 'ml-[20%]'
+                                : 'mx-auto'
                         }`}
                     >
                         <Outlet />

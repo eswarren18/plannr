@@ -18,6 +18,7 @@ import {
     Polls,
 } from '../components';
 import { AuthContext } from '../providers/AuthProvider';
+import { useSidebar } from '../providers/SidebarProvider';
 import { deleteEvent, fetchEventById, fetchEventByToken } from '../services';
 import { EventOut } from '../types/event';
 
@@ -32,13 +33,13 @@ export default function Event() {
         return <Navigate to="/" />;
     }
 
-    // Page state and navigation
-    const navigate = useNavigate();
+    // Page state and hooks
     const location = useLocation();
     const showInviteSentAlert = location.state?.showInviteSentAlert;
-    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-    const [event, setEvent] = useState<EventOut | null>(null);
+    const navigate = useNavigate();
+    const collapsed = useSidebar();
     const [error, setError] = useState<string | null>(null);
+    const [event, setEvent] = useState<EventOut | null>(null);
     const [featureSelection, setFeatureSelection] = useState<
         | 'participants'
         | 'invites'
@@ -48,6 +49,7 @@ export default function Event() {
         | 'itinerary'
         | 'polls'
     >('participants');
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
     // Fetch event details
     async function fetchEventData() {
@@ -119,14 +121,10 @@ export default function Event() {
             <div className="flex bg-gray-50 min-h-screen z-10">
                 {/* Event content */}
                 <div
-                    className={`fixed right-0 pt-20 pb-8 flex flex-col items-center overflow-y-auto ${auth?.user ? 'w-4/5' : 'w-full'}`}
-                    style={{
-                        height: 'calc(100vh - 4rem)',
-                        maxHeight: 'calc(100vh - 4rem)',
-                    }}
+                    className={`main-content-container hide-scrollbar flex justify-center items-center ${!auth?.user ? 'w-full' : collapsed ? 'collapsed' : 'uncollapsed'}`}
                 >
                     {/* Image and summary */}
-                    <div className="flex w-4/5 gap-4 items-start">
+                    <div className="flex w-4/5 gap-4 items-center">
                         {/* Image */}
                         <div className="w-72 h-72 bg-gray-200 rounded-2xl"></div>
                         {/* Summary: title, description, datetime, location, host */}

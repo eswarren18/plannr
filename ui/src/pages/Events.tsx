@@ -46,129 +46,124 @@ export default function Events() {
 
     return (
         <div className="flex bg-gray-50 min-h-screen z-10">
-            <div
-                className={`main-content-container hide-scrollbar ${collapsed ? 'collapsed' : 'uncollapsed'}`}
-            >
-                <div className="w-5/6 mx-auto">
-                    <div className="flex flex-col gap-4 mt-4 mb-6">
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-2xl font-bold text-center">
-                                Events
-                            </h2>
+            <div className="w-5/6 mx-auto mt-8">
+                <div className="flex flex-col gap-4 mt-4 mb-6">
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-2xl font-bold text-center">
+                            Events
+                        </h2>
+                        <button
+                            className="bg-cyan-600 text-white px-3 py-1 rounded font-medium hover:bg-cyan-400 transition-colors duration-150"
+                            onClick={() => navigate('/event-form')}
+                        >
+                            Create Event
+                        </button>
+                    </div>
+                    <div className="flex justify-center gap-4">
+                        <div className="flex bg-gray-100 rounded-xl shadow p-1">
                             <button
-                                className="bg-cyan-600 text-white px-3 py-1 rounded font-medium hover:bg-cyan-400 transition-colors duration-150"
-                                onClick={() => navigate('/event-form')}
+                                className={`px-4 py-1 rounded-l-lg font-medium transition-colors duration-150 ${roleFilter === 'participant' ? 'bg-cyan-500 text-white' : 'bg-gray-50 text-gray-700'}`}
+                                onClick={() => setRoleFilter('participant')}
                             >
-                                Create Event
+                                Participant
+                            </button>
+                            <button
+                                className={`px-4 py-1 rounded-r-lg font-medium transition-colors duration-150 ${roleFilter === 'host' ? 'bg-cyan-500 text-white' : 'bg-gray-50 text-gray-700'}`}
+                                onClick={() => setRoleFilter('host')}
+                            >
+                                Host
                             </button>
                         </div>
-                        <div className="flex justify-center gap-4">
-                            <div className="flex bg-gray-100 rounded-xl shadow p-1">
-                                <button
-                                    className={`px-4 py-1 rounded-l-lg font-medium transition-colors duration-150 ${roleFilter === 'participant' ? 'bg-cyan-500 text-white' : 'bg-gray-50 text-gray-700'}`}
-                                    onClick={() => setRoleFilter('participant')}
-                                >
-                                    Participant
-                                </button>
-                                <button
-                                    className={`px-4 py-1 rounded-r-lg font-medium transition-colors duration-150 ${roleFilter === 'host' ? 'bg-cyan-500 text-white' : 'bg-gray-50 text-gray-700'}`}
-                                    onClick={() => setRoleFilter('host')}
-                                >
-                                    Host
-                                </button>
-                            </div>
-                            <div className="flex bg-gray-100 rounded-xl shadow p-1">
-                                <button
-                                    className={`px-4 py-1 rounded-l-lg font-medium transition-colors duration-150 ${timeFilter === 'upcoming' ? 'bg-indigo-500 text-white' : 'bg-gray-50 text-gray-700'}`}
-                                    onClick={() => setTimeFilter('upcoming')}
-                                >
-                                    Upcoming
-                                </button>
-                                <button
-                                    className={`px-4 py-1 font-medium transition-colors duration-150 ${timeFilter === 'past' ? 'bg-indigo-500 text-white' : 'bg-gray-50 text-gray-700'}`}
-                                    onClick={() => setTimeFilter('past')}
-                                >
-                                    Past
-                                </button>
-                                <button
-                                    className={`px-4 py-1 rounded-r-lg font-medium transition-colors duration-150 ${timeFilter === 'all' ? 'bg-indigo-500 text-white' : 'bg-gray-50 text-gray-700'}`}
-                                    onClick={() => setTimeFilter('all')}
-                                >
-                                    All
-                                </button>
-                            </div>
+                        <div className="flex bg-gray-100 rounded-xl shadow p-1">
+                            <button
+                                className={`px-4 py-1 rounded-l-lg font-medium transition-colors duration-150 ${timeFilter === 'upcoming' ? 'bg-indigo-500 text-white' : 'bg-gray-50 text-gray-700'}`}
+                                onClick={() => setTimeFilter('upcoming')}
+                            >
+                                Upcoming
+                            </button>
+                            <button
+                                className={`px-4 py-1 font-medium transition-colors duration-150 ${timeFilter === 'past' ? 'bg-indigo-500 text-white' : 'bg-gray-50 text-gray-700'}`}
+                                onClick={() => setTimeFilter('past')}
+                            >
+                                Past
+                            </button>
+                            <button
+                                className={`px-4 py-1 rounded-r-lg font-medium transition-colors duration-150 ${timeFilter === 'all' ? 'bg-indigo-500 text-white' : 'bg-gray-50 text-gray-700'}`}
+                                onClick={() => setTimeFilter('all')}
+                            >
+                                All
+                            </button>
                         </div>
                     </div>
-                    <div className="mt-2">
-                        {loading ? (
-                            <div className="text-center text-gray-500 py-8">
-                                Loading...
-                            </div>
-                        ) : events.length === 0 ? (
-                            <div className="text-center text-gray-400 py-8">
-                                No events found.
-                            </div>
-                        ) : (
-                            <table className="w-full bg-white rounded-lg shadow-sm">
-                                <thead>
-                                    <tr className="bg-gray-100 text-left">
-                                        <th className="py-2 px-4">Title</th>
-                                        <th className="py-2 px-4">Date</th>
-                                        <th className="py-2 px-4">Host</th>
+                </div>
+                <div className="mt-2">
+                    {loading ? (
+                        <div className="text-center text-gray-500 py-8">
+                            Loading...
+                        </div>
+                    ) : events.length === 0 ? (
+                        <div className="text-center text-gray-400 py-8">
+                            No events found.
+                        </div>
+                    ) : (
+                        <table className="w-full bg-white rounded-lg shadow-sm">
+                            <thead>
+                                <tr className="bg-gray-100 text-left">
+                                    <th className="py-2 px-4">Title</th>
+                                    <th className="py-2 px-4">Date</th>
+                                    <th className="py-2 px-4">Host</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {events.map((event) => (
+                                    <tr
+                                        key={event.id}
+                                        className="border-b last:border-b-0 border-gray-200 hover:bg-gray-50 transition-colors"
+                                    >
+                                        <td className="py-2 px-4">
+                                            <button
+                                                className="cursor-pointer hover:text-cyan-500 text-left w-full"
+                                                onClick={() => {
+                                                    navigate(
+                                                        `/events/${event.id}`,
+                                                        {
+                                                            state: {
+                                                                from: '/events',
+                                                            },
+                                                        }
+                                                    );
+                                                }}
+                                            >
+                                                {event.title}
+                                            </button>
+                                        </td>
+                                        <td className="py-2 px-4 border-l border-gray-200">
+                                            {event.startTime
+                                                ? new Date(
+                                                      event.startTime
+                                                  ).toLocaleDateString(
+                                                      'en-US',
+                                                      {
+                                                          month: 'short',
+                                                          day: 'numeric',
+                                                          year: 'numeric',
+                                                      }
+                                                  )
+                                                : ''}
+                                        </td>
+                                        <td className="py-2 px-4 border-l border-gray-200">
+                                            {event.hostName}
+                                            {event.hostId === auth.user?.id && (
+                                                <span className="ml-2 px-1.5 py-0.5 bg-green-100 text-green-800 text-xs rounded-full">
+                                                    You
+                                                </span>
+                                            )}
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    {events.map((event) => (
-                                        <tr
-                                            key={event.id}
-                                            className="border-b last:border-b-0 border-gray-200 hover:bg-gray-50 transition-colors"
-                                        >
-                                            <td className="py-2 px-4">
-                                                <button
-                                                    className="hover:text-cyan-500 text-left w-full"
-                                                    onClick={() => {
-                                                        navigate(
-                                                            `/events/${event.id}`,
-                                                            {
-                                                                state: {
-                                                                    from: '/events',
-                                                                },
-                                                            }
-                                                        );
-                                                    }}
-                                                >
-                                                    {event.title}
-                                                </button>
-                                            </td>
-                                            <td className="py-2 px-4 border-l border-gray-200">
-                                                {event.startTime
-                                                    ? new Date(
-                                                          event.startTime
-                                                      ).toLocaleDateString(
-                                                          'en-US',
-                                                          {
-                                                              month: 'short',
-                                                              day: 'numeric',
-                                                              year: 'numeric',
-                                                          }
-                                                      )
-                                                    : ''}
-                                            </td>
-                                            <td className="py-2 px-4 border-l border-gray-200">
-                                                {event.hostName}
-                                                {event.hostId ===
-                                                    auth.user?.id && (
-                                                    <span className="ml-2 px-1.5 py-0.5 bg-green-100 text-green-800 text-xs rounded-full">
-                                                        You
-                                                    </span>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        )}
-                    </div>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
                 </div>
             </div>
         </div>

@@ -48,12 +48,12 @@ export function Nav({ sidebarCollapsed, setSidebarCollapsed }: NavProps) {
                 )}
                 <span className="font-semibold text-2xl">Loopd In</span>
             </div>
-            <div className="ml-auto flex gap-2">
+            <div className="ml-auto flex items-center gap-2">
                 {!user ? (
                     <>
                         <Link to="/signup">
                             <button
-                                className="cursor-pointer basis-1/2 bg-gray-200 px-3 py-1 rounded font-medium transition-colors duration-200 focus:outline-none hover:bg-gray-300"
+                                className="cursor-pointer basis-1/2 border border-gray-300 px-3 py-1 rounded-lg font-medium transition-colors duration-200 focus:outline-none hover:bg-indigo-400 active:bg-indigo-300"
                                 disabled={location.pathname === '/signup'}
                             >
                                 Sign Up
@@ -61,7 +61,7 @@ export function Nav({ sidebarCollapsed, setSidebarCollapsed }: NavProps) {
                         </Link>
                         <Link to="/signin">
                             <button
-                                className="cursor-pointer basis-1/2 bg-cyan-600 text-white px-3 py-1 rounded font-medium hover:bg-cyan-400"
+                                className="cursor-pointer basis-1/2 bg-cyan-500 shadow text-white px-3 py-1 rounded-lg font-medium hover:bg-cyan-400 active:bg-cyan-300"
                                 disabled={location.pathname === '/signin'}
                             >
                                 Sign In

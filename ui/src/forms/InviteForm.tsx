@@ -13,14 +13,14 @@ export default function InviteForm() {
         return <Navigate to="/" />;
     }
 
-    // Get eventId from URL params
+    // Form state and hooks
+    const navigate = useNavigate();
     const { eventId } = useParams<{ eventId?: string }>();
+    const [error, setError] = useState('');
     const [form, setForm] = useState<{ email: string; role: string }>({
         email: '',
         role: '',
     });
-    const [error, setError] = useState('');
-    const navigate = useNavigate();
 
     // Handle form submission
     const handleSubmit = async (event: React.FormEvent) => {
